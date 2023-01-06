@@ -5,7 +5,7 @@ services:
     image: qqchat-bot:latest
     restart: always
     ports:
-      - 5900:5900
+      - 5901:5900
     environment:
       - ENABLED_X11VNC=yes
     volumes:

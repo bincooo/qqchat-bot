@@ -4,6 +4,7 @@ import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import logger from 'src/util/log'
 import { filterTokens, buildLazyMessage } from 'src/util/message'
+import retryRequest from 'src/util/retry'
 
 export class ChatGPTHandler extends BaseMessageHandler {
   protected _api: ChatGPTAPIBrowser
@@ -53,27 +54,31 @@ export class ChatGPTHandler extends BaseMessageHandler {
       if (sender.textMessage === 'OpenTTS') {
         sender.reply('open the voice mode ~', false)
         config.tts = true
-        this._isWait = false
         return false
       }
 
       if (sender.textMessage === 'CloseTTS') {
         sender.reply('close the voice mode ~', false)
         config.tts = false
-        this._isWait = false
         return false
       } 
 
-      const response = await this._api.sendMessage(filterTokens(sender.textMessage), {
-        conversationId: this._trackSession?.conversationId,
-        parentMessageId: this._trackSession?.messageId
-      })
+      this._isWait = true
+      const response = await retryRequest(() =>
+        this._api.sendMessage(filterTokens(sender.textMessage), {
+          conversationId: this._trackSession?.conversationId,
+          parentMessageId: this._trackSession?.messageId
+        }),
+        3,
+        500
+      )
       this._trackSession = response
       this._isWait = false
       // sender.reply(this._trackSession.response, true)
     } catch (err) {
       this.messageErrorHandler(sender, err)
       logger.error(err)
+      this._isWait = false
     }
     return false
   }

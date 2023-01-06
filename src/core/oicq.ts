@@ -6,10 +6,12 @@ import logger from 'src/util/log'
 import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
 import speak from '../util/tts'
+import fs from 'fs'
 
 let client: Client
 let messageHandler: Array<MessageHandler | BaseMessageHandler>
 let timer: NodeJS.Timer | null = null
+let loginType: number = 2
 
 async function handleMessage (e: MessageEvent) {
   const sender = new Sender(e)
@@ -70,23 +72,45 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
 function doLogin (client: Client) {
 
   client.on('system.login.slider', function (e) {
-    inquirer.prompt({ type: 'input', message: '输入ticket：...\n', name: 'ticket' })
-      .then(({ ticket }) => this.submitSlider(String(ticket).trim()))
+    loginType = 0
+  //   inquirer.prompt({ type: 'input', message: '输入ticket：...\n', name: 'ticket' })
+  //     .then(({ ticket }) => this.submitSlider(String(ticket).trim()))
   })
 
   client.on('system.login.device', function (e) {
+    loginType = 1
     client.sendSmsCode()
     inquirer.prompt({ type: 'input', message: '请输入手机验证码...\n', name: 'code' })
       .then(({ code }) => this.submitSmsCode(String(code).trim()))
   })
 
   // client.on('system.login.qrcode', function (e) {
+  //   loginType = 2
   //   inquirer.prompt({ type: 'input', message: '回车刷新二维码，等待扫码中...\n', name: 'enter' })
   //     .then(() => { this.login() })
   // })
 
   if (!timer) {
-    timer = setInterval(() => client.login(), 15 * 1000)
+    timer = setInterval(() => loginHelper(client), 15 * 1000)
   }
   client.login(config.botPassword)
+}
+
+function loginHelper(client) {
+  switch(loginType) {
+  case 0:
+    fs.readFile('/bot/data/ticket.txt', (err, data) => {
+      if (!err) {
+        const ticket = data.toString().trim()
+        if (ticket) {
+          console.log("ticket: " + ticket)
+          client.submitSlider(ticket)
+        }
+      }
+    })
+    break
+  case 2:
+    client.login()
+    break
+  }
 }
