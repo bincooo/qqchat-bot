@@ -15,7 +15,7 @@ const awaitErrorWrap = async <T, U = any>(
   }
 };
 
-export default const retryRequest = async <T>(
+const retryRequest = async <T>(
   promise: () => Promise<T>,
   retryTimes = 3,
   retryInterval = 10000
@@ -39,3 +39,5 @@ export default const retryRequest = async <T>(
 
   return output[1];
 };
+
+export default retryRequest

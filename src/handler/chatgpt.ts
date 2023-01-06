@@ -23,7 +23,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     if (!config.api.enable) return
     const asyncOnMessage = buildLazyMessage(this._conversationMap)
     const { email, password, proxyServer } = config.api
-    this._api = new ChatGPTAPIBrowser({ email, password, asyncOnMessage, proxyServer })
+    this._api = new ChatGPTAPIBrowser({ email, password, asyncOnMessage, proxyServer, captchaSolver: true })
     await this._api.initSession()
     console.log('chatgpt - execute initChatGPT method success.')
   }
