@@ -23,8 +23,8 @@ export const config = {
   api: {
 
     enable: true,
-    email: 'seket97383@bitvoo.com',
-    password: 'a12345678',
+    email: '',
+    password: '',
     browserPath: '',
     proxyServer: 'http://master.io:7890'
   },
