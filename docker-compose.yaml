@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  test:
+    build: .
+    image: qqchat-bot:latest
+    restart: always
+    ports:
+      - 5900:5900
+    environment:
+      - ENABLED_X11VNC=yes
+    volumes:
+      - ./data:/bot/data
+      - ./amr:/bot/amr
+    extra_hosts:
+      - "master.io:192.168.0.64"
