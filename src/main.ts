@@ -37,12 +37,14 @@ async function main () {
         await writeConfig(config)
       })
       .then(async () => await loadHandlerConfig())
-      .then(async () => await initOicq(MessageHandlers))
+      .then(async () => {
+        config.client = await initOicq(MessageHandlers)
+      })
       .catch(err => { throw err })
   } else {
     Object.assign(config, await loadConfig())
     await loadHandlerConfig()
-    initOicq(MessageHandlers)
+    config.client = await initOicq(MessageHandlers)
   }
 }
 

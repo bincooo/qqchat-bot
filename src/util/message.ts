@@ -34,7 +34,7 @@ export function filterTokens (content: string) {
 
 
 // --------------------------
-
+const ldGif = segment.image('./loading.gif')
 const conversationMsgMap = new Map()
 const breakBlocks = [
   // '```'
@@ -54,8 +54,21 @@ const breakBlocks = [
   '.\n',
 ]
 
+let mid: string | null = null
+
+async function recallLdGif(render: any) {
+  if (mid) {
+    await render.recallMsg(mid)
+  }
+}
+
+async function loading(render: any) {
+  const ret = await render.reply(ldGif)
+  mid = ret.message_id
+}
+
 export const buildLazyMessage = (conversationMap: any) => {
-  return (data: any) => {
+  return async (data: any) => {
     //console.log('conversationMap', conversationMap)
     if (!conversationMap) return
       //console.log('ts: ', data)
@@ -97,21 +110,29 @@ export const buildLazyMessage = (conversationMap: any) => {
           const msg = cached.cachedMsg.substr(cached.idx)
           if (msg && msg.trim()) {
             if (config.tts) {
-              speak({text: msg, vname: 'zh-CN-XiaoshuangNeural', sname: 'general'}, 'audio-24khz-96kbitrate-mono-mp3')
-                .then(path => {
-                  render.reply(segment.record(path), false)
-                })
-            } else
-              render.reply(msg + '\n\n- end -', false)
+              recallLdGif(render)
+              const path = await speak({ text: msg })
+              render.reply(segment.record(path), false)
+                .then(() => loading(render, true))
+            }
+            else {
+              recallLdGif(render)
+              render.reply(msg, false)
+                .then(() => loading(render, true))
+            }
 
           } else {
-            if (!config.tts)
-              render.reply('- end -', false)
+            // if (!config.tts)
+            recallLdGif(render)
+            loading(render, true)
+              //render.reply('- end -', false)
           }
       
         } else {
-          if (!config.tts)
-            render.reply('- end -', false)
+          // if (!config.tts)
+          recallLdGif(render)
+          loading(render, true)
+            // render.reply('- end -', false)
         }
         conversationMsgMap.delete(data.conversationId)
         return
@@ -122,12 +143,16 @@ export const buildLazyMessage = (conversationMap: any) => {
         const msg = data.response.substr(cached.idx, index)
         if (msg && msg.trim()) {
           if (config.tts) {
-            speak({text: msg, vname: 'zh-CN-XiaoshuangNeural', sname: 'general'}, 'audio-24khz-96kbitrate-mono-mp3')
-              .then(path => {
-                render.reply(segment.record(path), false)
-              })
-          } else
+            recallLdGif(render)
+            speak({ text: msg }).then(path => {
+              render.reply(segment.record(path), false)
+                .then(() => loading(render))
+            })
+          } else {
+            recallLdGif(render)
             render.reply(msg, false)
+              .then(() => loading(render))
+          }
         }
         cached.idx = index
       }

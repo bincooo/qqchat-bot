@@ -27,7 +27,11 @@ export class Sender {
     }
   }
 
-  reply (content: Sendable, quote?: boolean) {
-    this._eventObject.reply(content, quote)
+  async reply (content: Sendable, quote?: boolean): any {
+    return await this._eventObject.reply(content, quote)
+  }
+
+  async recallMsg(id: string): any {
+    return await config.client.deleteMsg(id)
   }
 }

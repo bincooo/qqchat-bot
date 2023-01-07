@@ -85,7 +85,7 @@ async function conn(): Promise<WebSocket> {
     })
   return new Promise((resolve, reject) => {
     ws.on('open', () => { 
-      console.log('ws.open')
+      console.log('MS_TTS is open: ' + cid)
       resolve(ws)
     })
     ws.on('close', (code, reason) => {
@@ -115,7 +115,7 @@ async function conn(): Promise<WebSocket> {
           if (timerMap.has(id)) {
             const timer = timerMap.get(id)
             const buffer = ttsMap.get(id)
-            timer.resolve(buffer)
+            timer?.resolve(buffer)
             timerMap.delete(id)
           }
         }
@@ -170,7 +170,7 @@ declare type Config = {
 function buildSsml(config: Config) {
   const {
     text,
-    vname = 'zh-CN-XiaoxiaoNeural',
+    vname = 'zh-CN-XiaoshuangNeural',
     sname = 'general',
     degree = 1.0,
     lexicon = ''
@@ -200,7 +200,7 @@ function buildSsml(config: Config) {
 
 async function speak(
   config: Config,
-  type: string = 'audio-16khz-32kbitrate-mono-mp3'
+  type: string = 'audio-24khz-96kbitrate-mono-mp3'
 ) {
 
   if (!_ws || _ws.readyState !== WebSocket.OPEN) {

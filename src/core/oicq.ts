@@ -53,7 +53,7 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
       clearTimeout(timer)
       timer = null
     }
-    client.sendPrivateMsg(config.adminQQ, '已上线~')
+    const ret = await client.sendPrivateMsg(config.adminQQ, '已上线~')
   })
 
   const app = GuildApp.bind(client)
