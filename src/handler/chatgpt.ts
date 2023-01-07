@@ -3,7 +3,7 @@ import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import logger from 'src/util/log'
-import { filterTokens, buildLazyMessage, recallLdGif } from 'src/util/message'
+import { filterTokens, buildLazyMessage } from 'src/util/message'
 import retryRequest from 'src/util/retry'
 
 export class ChatGPTHandler extends BaseMessageHandler {
@@ -80,7 +80,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
       logger.error(err)
       this._isWait = false
     }
-    recallLdGif(sender)
     return false
   }
 

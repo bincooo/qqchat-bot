@@ -56,9 +56,9 @@ const breakBlocks = [
 
 let mid: string | null = null
 
-export async function recallLdGif(render: any) {
+async function recallLdGif() {
   if (mid) {
-    await render.recallMsg(mid)
+    await config.client.deleteMsg(mid)
   }
 }
 
@@ -71,6 +71,8 @@ async function loading(render: any, isEnd: boolean = false) {
 
 export const buildLazyMessage = (conversationMap: any) => {
   let isEnd = true
+  const timer = setInterval(recallLdGif, 1000)
+
   return async (data: any) => {
     //console.log('conversationMap', conversationMap)
     if (!conversationMap) return
@@ -116,15 +118,15 @@ export const buildLazyMessage = (conversationMap: any) => {
             if (config.tts) {
               const path = await speak({ text: msg })
               render.reply(segment.record(path), false)
-                .then(() => recallLdGif(render))
+                .then(recallLdGif)
             }
             else {
               render.reply(msg, false)
-                .then(() => recallLdGif(render))
+                .then(recallLdGif)
             }
           }
         }
-        recallLdGif(render)
+        recallLdGif()
         conversationMsgMap.delete(data.conversationId)
         return
       }
@@ -135,13 +137,13 @@ export const buildLazyMessage = (conversationMap: any) => {
         if (msg && msg.trim()) {
           isEnd = false
           if (config.tts) {
-            recallLdGif(render)
+            recallLdGif()
             speak({ text: msg }).then(path => {
               render.reply(segment.record(path), false)
                 .then(() => loading(render, isEnd))
             })
           } else {
-            recallLdGif(render)
+            recallLdGif()
             render.reply(msg, false)
               .then(() => loading(render, isEnd))
           }
