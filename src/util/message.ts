@@ -109,7 +109,6 @@ export const buildLazyMessage = (conversationMap: any) => {
       //console.log(index, data.response)
       if (data.response == '[DONE]') {
         isEnd = true
-        recallLdGif(render)
         if (cached.idx < cached.cachedMsg.length) {
           // console.log('ts: ', cached.cachedMsg.substr(cached.idx))
           const msg = cached.cachedMsg.substr(cached.idx)
@@ -117,12 +116,15 @@ export const buildLazyMessage = (conversationMap: any) => {
             if (config.tts) {
               const path = await speak({ text: msg })
               render.reply(segment.record(path), false)
+                .then(() => recallLdGif(render))
             }
             else {
               render.reply(msg, false)
+                .then(() => recallLdGif(render))
             }
           }
         }
+        recallLdGif(render)
         conversationMsgMap.delete(data.conversationId)
         return
       }
@@ -136,7 +138,7 @@ export const buildLazyMessage = (conversationMap: any) => {
             recallLdGif(render)
             speak({ text: msg }).then(path => {
               render.reply(segment.record(path), false)
-                .then(() => loading(render))
+                .then(() => loading(render, isEnd))
             })
           } else {
             recallLdGif(render)
