@@ -71,8 +71,7 @@ async function loading(render: any, isEnd: boolean = false) {
 
 export const buildLazyMessage = (conversationMap: any) => {
   let isEnd: boolean = true
-  const timer: node.Timer | null = null
-  setInterval((() => {
+  const timer: node.Timer = setInterval(() => {
     if (isEnd) {
       recallLdGif()
     }
