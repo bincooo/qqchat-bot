@@ -56,7 +56,7 @@ const breakBlocks = [
 
 let mid: string | null = null
 
-async function recallLdGif(render: any) {
+export async function recallLdGif(render: any) {
   if (mid) {
     await render.recallMsg(mid)
   }
