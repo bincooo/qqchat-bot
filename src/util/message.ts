@@ -39,15 +39,15 @@ const conversationMsgMap = new Map()
 const breakBlocks = [
   // '```'
   function(text, index) {
-  const block = '```'
-  const currIndex = text.lastIndexOf(block)
-  if (currIndex < 0 || currIndex < index) {
-    return 0
-  }
-  if (currIndex + block.length <= index) {
-    return -1
-  }
-  return currIndex + block.length
+    const block = '```'
+    const currIndex = text.lastIndexOf(block)
+    if (currIndex < 0 || currIndex < index) {
+      return 0
+    }
+    if (currIndex + block.length <= index) {
+      return -1
+    }
+    return currIndex + block.length
   },
   '。\n',
   '。', 
@@ -62,12 +62,15 @@ async function recallLdGif(render: any) {
   }
 }
 
-async function loading(render: any) {
-  const ret = await render.reply(ldGif)
-  mid = ret.message_id
+async function loading(render: any, isEnd: boolean = false) {
+  if (!isEnd) {
+    const ret = await render.reply(ldGif)
+    mid = ret.message_id
+  }
 }
 
 export const buildLazyMessage = (conversationMap: any) => {
+  let isEnd = true
   return async (data: any) => {
     //console.log('conversationMap', conversationMap)
     if (!conversationMap) return
@@ -93,7 +96,7 @@ export const buildLazyMessage = (conversationMap: any) => {
           index = data.response.lastIndexOf(block)
             if (index > 0) {
               index += block.length
-            break
+              break
             }
         } else {
           index = block(data.response, cached.idx)
@@ -105,6 +108,7 @@ export const buildLazyMessage = (conversationMap: any) => {
     
       //console.log(index, data.response)
       if (data.response == '[DONE]') {
+        recallLdGif(render)
         if (cached.idx < cached.cachedMsg.length) {
           // console.log('ts: ', cached.cachedMsg.substr(cached.idx))
           const msg = cached.cachedMsg.substr(cached.idx)
@@ -112,16 +116,13 @@ export const buildLazyMessage = (conversationMap: any) => {
             if (config.tts) {
               const path = await speak({ text: msg })
               render.reply(segment.record(path), false)
-              recallLdGif(render)
             }
             else {
               render.reply(msg, false)
-              recallLdGif(render)
             }
           }
         }
         conversationMsgMap.delete(data.conversationId)
-        recallLdGif(render)
         return
       }
       cached.cachedMsg = data.response
@@ -129,6 +130,7 @@ export const buildLazyMessage = (conversationMap: any) => {
         // console.log('ts: ', data.response.substr(cached.idx, index))
         const msg = data.response.substr(cached.idx, index)
         if (msg && msg.trim()) {
+          isEnd = false
           if (config.tts) {
             recallLdGif(render)
             speak({ text: msg }).then(path => {
@@ -138,7 +140,7 @@ export const buildLazyMessage = (conversationMap: any) => {
           } else {
             recallLdGif(render)
             render.reply(msg, false)
-              .then(() => loading(render))
+              .then(() => loading(render, isEnd))
           }
         }
         cached.idx = index
