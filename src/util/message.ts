@@ -108,6 +108,7 @@ export const buildLazyMessage = (conversationMap: any) => {
     
       //console.log(index, data.response)
       if (data.response == '[DONE]') {
+        isEnd = true
         recallLdGif(render)
         if (cached.idx < cached.cachedMsg.length) {
           // console.log('ts: ', cached.cachedMsg.substr(cached.idx))
