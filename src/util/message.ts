@@ -113,25 +113,21 @@ export const buildLazyMessage = (conversationMap: any) => {
               recallLdGif(render)
               const path = await speak({ text: msg })
               render.reply(segment.record(path), false)
-                .then(() => loading(render, true))
             }
             else {
               recallLdGif(render)
               render.reply(msg, false)
-                .then(() => loading(render, true))
             }
 
           } else {
             // if (!config.tts)
             recallLdGif(render)
-            loading(render, true)
               //render.reply('- end -', false)
           }
       
         } else {
           // if (!config.tts)
           recallLdGif(render)
-          loading(render, true)
             // render.reply('- end -', false)
         }
         conversationMsgMap.delete(data.conversationId)
