@@ -70,8 +70,13 @@ async function loading(render: any, isEnd: boolean = false) {
 }
 
 export const buildLazyMessage = (conversationMap: any) => {
-  let isEnd = true
-  const timer = setInterval(recallLdGif, 1000)
+  let isEnd: boolean = true
+  const timer: node.Timer | null = null
+  setInterval((() => {
+    if (isEnd) {
+      recallLdGif()
+    }
+  }, 1000)
 
   return async (data: any) => {
     //console.log('conversationMap', conversationMap)
