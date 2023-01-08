@@ -43,11 +43,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   handle = async (sender: Sender) => {
     if (!config.api.enable) return true
-    if (this._isWait) {
-      console.log('ignore message, is waiting ...')
-      sender.reply('ignore message, is waiting ...', true)
-      return false
-    }
     try {
 
       this._conversationMap.set(await this.getConversation(), sender)
@@ -67,6 +62,12 @@ export class ChatGPTHandler extends BaseMessageHandler {
         this._isWait = false
         this._trackSession = null
         sender.reply('Previous conversation has been reset.', false)
+        return false
+      }
+
+      if (this._isWait) {
+        console.log('ignore message, is waiting ...')
+        sender.reply('ignore message, is waiting ...', true)
         return false
       }
 
