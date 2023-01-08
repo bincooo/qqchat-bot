@@ -120,8 +120,8 @@ export const buildLazyMessage = (conversationMap: any) => {
           const msg = cached.cachedMsg.substr(cached.idx)
           if (msg && msg.trim()) {
             if (config.tts) {
-              const path = await speak({ text: msg })
-              render.reply(segment.record(path), false)
+              speak({ text: msg })
+                .then(path => render.reply(segment.record(path), false))
                 .then(recallLdGif)
             }
             else {
