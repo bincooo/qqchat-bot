@@ -25,7 +25,7 @@ class ServerCommand extends BaseCommand {
             }
           })
         )
-        await initOicq()
+        // await initOicq()
         break
       case 'status':
         sender.reply(JSON.stringify(process.memoryUsage()), true)

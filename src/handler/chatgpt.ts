@@ -32,7 +32,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     if (this._trackSession?.conversationId) {
       return this._trackSession?.conversationId
     }
-    const res = await await this._api.sendMessage('嗨')
+    const res = await this._api.sendMessage('嗨')
     this._trackSession = res
     return res.conversationId
   }
@@ -62,6 +62,13 @@ export class ChatGPTHandler extends BaseMessageHandler {
         config.tts = false
         return false
       } 
+
+      if (sender.textMessage === 'reset') {
+        this._isWait = false
+        this._trackSession = null
+        sender.reply('Previous conversation has been reset.', false)
+        return false
+      }
 
       this._isWait = true
       const response = await retryRequest(() =>
