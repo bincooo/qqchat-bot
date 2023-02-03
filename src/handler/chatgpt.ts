@@ -3,7 +3,7 @@ import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import logger from 'src/util/log'
-import { filterTokens, buildLazyMessage } from 'src/util/message'
+import { filterTokens, onMessage } from 'src/util/message'
 import retryRequest from 'src/util/retry'
 
 export class ChatGPTHandler extends BaseMessageHandler {
@@ -21,9 +21,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async initChatGPT () {
     if (!config.api.enable) return
-    const asyncOnMessage = buildLazyMessage(this._conversationMap)
     const { email, password, proxyServer } = config.api
-    this._api = new ChatGPTAPIBrowser({ email, password, asyncOnMessage, proxyServer, captchaSolver: true })
+    this._api = new ChatGPTAPIBrowser({ email, password, proxyServer, userDataDir: '/bot/data/' + email })
     await this._api.initSession()
     console.log('chatgpt - execute initChatGPT method success.')
   }
@@ -38,7 +37,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   async reboot () {
-    await this.initChatGPT()
+    this.load()
   }
 
   handle = async (sender: Sender) => {
@@ -67,7 +66,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       if (this._isWait) {
         console.log('ignore message, is waiting ...')
-        sender.reply('ignore message, is waiting ...', true)
+        sender.reply('问的太快啦,让我先想想~', true)
         return false
       }
 
@@ -75,19 +74,24 @@ export class ChatGPTHandler extends BaseMessageHandler {
       const response = await retryRequest(() =>
         this._api.sendMessage(filterTokens(sender.textMessage), {
           conversationId: this._trackSession?.conversationId,
-          parentMessageId: this._trackSession?.messageId
+          parentMessageId: this._trackSession?.messageId,
+          onProgress: (res) => {
+            onMessage(res, sender)
+          }
         }),
         3,
         500
       )
+
+      onMessage({...response, response: '[DONE]'}, sender)
       this._trackSession = response
-      this._isWait = false
       // sender.reply(this._trackSession.response, true)
     } catch (err) {
       this.messageErrorHandler(sender, err)
       logger.error(err)
-      this._isWait = false
     }
+    
+    this._isWait = false
     return false
   }
 

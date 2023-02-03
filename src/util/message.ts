@@ -55,6 +55,13 @@ const breakBlocks = [
 ]
 
 let mid: string | null = null
+let isEnd: boolean = true
+
+setInterval(() => {
+  if (isEnd) {
+    recallLdGif()
+  }
+}, 1000)
 
 async function recallLdGif() {
   if (mid) {
@@ -69,91 +76,81 @@ async function loading(render: any, isEnd: boolean = false) {
   }
 }
 
-export const buildLazyMessage = (conversationMap: any) => {
-  let isEnd: boolean = true
-  const timer: node.Timer = setInterval(() => {
-    if (isEnd) {
-      recallLdGif()
-    }
-  }, 1000)
+function cacheMessage(conversationId: string): any {
+  if (conversationMsgMap.has(conversationId)) {
+    return conversationMsgMap.get(conversationId)
+  }
 
-  return async (data: any) => {
-    //console.log('conversationMap', conversationMap)
-    if (!conversationMap) return
-      //console.log('ts: ', data)
-    if (!conversationMap.has(data.conversationId)) return
-    const render: any = conversationMap.get(data.conversationId)
+  let cached = {
+    idx: 0,
+    msg: ''
+  }
+  conversationMsgMap.set(conversationId, cached)
+  return cached
+}
 
-    let cached = {
-      idx: 0,
-      cachedMsg: ''
-    }
-    if (conversationMsgMap.has(data.conversationId)) {
-      cached = conversationMsgMap.get(data.conversationId)
-    } else {
-      conversationMsgMap.set(data.conversationId, cached)
+export const onMessage = (data: any, render: any) => {
+  let cached: any = cacheMessage(data.conversationId)
+
+  if (data.response) {
+    let index
+    for (let i in breakBlocks) {
+      const block = breakBlocks[i]
+      if (typeof(block) == 'string') {
+        index = data.response.lastIndexOf(block)
+          if (index > 0) {
+            index += block.length
+            break
+          }
+      } else {
+        index = block(data.response, cached.idx)
+        if (index == -1) break
+        if (index > 0) break
+      }
+      
     }
   
-    if (data.response) {
-      let index
-      for (let i in breakBlocks) {
-        const block = breakBlocks[i]
-        if (typeof(block) == 'string') {
-          index = data.response.lastIndexOf(block)
-            if (index > 0) {
-              index += block.length
-              break
-            }
-        } else {
-          index = block(data.response, cached.idx)
-          if (index == -1) break
-          if (index > 0) break
-        }
-        
-      }
-    
-      //console.log(index, data.response)
-      if (data.response == '[DONE]') {
-        isEnd = true
-        if (cached.idx < cached.cachedMsg.length) {
-          // console.log('ts: ', cached.cachedMsg.substr(cached.idx))
-          const msg = cached.cachedMsg.substr(cached.idx)
-          if (msg && msg.trim()) {
-            if (config.tts) {
-              speak({ text: msg })
-                .then(path => render.reply(segment.record(path), false))
-                .then(recallLdGif)
-            }
-            else {
-              render.reply(msg, false)
-                .then(recallLdGif)
-            }
-          }
-        }
-        recallLdGif()
-        conversationMsgMap.delete(data.conversationId)
-        return
-      }
-      cached.cachedMsg = data.response
-      if (index > 0 && cached.idx < index) {
-        // console.log('ts: ', data.response.substr(cached.idx, index))
-        const msg = data.response.substr(cached.idx, index)
+    //console.log(index, data.response)
+    if (data.response == '[DONE]') {
+      isEnd = true
+      if (cached.idx < cached.msg.length) {
+        // console.log('ts: ', cached.msg.substr(cached.idx))
+        const msg = cached.msg.substr(cached.idx)
         if (msg && msg.trim()) {
-          isEnd = false
           if (config.tts) {
-            recallLdGif()
-            speak({ text: msg }).then(path => {
-              render.reply(segment.record(path), false)
-                .then(() => loading(render, isEnd))
-            })
-          } else {
-            recallLdGif()
+            speak({ text: msg })
+              .then(path => render.reply(segment.record(path), false))
+              .then(recallLdGif)
+          }
+          else {
             render.reply(msg, false)
-              .then(() => loading(render, isEnd))
+              .then(recallLdGif)
           }
         }
-        cached.idx = index
       }
+      recallLdGif()
+      conversationMsgMap.delete(data.conversationId)
+      return
+    }
+    cached.msg = data.response
+    if (index > 0 && cached.idx < index) {
+      // console.log('ts: ', data.response.substr(cached.idx, index))
+      const msg = data.response.substr(cached.idx, index)
+      if (msg && msg.trim()) {
+        isEnd = false
+        if (config.tts) {
+          recallLdGif()
+          speak({ text: msg }).then(path => {
+            render.reply(segment.record(path), false)
+              .then(() => loading(render, isEnd))
+          })
+        } else {
+          recallLdGif()
+          render.reply(msg, false)
+            .then(() => loading(render, isEnd))
+        }
+      }
+      cached.idx = index
     }
   }
 }
