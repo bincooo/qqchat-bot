@@ -49,7 +49,7 @@
     "ffmpeg-static": "^2.0.0",
     "ws": "^8.8.0",
     "chalk": "^5.2.0",
-    "cgpt": "3.5.4-test-12",
+    "cgpt": "3.5.4-test-13",
     "esbuild": "^0.16.10",
     "inquirer": "^9.1.4",
     "oicq": "^2.3.1",
