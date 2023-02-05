@@ -26,7 +26,8 @@ export const config = {
     email: '',
     password: '',
     browserPath: '',
-    proxyServer: 'http://master.io:7890'
+    proxyServer: 'http://master.io:7890',
+    pingMs: 60000 * 5
   },
   tts: false,
   client: null

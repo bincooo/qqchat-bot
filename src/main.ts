@@ -19,7 +19,7 @@ async function loadHandlerConfig () {
 }
 
 async function main () {
-  console.log(chalk.green('欢迎使用chatgpt_oicq: https://github.com/easydu2002/chat_gpt_oicq'))
+  console.log(chalk.green('欢迎使用qqchat-bot: https://github.com/bincooo/qqchat-bot'))
   console.log(chalk.green('如果有用点个star吧 !!!'))
 
   const exist = existsConfig()

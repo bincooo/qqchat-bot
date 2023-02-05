@@ -6,6 +6,7 @@ import logger from 'src/util/log'
 import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
 import speak from '../util/tts'
+import chalk from 'chalk'
 import fs from 'fs'
 
 let client: Client
@@ -80,17 +81,18 @@ function doLogin (client: Client) {
   client.on('system.login.device', function (e) {
     loginType = 1
     client.sendSmsCode()
-    inquirer.prompt({ type: 'input', message: '请输入手机验证码...\n', name: 'code' })
-      .then(({ code }) => this.submitSmsCode(String(code).trim()))
+    // inquirer.prompt({ type: 'input', message: '请输入手机验证码...\n', name: 'code' })
+    //   .then(({ code }) => this.submitSmsCode(String(code).trim()))
   })
 
-  // client.on('system.login.qrcode', function (e) {
-  //   loginType = 2
+  client.on('system.login.qrcode', function (e) {
+    loginType = 2
   //   inquirer.prompt({ type: 'input', message: '回车刷新二维码，等待扫码中...\n', name: 'enter' })
   //     .then(() => { this.login() })
-  // })
+  })
 
   if (!timer) {
+    console.log(chalk.green('请在15秒内完成登录 ...'))
     timer = setInterval(() => loginHelper(client), 15 * 1000)
   }
   client.login(config.botPassword)
@@ -99,12 +101,23 @@ function doLogin (client: Client) {
 function loginHelper(client) {
   switch(loginType) {
   case 0:
-    fs.readFile('/bot/data/ticket.txt', (err, data) => {
+    fs.readFile('./ticket.txt', (err, data) => {
       if (!err) {
         const ticket = data.toString().trim()
         if (ticket) {
-          console.log("ticket: " + ticket)
+          console.log("submitSlider: " + ticket)
           client.submitSlider(ticket)
+        }
+      }
+    })
+    break
+  case 1:
+    fs.readFile('./ticket.txt', (err, data) => {
+      if (!err) {
+        const ticket = data.toString().trim()
+        if (ticket) {
+          console.log("submitSmsCode: " + ticket)
+          client.submitSmsCode(ticket)
         }
       }
     })
