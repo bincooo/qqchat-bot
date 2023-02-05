@@ -5,11 +5,11 @@ services:
     image: qqchat-bot:latest
     restart: always
     ports:
-      - 5900:5900
+      - 5901:5900
     environment:
       - ENABLED_X11VNC=yes
     volumes:
       - ./data:/bot/data
       - ./amr:/bot/amr
     extra_hosts:
-      - "master.io:192.168.0.99"
+      - "master.io:10.0.20.17"
