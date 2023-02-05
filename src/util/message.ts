@@ -54,16 +54,19 @@ const breakBlocks = [
   '.\n',
 ]
 
-let mid: string | null = null
+const mids: Array<string> = []
 let isEnd: boolean = true
 
 setInterval(() => {
   if (isEnd) {
-    recallLdGif()
+    while (mids.length > 0) {
+      recallLdGif()
+    }
   }
 }, 1000)
 
 async function recallLdGif() {
+  const mid = mids.shift()
   if (mid) {
     await config.client.deleteMsg(mid)
   }
@@ -72,7 +75,7 @@ async function recallLdGif() {
 async function loading(render: any, isEnd: boolean = false) {
   if (!isEnd) {
     const ret = await render.reply(ldGif)
-    mid = ret.message_id
+    mids.push(ret.message_id)
   }
 }
 
