@@ -13,12 +13,54 @@ function genUid(): string {
     .toLowerCase()
 }
 
+declare type Email = {
+  email: string,
+  password: string
+}
+
+class EmailPool {
+  protected _emails: Array<Email>
+  protected _args: any = {}
+  protected _currentIndex: number = 0
+  protected _opts: any
+
+  constructor(
+    opts: {
+      email: string
+      password: string
+      proxyServer?: string
+      heartbeatMs?: number
+    },
+    emails: Array<Email>
+  ) {
+    this._opts = opts
+    this._emails = emails
+  }
+
+  next() {
+    const size = this._emails.length
+    this._currentIndex += 1
+    if (this._currentIndex >= size) {
+      this._currentIndex = size - 1
+    }
+    const account = this._emails[this._currentIndex]
+    this._opts.email = account.email
+    this._opts.password = account.password
+  }
+
+  getOpts(): any {
+    return this._opts
+  }
+}
+
 export class ChatGPTHandler extends BaseMessageHandler {
   protected _api: ChatGPTAPIBrowser
 
   protected _uuid: string = genUid()
   
   protected _iswait: boolean = false
+
+  protected _emailPool: EmailPool
 
   async load () {
     if (!config.api.enable) return
@@ -27,8 +69,16 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async initChatGPT () {
     if (!config.api.enable) return
-    const { email, password, proxyServer, pingMs } = config.api
-    this._api = new ChatGPTAPIBrowser({ email, password, proxyServer, heartbeatMs: pingMs })
+    const { email, password, proxyServer, pingMs, slaves } = config.api
+    this._emailPool = new EmailPool(
+      {
+        email,
+        password,
+        proxyServer,
+        heartbeatMs: pingMs
+      },
+      [...slaves, { email, password }])
+    this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
     await this._api.initSession()
     console.log('chatgpt - execute initChatGPT method success.')
   }
@@ -94,6 +144,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     } else if (err.statusCode === 429) {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...', true)
+      this._emailPool.next()
+      this._api.resetSession()
 
     } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...', true)
