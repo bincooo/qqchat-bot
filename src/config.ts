@@ -25,6 +25,13 @@ export const config = {
     enable: true,
     email: '',
     password: '',
+    // Standby for solving "429" [1 hours error] 
+    slaves: [
+      // {
+      //   "email": "",
+      //   "password": "",
+      // }
+    ],
     browserPath: '',
     proxyServer: 'http://master.io:7890',
     pingMs: 60000 * 5
