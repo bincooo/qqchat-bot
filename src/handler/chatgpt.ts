@@ -14,6 +14,7 @@ function genUid(): string {
 }
 
 declare type Email = {
+  uuid?: string,
   email: string,
   password: string
 }
@@ -46,6 +47,10 @@ class EmailPool {
     const account = this._emails[this._currentIndex]
     this._opts.email = account.email
     this._opts.password = account.password
+    if (!accouut.uuid) {
+      account.uuid = genUid()
+    }
+    return account.uuid
   }
 
   getOpts(): any {
@@ -77,7 +82,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
         proxyServer,
         heartbeatMs: pingMs
       },
-      [...slaves, { email, password }])
+      [...slaves, { email, password, uuid: this._uuid }])
     this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
     await this._api.initSession()
     console.log('chatgpt - execute initChatGPT method success.')
@@ -136,11 +141,10 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   messageErrorHandler (sender: Sender, err: any) {
     const currentTimeIsBusy = () => {
-      const timeSplit:Array<string> = new Date()
-        .toLocaleTimeString()
-        .split(':')
-      const hour = parseInt(timeSplit[0])
-      return (hour <= 6 || hour >= 20)
+      const hour: number = new Date()
+        .getHours()
+      // 有时差，自行调整
+      return (hour >= 12 && hour <= 22)
     }
 
     const append = !currentTimeIsBusy() ? ""
@@ -155,7 +159,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     } else if (err.statusCode === 429) {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...' + append, true)
-      this._emailPool.next()
+      this._uuid = this._emailPool.next()
       this._api.resetSession()
 
     } else if (err.statusCode === 403) {
