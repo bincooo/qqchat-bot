@@ -135,23 +135,34 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   messageErrorHandler (sender: Sender, err: any) {
+    const currentTimeIsBusy = () => {
+      const timeSplit:Array<string> = new Date()
+        .toLocaleTimeString()
+        .split(':')
+      const hour = parseInt(timeSplit[0])
+      return (hour <= 6 || hour >= 20)
+    }
+
+    const append = !currentTimeIsBusy() ? ""
+      : "\n——————\n\n晚上20:00 ~ 凌晨06:00为国外高峰期, 尽量避开使用哦 ~"
+
     // if (err instanceof ChatGPTError) {
     if (err.message === 'ChatGPT invalid session token') {
-      sender.reply('token 无效')
+      sender.reply('token 无效' + append)
 
     } else if (err.statusCode === 5001) {
-      sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ...', true)
+      sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ...' + append, true)
 
     } else if (err.statusCode === 429) {
-      sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...', true)
+      sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...' + append, true)
       this._emailPool.next()
       this._api.resetSession()
 
     } else if (err.statusCode === 403) {
-      sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...', true)
+      sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)
 
     } else {
-      sender.reply(`发生错误\n${err}`)
+      sender.reply(`发生错误\n${err} ${append}`)
     }
   }
 }
