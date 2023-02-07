@@ -61,7 +61,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       if (this._iswait) {
         console.log('ignore message, is waiting ...')
-        sender.reply('——————————————\nError: ignore\n脑瓜子嗡嗡的, 让我缓缓 ...', true)
+        sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ~', true)
         return false
       }
 
@@ -88,12 +88,16 @@ export class ChatGPTHandler extends BaseMessageHandler {
     // if (err instanceof ChatGPTError) {
     if (err.message === 'ChatGPT invalid session token') {
       sender.reply('token 无效')
+
     } else if (err.statusCode === 5001) {
-      sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ~', true)
-    }  else if (err.statusCode === 403) {
+      sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ...', true)
+
+    } else if (err.statusCode === 429) {
+      sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...', true)
+
+    } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...', true)
-    } else if (err.message === 'ChatGPT failed to refresh auth token. TypeError: fetch failed') {
-      sender.reply('——————————————\nError: unknown\nemmm... 脑子掉线啦, 可以再说一遍吗 ~', true)
+
     } else {
       sender.reply(`发生错误\n${err}`)
     }
