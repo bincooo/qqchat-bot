@@ -122,7 +122,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       this._iswait = true
       await this._api.queueSendMessage(filterTokens(sender.textMessage), {
-        onProgress: (res) => {
+        onProgress: async (res) => {
           if (res.error) {
             await this.messageErrorHandler(sender, res.error)
             return
@@ -139,7 +139,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     return false
   }
 
-  async messageErrorHandler (sender: Sender, err: any) {
+  async messageErrorHandler(sender: Sender, err: any) {
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
         .getHours()
