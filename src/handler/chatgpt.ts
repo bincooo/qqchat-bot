@@ -47,7 +47,7 @@ class EmailPool {
     const account = this._emails[this._currentIndex]
     this._opts.email = account.email
     this._opts.password = account.password
-    if (!accouut.uuid) {
+    if (!account.uuid) {
       account.uuid = genUid()
     }
     return account.uuid
