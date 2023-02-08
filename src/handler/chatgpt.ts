@@ -41,10 +41,11 @@ class EmailPool {
 
   next() {
     const size = this._emails.length
-    this._currentIndex += 1
+    this._currentIndex ++
     if (this._currentIndex >= size) {
-      this._currentIndex = size - 1
+      this._currentIndex = 0
     }
+    console.log('currentIndex', this._currentIndex)
     const account = this._emails[this._currentIndex]
     this._opts.email = account.email
     this._opts.password = account.password
