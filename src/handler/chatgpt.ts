@@ -45,7 +45,6 @@ class EmailPool {
     if (this._currentIndex >= size) {
       this._currentIndex = 0
     }
-    console.log('currentIndex', this._currentIndex)
     const account = this._emails[this._currentIndex]
     this._opts.email = account.email
     this._opts.password = account.password
@@ -161,9 +160,9 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     } else if (err.statusCode === 429) {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...' + append, true)
+      // 429 1hours 限制, 换号处理
       this._uuid = this._emailPool.next()
       const opts = this._emailPool.getOpts()
-      console.log('429 opts', opts)
       this._api.setAccount(opts.email, opts.password)
       try {
         await this._api.resetSession()
