@@ -162,6 +162,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...' + append, true)
       this._uuid = this._emailPool.next()
       const opts = this._emailPool.getOpts()
+      console.log('429 opts', opts)
       this._api.setAccount(opts.email, opts.password)
       try {
         await this._api.resetSession()
