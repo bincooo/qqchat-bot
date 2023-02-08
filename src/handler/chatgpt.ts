@@ -84,7 +84,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
         proxyServer,
         heartbeatMs: pingMs
       },
-      [...slaves, { email, password, uuid: this._uuid }])
+      [{ email, password, uuid: this._uuid }, ...slaves ])
     this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
     await this._api.initSession()
     console.log('chatgpt - execute initChatGPT method success.')
