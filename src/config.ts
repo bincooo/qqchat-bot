@@ -27,10 +27,10 @@ export const config = {
     password: '',
     // Standby for solving "429" [1 hours error] 
     slaves: [
-      // {
-      //   "email": "",
-      //   "password": "",
-      // }
+      {
+        "email": "seket97383@bitvoo.com",
+        "password": "a12345678"
+      }
     ],
     browserPath: '',
     proxyServer: 'http://master.io:7890',
