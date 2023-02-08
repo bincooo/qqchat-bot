@@ -36,6 +36,7 @@ class EmailPool {
   ) {
     this._opts = opts
     this._emails = emails
+    console.log('email pool:', emails)
   }
 
   next() {
