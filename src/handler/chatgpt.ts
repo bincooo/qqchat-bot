@@ -124,14 +124,14 @@ export class ChatGPTHandler extends BaseMessageHandler {
       await this._api.queueSendMessage(filterTokens(sender.textMessage), {
         onProgress: (res) => {
           if (res.error) {
-            this.messageErrorHandler(sender, res.error)
+            await this.messageErrorHandler(sender, res.error)
             return
           }
           onMessage(res, sender)
         }
       }, this._uuid)
     } catch (err) {
-      this.messageErrorHandler(sender, err)
+      await this.messageErrorHandler(sender, err)
       logger.error(err)
     }
     
@@ -139,7 +139,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     return false
   }
 
-  messageErrorHandler (sender: Sender, err: any) {
+  async messageErrorHandler (sender: Sender, err: any) {
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
         .getHours()
@@ -162,7 +162,14 @@ export class ChatGPTHandler extends BaseMessageHandler {
       this._uuid = this._emailPool.next()
       const opts = this._emailPool.getOpts()
       this._api.setAccount(opts.email, opts.password)
-      this._api.resetSession()
+      try {
+        await this._api.resetSession()
+      } catch(e: Error) {
+        console.warn(
+          `chatgpt error re-authenticating ${opts.email}`,
+          err.toString()
+        )
+      }
 
     } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)
