@@ -144,12 +144,12 @@ export const onMessage = (data: any, render: any) => {
         if (config.tts) {
           recallLdGif()
           speak({ text: msg }).then(path => {
-            render.reply(segment.record(path), false)
+            render.reply(segment.record(path), true)
               .then(() => loading(render, isEnd))
           })
         } else {
           recallLdGif()
-          render.reply(msg, false)
+          render.reply(msg, true)
             .then(() => loading(render, isEnd))
         }
       }
