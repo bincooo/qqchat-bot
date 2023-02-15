@@ -28,8 +28,8 @@ export const config = {
     // Standby for solving "429" [1 hours error] 
     slaves: [
       {
-        "email": "seket97383@bitvoo.com",
-        "password": "a12345678"
+        "email": "",
+        "password": ""
       }
     ],
     browserPath: '',
