@@ -56,7 +56,7 @@ docker logs -f [container_name or container_id]
 
 
 ## 视频教程
-[在无界面Linux上部署chatgpt微信机器人](https://www.bilibili.com/video/BV1JP4y1i7Kw/)
+[在无界面Linux上部署chatgptQQ机器人](https://www.bilibili.com/video/BV1JP4y1i7Kw/)
 
 
 
