@@ -122,11 +122,11 @@ export const onMessage = (data: any, render: any) => {
         if (msg && msg.trim()) {
           if (config.tts) {
             speak({ text: msg })
-              .then(path => render.reply(segment.record(path), false))
+              .then(path => render.reply(segment.record(path), true))
               .then(recallLdGif)
           }
           else {
-            render.reply(msg, false)
+            render.reply(msg, true)
               .then(recallLdGif)
           }
         }
