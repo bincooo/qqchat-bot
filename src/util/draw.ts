@@ -74,7 +74,13 @@ function sendPost(url: string, dataString: string, headers?: Map<string, any>): 
       })
 
       res.on('end', () => {
-        resolve(isJson ? JSON.parse(data) : data)
+        try {
+          resolve(isJson ? JSON.parse(data) : data)
+        } catch(err) {
+          reject(err)
+          console.log('respose', data)
+          console.log('draw error', err)
+        }
       })
     }).on('error', (err) => {
       reject(err)
