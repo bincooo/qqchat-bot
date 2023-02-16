@@ -16,13 +16,17 @@ export class NovelAiHandler extends BaseMessageHandler {
 
   handle = async (sender: Sender) => {
     if ((sender?.textMessage||'').startsWith(pref)) {
-      sender.reply('正在努力作画, 稍等哦~', true)
+      try {
+        sender.reply('正在努力作画, 稍等哦~', true)
 
-      const data = initParams(
-        filterTokens(sender?.textMessage.substr(pref.length))
-      )
-      const path = await draw({ data })
-      sender.reply(segment.image(path), true)
+        const data = initParams(
+          filterTokens(sender?.textMessage.substr(pref.length))
+        )
+        const path = await draw({ data })
+        sender.reply(segment.image(path), true)
+      } catch(err) {
+        console.log('NovelAI:Error', err)
+      }
       return false
     }
 
