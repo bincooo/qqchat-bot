@@ -8,11 +8,11 @@ function buildHelpMessage (isAdmin: boolean) {
     return item.label !== 'help' && hasPermission && item.showHelp()
   })
 
-  const content = command.map((item, key) => `${(key + 1)}: ${item.helpDoc}`).join('\n------------------\n')
+  const content = command.map((item, key) => `${(key + 1)}: ${item.helpDoc}`).join('\n——————————————\n')
   return [
-    '-----------',
+    '—————————',
     '命令帮助',
-    '-----------',
+    '—————————',
     content
   ].join('\n')
 }

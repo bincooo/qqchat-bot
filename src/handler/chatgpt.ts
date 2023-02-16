@@ -7,6 +7,8 @@ import { filterTokens, onMessage } from 'src/util/message'
 import retryRequest from 'src/util/retry'
 import { randomBytes } from 'crypto'
 
+const MAX_DEB_COUNT = 10
+
 function genUid(): string {
   return 'uid-' + randomBytes(16)
     .toString('hex')
@@ -68,6 +70,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   protected _emailPool: EmailPool
 
+  protected _count: number = 0
+
   async load () {
     if (!config.api.enable) return
     await this.initChatGPT()
@@ -111,11 +115,16 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       this._iswait = true
-      await this._api.queueSendMessage(filterTokens(config.api.preface + sender.textMessage), {
+      let pref = processPreface()
+
+      await this._api.queueSendMessage(filterTokens(pref + sender.textMessage), {
         onProgress: async (res) => {
           if (res.error) {
             await this.messageErrorHandler(sender, res.error)
             return
+          }
+          if (res.response == '[DONE]') {
+            this._count ++
           }
           onMessage(res, sender)
         }
@@ -127,6 +136,23 @@ export class ChatGPTHandler extends BaseMessageHandler {
     
     this._iswait = false
     return false
+  }
+
+  async processPreface(): string {
+    let pref = ''
+    if (config.api.enablePref) {
+      pref = config.api.preface
+      if (!!config.api.deblocking && this._count > MAX_DEB_COUNT) {
+        await this._api.queueSendMessage(config.api.deblocking, {
+          onProgress: async (res) => {
+            if (res.response == '[DONE]') {
+              this._count = 0
+            }
+          }
+        }, this._uuid)
+      }
+    }
+    return pref
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
@@ -148,7 +174,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ...' + append, true)
 
     } else if (err.statusCode === 429) {
-      sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 一个小时后再来吧 ...' + append, true)
+      sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 稍后再来吧 ...' + append, true)
       // 429 1hours 限制, 换号处理
       this._uuid = this._emailPool.next()
       const opts = this._emailPool.getOpts()
