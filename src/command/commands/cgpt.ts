@@ -42,7 +42,7 @@ class ServerCommand extends BaseCommand {
     }
   }
 
-  showHelp(): boolean {
+  override showHelp(): boolean {
     return !!config.api.enable
   }
 }

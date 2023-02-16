@@ -60,7 +60,7 @@ class OfficialCommand extends BaseCommand {
     }
   }
 
-  showHelp(): boolean {
+  override showHelp(): boolean {
     return !!config.officialAPI.enable
   }
 }
