@@ -18,7 +18,6 @@ async function handleMessage (e: MessageEvent) {
   try {
     for (let i = 0; i < messageHandler.length; i++) {
       let isStop = false
-      console.log(messageHandler)
       if (messageHandler[i] instanceof BaseMessageHandler) {
         isStop = !await (messageHandler[i] as BaseMessageHandler).handle(sender)
       } else if (typeof messageHandler[i] === 'function') {

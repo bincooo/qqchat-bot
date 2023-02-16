@@ -6,8 +6,8 @@ import { helpHandler } from './help'
 
 
 const messageHandlers = [
-  emptyHandler,
   helpHandler,
+  emptyHandler,
   commandHandler,
   new ChatGPTHandler(),
   new ChatGPTOfficialHandler()
