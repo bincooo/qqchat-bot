@@ -1,3 +1,4 @@
+import { config } from 'src/config'
 import { initOicq } from 'src/core/oicq'
 import { BaseMessageHandler } from 'src/types'
 import { Sender } from '../../model/sender'
@@ -5,35 +6,34 @@ import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
 
 class ServerCommand extends BaseCommand {
-  label = 'server'
+  label = 'cgpt'
   usage = [
-    'reboot - 重启机器人',
-    'status - 服务器状态'
+    'tts:on  - 开启语音模式',
+    'tts:off - 关闭语音模式',
+    'reset   - 重置会话'
   ]
 
   requiredAdministrator = true
-  description = '服务操作相关命令'
+  description = 'web chatgpt 配置'
 
   async execute (sender: Sender, params: string[]) {
     switch (params[0]) {
-      case 'reboot':
-        sender.reply('重启中, 稍等~')
-        await Promise.all(
-          messageHandlers.map(async item => {
-            if (item instanceof BaseMessageHandler) {
-              await item.reboot()
-            }
-          })
-        )
-        // await initOicq()
+      case 'tts:on':
+        sender.reply('open the voice mode ~', false)
+        config.tts = true
         break
-      case 'status':
-        sender.reply(JSON.stringify(process.memoryUsage()), true)
+      case 'tts:off':
+        sender.reply('close the voice mode ~', false)
+        config.tts = false
         break
       default:
         sender.reply(this.helpDoc, true)
         break
     }
+  }
+
+  showHelp(): boolean {
+    return !!config.api.enable
   }
 }
 

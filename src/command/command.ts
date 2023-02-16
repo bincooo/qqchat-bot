@@ -23,5 +23,9 @@ export abstract class BaseCommand implements Command {
     ].join('\n')
   }
 
+  showHelp(): boolean {
+    return true
+  }
+
   execute (sender: Sender, params?: string[] | undefined) { throw new Error('this is abstract class!') }
 }

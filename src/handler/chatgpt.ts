@@ -96,19 +96,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
   handle = async (sender: Sender) => {
     if (!config.api.enable) return true
     try {
-      if (sender.textMessage === 'OpenTTS') {
-        sender.reply('open the voice mode ~', false)
-        config.tts = true
-        return false
-      }
 
-      if (sender.textMessage === 'CloseTTS') {
-        sender.reply('close the voice mode ~', false)
-        config.tts = false
-        return false
-      } 
-
-      if (sender.textMessage === 'reset') {
+      if (sender.textMessage === '/cgpt reset') {
         this._iswait = false
         this._uuid = genUid()
         sender.reply('Previous conversation has been reset.', false)
