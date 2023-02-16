@@ -8,9 +8,11 @@ import messageHandlers from './../../handler'
 class ServerCommand extends BaseCommand {
   label = 'cgpt'
   usage = [
-    'tts:on  - 开启语音模式',
-    'tts:off - 关闭语音模式',
-    'reset   - 重置会话'
+    'tts:on       \n开启语音模式',
+    'tts:off      \n关闭语音模式',
+    'reset        \n重置会话',
+    'catgirl:on   \n开启猫娘',
+    'catgirl:off  \n关闭猫娘'
   ]
 
   requiredAdministrator = true
@@ -25,6 +27,14 @@ class ServerCommand extends BaseCommand {
       case 'tts:off':
         sender.reply('close the voice mode ~', false)
         config.tts = false
+        break
+      case 'catgirl:on':
+        sender.reply('enable the cat girl ~', false)
+        config.api.enablePref = true
+        break
+      case 'catgirl:off':
+        sender.reply('disable the cat girl ~', false)
+        config.api.enablePref = false
         break
       default:
         sender.reply(this.helpDoc, true)

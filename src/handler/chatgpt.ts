@@ -70,7 +70,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   protected _emailPool: EmailPool
 
-  protected _count: number = 0
+  protected _count: number = MAX_DEB_COUNT
 
   async load () {
     if (!config.api.enable) return
@@ -142,7 +142,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     let pref = ''
     if (config.api.enablePref) {
       pref = config.api.preface
-      if (!!config.api.deblocking && this._count > MAX_DEB_COUNT) {
+      if (!!config.api.deblocking && this._count >= MAX_DEB_COUNT) {
         await this._api.queueSendMessage(config.api.deblocking, {
           onProgress: async (res) => {
             if (res.response == '[DONE]') {
