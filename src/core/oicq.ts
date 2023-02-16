@@ -5,7 +5,6 @@ import { BaseMessageHandler, MessageEvent, MessageHandler } from 'src/types'
 import logger from 'src/util/log'
 import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
-import speak from '../util/tts'
 import chalk from 'chalk'
 import fs from 'fs'
 

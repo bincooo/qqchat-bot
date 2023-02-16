@@ -34,7 +34,8 @@ export const config = {
     ],
     browserPath: '',
     proxyServer: 'http://master.io:7890',
-    pingMs: 60000 * 5
+    pingMs: 60000 * 5,
+    preface: ''
   },
   tts: false,
   client: null
