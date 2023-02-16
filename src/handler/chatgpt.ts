@@ -115,7 +115,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       this._iswait = true
-      let pref = await processPreface()
+      let pref = await this.processPreface()
 
       await this._api.queueSendMessage(filterTokens(pref + sender.textMessage), {
         onProgress: async (res) => {
