@@ -56,6 +56,11 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
     const ret = await client.sendPrivateMsg(config.adminQQ, '已上线~')
   })
 
+  client.on('notice.group.increase', async e => {
+    console.log('notice.group.increase', e)
+    handleMessage(e)
+  })
+
   const app = GuildApp.bind(client)
   app.on('message', e => {
     const isAt = e.message.some(item => item.id === app.tiny_id)

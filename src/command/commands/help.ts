@@ -2,7 +2,7 @@ import commands from '.'
 import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
 
-function buildHelpMessage (isAdmin: boolean) {
+export function buildHelpMessage (isAdmin: boolean) {
   const command = commands.filter(item => {
     const hasPermission = isAdmin ? item.requiredAdministrator : true
     return item.label !== 'help' && hasPermission && item.showHelp()
