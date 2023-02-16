@@ -5,7 +5,6 @@ import { BaseCommand } from '../command'
 function buildHelpMessage (isAdmin: boolean) {
   const command = commands.filter(item => {
     const hasPermission = isAdmin ? item.requiredAdministrator : true
-    console.log('commands.filter: ' + item.label + ' - ' + item.showHelp())
     return item.label !== 'help' && hasPermission && item.showHelp()
   })
 

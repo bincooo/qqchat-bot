@@ -5,7 +5,7 @@ import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
 
-class ServerCommand extends BaseCommand {
+class CgptCommand extends BaseCommand {
   label = 'cgpt'
   usage = [
     'tts:on       \n开启语音模式',
@@ -47,4 +47,4 @@ class ServerCommand extends BaseCommand {
   }
 }
 
-export default ServerCommand
+export default CgptCommand
