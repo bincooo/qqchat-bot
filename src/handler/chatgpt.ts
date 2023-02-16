@@ -4,7 +4,6 @@ import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import logger from 'src/util/log'
 import { filterTokens, onMessage } from 'src/util/message'
-import retryRequest from 'src/util/retry'
 import { randomBytes } from 'crypto'
 
 const MAX_DEB_COUNT = 10
