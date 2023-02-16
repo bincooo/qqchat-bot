@@ -22,7 +22,8 @@ export class NovelAiHandler extends BaseMessageHandler {
         filterTokens(sender?.textMessage.substr(pref.length))
       )
       const path = await draw({ data })
-      sender.reply(segment.record(path), true)
+      console.log('genarate NovelAI image: ', path)
+      sender.reply(segment.image(path), true)
       return false
     }
 
