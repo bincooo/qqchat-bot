@@ -15,7 +15,7 @@ class CgptCommand extends BaseCommand {
     'catgirl:off  \n关闭猫娘'
   ]
 
-  requiredAdministrator = true
+  requiredAdministrator = false
   description = 'web chatgpt 配置'
 
   async execute (sender: Sender, params: string[]) {
