@@ -57,8 +57,9 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
   })
 
   client.on('notice.group.increase', async e => {
-    console.log('notice.group.increase', e)
-    handleMessage(e)
+    if (e.user_id !== config.botQQ) {
+      handleMessage(e)
+    }
   })
 
   const app = GuildApp.bind(client)

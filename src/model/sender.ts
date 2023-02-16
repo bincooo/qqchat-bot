@@ -16,15 +16,19 @@ export class Sender {
 
   _eventObject: MessageEvent
 
-  userID: number
+  userId: number
 
   constructor (e: MessageEvent) {
     this._eventObject = e
-    this.textMessage = e.message.filter(item => item.type === 'text').map(item => item.text).join().trim()
+    this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
     if (!(e instanceof GuildMessage)) {
-      this.userID = e.sender.user_id
-      this.isAdmin = e.sender.user_id === Number(config.adminQQ)
+      this.userId = e.sender?.user_id || e.user_id
+      this.isAdmin = this.userId === Number(config.adminQQ)
     }
+  }
+
+  getEventObject(): MessageEvent {
+    return this._eventObject
   }
 
   async reply (content: Sendable, quote?: boolean): any {
