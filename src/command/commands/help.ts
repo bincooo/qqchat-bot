@@ -4,8 +4,8 @@ import { BaseCommand } from '../command'
 
 export function buildHelpMessage (isAdmin: boolean) {
   const command = commands.filter(item => {
-    const hasPermission = isAdmin ? item.requiredAdministrator : true
-    return item.label !== 'help' && hasPermission && item.showHelp()
+    // const hasPermission = item.requiredAdministrator ? isAdmin : true
+    return item.label !== 'help' /* && hasPermission */ && item.showHelp()
   })
 
   const content = command.map((item, key) => `${(key + 1)}: ${item.helpDoc}`).join('\n——————————————\n')

@@ -8,11 +8,12 @@ import messageHandlers from './../../handler'
 class CgptCommand extends BaseCommand {
   label = 'cgpt'
   usage = [
-    'tts:on       \n开启语音模式',
-    'tts:off      \n关闭语音模式',
-    'reset        \n重置会话',
-    'catgirl:on   \n开启猫娘',
-    'catgirl:off  \n关闭猫娘'
+    'tts:on      - 开启语音',
+    'tts:off     - 关闭语音',
+    'catgirl:on  - 开启猫娘',
+    'catgirl:off - 关闭猫娘',
+    'reset       - 重置会话',
+    + '\n—————————\n/draw [prompt] - ai作画'
   ]
 
   requiredAdministrator = false

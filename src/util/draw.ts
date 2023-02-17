@@ -7,6 +7,7 @@ function genUid(): string {
   return randomBytes(16)
     .toString('hex')
     .toLowerCase()
+    .substr(0, 10)
 }
 
 /**
@@ -39,6 +40,10 @@ export function draw(opts: {
       })
     .then((res) => {
       const path = res.data[0][0]?.name
+      if (!path) {
+        console.log("NovalAI:Error", res)
+        reject(new Error("NovalAI:Error:: " + JSON.parse(res)))
+      }
       resolve('http://mccn.pro:7860/file=' + path)
     })
     .catch(err => reject(err))
