@@ -11,9 +11,9 @@ class CgptCommand extends BaseCommand {
     'tts:on      - 开启语音',
     'tts:off     - 关闭语音',
     'catgirl:on  - 开启猫娘',
-    'catgirl:off - 关闭猫娘',
-    'reset       - 重置会话'
+    'catgirl:off - 关闭猫娘'
     + '\n----\n/draw [prompt] - ai作画'
+    + '\nhttp://h.icu-web.tk:8082/novel-ai-tag | 可通过该站点定制标签'
   ]
 
   requiredAdministrator = false

@@ -7,16 +7,16 @@ import { Sendable } from 'oicq'
  * 消息对象的封装
  */
 export class Sender {
-  isAdmin: boolean
+  public isAdmin: boolean
 
   /**
    * 文本信息（不含@）
    */
-  textMessage: string
+  public textMessage: string
 
-  _eventObject: MessageEvent
+  protected _eventObject: MessageEvent
 
-  userId: number
+  public userId: number
 
   constructor (e: MessageEvent) {
     this._eventObject = e

@@ -100,13 +100,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
     if (!config.api.enable) return true
     try {
 
-      if (sender.textMessage === '/cgpt reset') {
-        this._iswait = false
-        this._uuid = genUid()
-        sender.reply('Previous conversation has been reset.', false)
-        return false
-      }
-
       let isGenTags = false
       if (sender.textMessage.startsWith('[prompt]') 
         && config.api.genTags)
