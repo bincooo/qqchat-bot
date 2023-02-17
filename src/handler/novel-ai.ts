@@ -24,20 +24,21 @@ export class NovelAiHandler extends BaseMessageHandler {
 
   handle = async (sender: Sender) => {
     if ((sender?.textMessage||'').startsWith(pref)) {
-      try {
-        const idx = parseInt(Math.random() * hint.length, 10)
-        sender.reply(hint[idx], true)
+      const idx = parseInt(Math.random() * hint.length, 10)
+      sender.reply(hint[idx], true)
 
-        const data = initParams(
-          filterTokens(sender?.textMessage.substr(pref.length))
-            .trim()
-        )
-        const path = await draw({ data })
-        sender.reply(segment.image(path), true)
-      } catch(err) {
-        sender.reply(`发生错误\n${err}`, true)
-        console.log('NovelAI:Error', err)
-      }
+      const data = initParams(
+        filterTokens(sender?.textMessage.substr(pref.length))
+          .trim()
+      )
+      draw({ data })
+        .then(path => {
+          sender.reply(segment.image(path), true)
+        })
+        .catch(err => {
+          sender.reply(`发生错误\n${err}`, true)
+          console.log('NovelAI:Error', err)
+        })
       return false
     }
 
@@ -52,8 +53,8 @@ export const initParams = function(prompt: string): Array<any> {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   const params = [
-    prompt + ", petite, 1 girl, only one girl, solo, pink hair, very long hair, school uniform,{{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, tanktop, {{looking at you}}, focus on face, dark blue skirt, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, detailed, unamused, good lighting, glass tint, zoom in on eyes, {{reflective eyes}}, {{hair dripping}}, water eye",
-    "ugly,duplicate,morbid,mutilated,tranny,trans,trannsexual,mutation,deformed,long neck,bad anatomy,bad proportions,extra arms,extra legs, disfigured,more than 2 nipples,malformed,mutated,hermaphrodite,out of frame,extra limbs,missing arms,missing legs,poorly drawn hands,poorty drawn face,mutation,poorly drawn,long body,multiple breasts,cloned face,gross proportions, mutated hands,bad hands,bad feet,long neck,missing limb,malformed limbs,malformed hands,fused fingers,too many fingers,extra fingers,missing fingers,extra digit,fewer digits,mutated hands and fingers,lowres,text,error,cropped,worst quality,low quality,normal quality,jpeg artifacts,signature,watermark,username,blurry,text font ui,futa,yaoi",
+    prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, {{looking at you}}, focus on face, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, good lighting, glass tint, zoom in on eyes, {{reflective eyes}},  {{hair dripping}}, water eye",
+    "ugly,duplicate,morbid,mutilated,tranny,trans,mutation,deformed,long neck,bad anatomy,bad proportions,extra arms,extra legs, disfigured,more than 2 nipples,malformed,mutated,hermaphrodite,out of frame,extra limbs,missing arms,missing legs,poorly drawn hands,poorty drawn face,mutation,poorly drawn,long body,multiple breasts,cloned face,gross proportions,   mutated hands,bad hands,bad feet,long neck,missing limb,malformed limbs,malformed hands,fused fingers,too many fingers,extra fingers,missing fingers,extra digit,fewer digits,mutated hands and fingers,lowres,text,error,cropped,worst quality,low quality,normal quality,blurry",
     "None",
     "None",
     28,
