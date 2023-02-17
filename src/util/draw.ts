@@ -1,27 +1,19 @@
 import http from 'http'
 import _url from 'url'
-import { randomBytes } from 'crypto'
 
-
-function genUid(): string {
-  return randomBytes(16)
-    .toString('hex')
-    .toLowerCase()
-    .substr(0, 10)
-}
 
 /**
  * NovalAI
  */
 export function draw(opts: {
-  session_hash?: string
+  session_hash: string
   fn_index?: number
   data: Array<any>
 }): Promise<string> {
 
   const {
     data,
-    session_hash = genUid(),
+    session_hash,
     fn_index = 101
   } = opts
 

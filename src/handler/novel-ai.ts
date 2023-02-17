@@ -1,10 +1,12 @@
-import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
-import logger from 'src/util/log'
 import { draw } from 'src/util/draw'
 import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
+
+import { randomBytes } from 'crypto'
+
+
 
 const pref = '/draw'
 const hint = [
@@ -16,8 +18,19 @@ const hint = [
   "好吧好吧, 马上给您画 >_<|||"
 ]
 
+const MAX_SEND_COUNT = 20
+
+function genUid(): string {
+  return randomBytes(16)
+    .toString('hex')
+    .toLowerCase()
+    .substr(0, 10)
+}
+
 export class NovelAiHandler extends BaseMessageHandler {
 
+  protected _uuid?: string = genUid()
+  protected _count: number = 0
 
   async reboot () {
   }
@@ -31,9 +44,10 @@ export class NovelAiHandler extends BaseMessageHandler {
         filterTokens(sender?.textMessage.substr(pref.length))
           .trim()
       )
-      draw({ data })
+      draw({ data, session_hash: this._uuid })
         .then(path => {
           sender.reply(segment.image(path), true)
+          this.refresh()
         })
         .catch(err => {
           sender.reply(`发生错误\n${err}`, true)
@@ -45,6 +59,14 @@ export class NovelAiHandler extends BaseMessageHandler {
     return true
   }
 
+  refresh() {
+    this._count ++
+    if (this._count > MAX_SEND_COUNT) {
+      this._count = 0
+      this._uuid = genUid()
+    }
+  }
+
 }
 
 // 提示词参考: https://www.yuque.com/longyuye/lmgcwy
@@ -52,6 +74,8 @@ export const initParams = function(prompt: string): Array<any> {
   if (prompt.endsWith(',')) {
     prompt = prompt.substr(0, prompt.length - 1)
   }
+  // 提示词相关性(CFG Scale)
+  const cfg_scale = 4.5
   const params = [
     prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, {{looking at you}}, focus on face, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, good lighting, glass tint, zoom in on eyes, {{reflective eyes}},  {{hair dripping}}, water eye",
     "ugly,duplicate,morbid,mutilated,tranny,trans,mutation,deformed,long neck,bad anatomy,bad proportions,extra arms,extra legs, disfigured,more than 2 nipples,malformed,mutated,hermaphrodite,out of frame,extra limbs,missing arms,missing legs,poorly drawn hands,poorty drawn face,mutation,poorly drawn,long body,multiple breasts,cloned face,gross proportions,   mutated hands,bad hands,bad feet,long neck,missing limb,malformed limbs,malformed hands,fused fingers,too many fingers,extra fingers,missing fingers,extra digit,fewer digits,mutated hands and fingers,lowres,text,error,cropped,worst quality,low quality,normal quality,blurry",
@@ -63,7 +87,7 @@ export const initParams = function(prompt: string): Array<any> {
     false,
     1,
     1,
-    7,
+    cfg_scale,
     -1,
     -1,
     0,
@@ -120,7 +144,7 @@ export const initParams = function(prompt: string): Array<any> {
     "width": 512,
     "height": 832,
     "sampler_name": "Euler a",
-    "cfg_scale": 7,
+    "cfg_scale": cfg_scale,
     "steps": 28,
     "batch_size": 1,
     "restore_faces": false,
@@ -134,7 +158,7 @@ export const initParams = function(prompt: string): Array<any> {
     },
     "index_of_first_image": 0,
     "infotexts": [
-      params[0] + "\nNegative prompt: " + params[1] + "\nSteps: 28, Sampler: Euler a, CFG scale: 7, Seed: 1637418386, Size: 512x832, Model hash: 0b16241c, Denoising strength: 0.7, Clip skip: 2, ENSD: 31337, First pass size: 0x0"
+      `${params[0]}\nNegative prompt: ${params[1]}\nSteps: 28, Sampler: Euler a, CFG scale: ${cfg_scale}, Seed: 1637418386, Size: 512x832, Model hash: 0b16241c, Denoising strength: 0.7, Clip skip: 2, ENSD: 31337, First pass size: 0x0`
     ],
     "styles": [
       "None",
