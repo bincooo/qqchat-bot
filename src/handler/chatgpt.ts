@@ -112,7 +112,9 @@ export class ChatGPTHandler extends BaseMessageHandler {
         && config.api.genTags)
       {
         isGenTags = true
-        sender.textMessage = config.api.genTags + sender.textMessage.substr(7)
+        sender.textMessage = config.api.genTags
+          + sender.textMessage.substr(7)
+          + '\n\n仅需要给我提供prompt的内容'
       }
 
       if (this._iswait) {

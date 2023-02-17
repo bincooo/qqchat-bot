@@ -56,7 +56,7 @@ export const config = {
       '"extremely detailed CG unity 8k wallpaper,best quality,noon,beautiful detailed water,long black hair,beautiful detailed girl,view straight on,eyeball,hair flower,retro artstyle, (masterpiece:1.3),illustration,mature,small breast,beautiful detailed eyes,long sleeves, bright skin,(Good light:1.2)"\n' +
       '第二个例子:\n' +
       '"Detailed CG illustration, (best quality), (mid-shot), (masterpiece:1.5), beautiful detailed girl, full body, (1 girl:1.2), long flowing hair, (stunning eyes:1.3), (beautiful face:1.3), (feminine figure:1.3), (romantic setting:1.3), (soft lighting:1.2), (delicate features:1.2)"。\n' +
-      '阅读并理解以上内容。\n\n'
+      '阅读并理解以上内容。\n\n用prompt描述: '
   },
   tts: false,
   client: null
