@@ -42,6 +42,27 @@ export function draw(opts: {
   })
 }
 
+export function reset(hash: string) {
+  return new Promise<string>((resolve, reject) => {
+    sendPost('http://mccn.pro:7860/run/predict', 
+      JSON.stringify({
+        data: [],
+        fn_index: 270,
+        session_hash: hash
+      }),
+      {
+        'Content-Type': 'application/json',
+        'Proxy-Connection': 'keep-alive',
+        'Origin': 'http://mccn.pro:7860',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
+      })
+    .then((res) => {
+      resolve('ok')
+    })
+    .catch(err => reject(err))
+  })
+}
+
 
 function sendPost(url: string, dataString: string, headers?: Map<string, any>): Promise<any> {
   const {

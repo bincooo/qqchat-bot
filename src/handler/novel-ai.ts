@@ -1,6 +1,6 @@
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
-import { draw } from 'src/util/draw'
+import { draw, reset } from 'src/util/draw'
 import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
 
@@ -18,7 +18,7 @@ const hint = [
   "好吧好吧, 马上给您画 >_<|||"
 ]
 
-const MAX_SEND_COUNT = 20
+const MAX_SEND_COUNT = 25
 
 function genUid(): string {
   return randomBytes(16)
@@ -62,6 +62,7 @@ export class NovelAiHandler extends BaseMessageHandler {
   refresh() {
     this._count ++
     if (this._count > MAX_SEND_COUNT) {
+      reset(this._uuid)
       this._count = 0
       this._uuid = genUid()
     }
@@ -75,10 +76,10 @@ export const initParams = function(prompt: string): Array<any> {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   // 提示词相关性(CFG Scale)
-  const cfg_scale = 4.5
+  const cfg_scale = 5.5
   const params = [
-    prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, {{looking at you}}, focus on face, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, good lighting, glass tint, zoom in on eyes, {{reflective eyes}},  {{hair dripping}}, water eye",
-    "ugly,duplicate,morbid,mutilated,tranny,trans,mutation,deformed,long neck,bad anatomy,bad proportions,extra arms,extra legs, disfigured,more than 2 nipples,malformed,mutated,hermaphrodite,out of frame,extra limbs,missing arms,missing legs,poorly drawn hands,poorty drawn face,mutation,poorly drawn,long body,multiple breasts,cloned face,gross proportions,   mutated hands,bad hands,bad feet,long neck,missing limb,malformed limbs,malformed hands,fused fingers,too many fingers,extra fingers,missing fingers,extra digit,fewer digits,mutated hands and fingers,lowres,text,error,cropped,worst quality,low quality,normal quality,blurry",
+    prompt + ", {{full upper body}}, {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, {{looking at you}}, focus on face, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, good lighting, glass tint, zoom in on eyes, {{reflective eyes}},  {{hair dripping}}, water eye",
+    "ugly,duplicate,morbid,mutilated,tranny,trans,mutation,deformed,long neck,bad anatomy,bad proportions,extra arms,extra legs, disfigured,more than 2 nipples,malformed,mutated,hermaphrodite,out of frame,extra limbs,missing arms,missing legs,poorly drawn hands,poorty drawn face,mutation,poorly drawn,long body,multiple breasts,cloned face,gross proportions,   mutated hands,bad hands,bad feet,long neck,missing limb,malformed limbs,malformed hands,fused fingers,too many fingers,extra fingers,missing fingers,extra digit,fewer digits,mutated hands and fingers,lowres,text,error,cropped,worst quality,low quality,blurry",
     "None",
     "None",
     28,
