@@ -13,7 +13,7 @@ class CgptCommand extends BaseCommand {
     'catgirl:on  - 开启猫娘',
     'catgirl:off - 关闭猫娘',
     'reset       - 重置会话'
-    + '\n—————————\n/draw [prompt] - ai作画'
+    + '\n----\n/draw [prompt] - ai作画'
   ]
 
   requiredAdministrator = false

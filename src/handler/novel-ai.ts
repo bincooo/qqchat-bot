@@ -7,6 +7,14 @@ import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
 
 const pref = '/draw'
+const hint = [
+  "正在努力作画, 稍等哦~",
+  "在画了再画了, 别急呢~",
+  "本Ai要当一个敲腻害的画家~",
+  "呀咩, 奇怪的作画要求哦~",
+  "急死Ai了, 又要人家画画!!",
+  "好吧好吧, 马上给您画 >_<|||"
+]
 
 export class NovelAiHandler extends BaseMessageHandler {
 
@@ -17,7 +25,8 @@ export class NovelAiHandler extends BaseMessageHandler {
   handle = async (sender: Sender) => {
     if ((sender?.textMessage||'').startsWith(pref)) {
       try {
-        sender.reply('正在努力作画, 稍等哦~', true)
+        const idx = parseInt(Math.random() * hint.length, 10)
+        sender.reply(hint[idx], true)
 
         const data = initParams(
           filterTokens(sender?.textMessage.substr(pref.length))
@@ -38,7 +47,7 @@ export class NovelAiHandler extends BaseMessageHandler {
 }
 
 // 提示词参考: https://www.yuque.com/longyuye/lmgcwy
-const initParams = function(prompt: string): Array<any> {
+export const initParams = function(prompt: string): Array<any> {
   if (prompt.endsWith(',')) {
     prompt = prompt.substr(0, prompt.length - 1)
   }
