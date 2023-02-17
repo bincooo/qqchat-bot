@@ -44,12 +44,13 @@ export class NovelAiHandler extends BaseMessageHandler {
       )
 
       retry(
-        draw({ data, session_hash: this._uuid })
-          .then(path => {
-            sender.reply(segment.image(path), true)
-          }),
-        3, 500
-      ).catch(err => {
+        draw({ data, session_hash: this._uuid }),
+        3,
+        500
+      ).then(path => {
+        sender.reply(segment.image(path), true)
+      })
+      .catch(err => {
         sender.reply('——————————————\nError: 4001\n作画失败了, CPU都淦冒烟啦 ~', true)
         this.reset()
       })
