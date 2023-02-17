@@ -29,7 +29,7 @@ const retryRequest = async <T>(
       break;
     }
 
-    console.log(`retry ${a + 1} times, error: ${output[0]}`);
+    // console.log(`retry ${a + 1} times, error: ${output[0]}`);
     await sleep(retryInterval);
   }
 

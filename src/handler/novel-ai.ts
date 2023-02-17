@@ -3,7 +3,7 @@ import { BaseMessageHandler } from 'src/types'
 import { draw, reset } from 'src/util/draw'
 import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
-
+import retry from 'src/util/retry'
 import { randomBytes } from 'crypto'
 
 
@@ -18,7 +18,6 @@ const hint = [
   "好吧好吧, 马上给您画 >_<|||"
 ]
 
-const MAX_SEND_COUNT = 25
 
 function genUid(): string {
   return randomBytes(16)
@@ -30,7 +29,6 @@ function genUid(): string {
 export class NovelAiHandler extends BaseMessageHandler {
 
   protected _uuid?: string = genUid()
-  protected _count: number = 0
 
   async reboot () {
   }
@@ -44,29 +42,26 @@ export class NovelAiHandler extends BaseMessageHandler {
         filterTokens(sender?.textMessage.substr(pref.length))
           .trim()
       )
-      draw({ data, session_hash: this._uuid })
-        .then(path => {
-          sender.reply(segment.image(path), true)
-          this.refresh()
-        })
-        .catch(err => {
-          sender.reply(`发生错误\n${err}`, true)
-          console.log('NovelAI:Error', err)
-          this.refresh()
-        })
+
+      retry(
+        draw({ data, session_hash: this._uuid })
+          .then(path => {
+            sender.reply(segment.image(path), true)
+          }),
+        3, 500
+      ).catch(err => {
+        sender.reply('——————————————\nError: 4001\n作画失败了, CPU都淦冒烟啦 ~', true)
+        this.reset()
+      })
       return false
     }
 
     return true
   }
 
-  refresh() {
-    this._count ++
-    if (this._count > MAX_SEND_COUNT) {
-      reset(this._uuid)
-      this._count = 0
-      this._uuid = genUid()
-    }
+  reset() {
+    reset(this._uuid)
+    this._uuid = genUid()
   }
 
 }
