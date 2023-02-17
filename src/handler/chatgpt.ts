@@ -107,6 +107,14 @@ export class ChatGPTHandler extends BaseMessageHandler {
         return false
       }
 
+      let isGenTags = false
+      if (sender.textMessage.startsWith('[prompt]') 
+        && config.api.genTags)
+      {
+        isGenTags = true
+        sender.textMessage = config.api.genTags + sender.textMessage.substr(7)
+      }
+
       if (this._iswait) {
         console.log('ignore message, is waiting ...')
         sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ~', true)
@@ -114,7 +122,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       this._iswait = true
-      let pref = await this.processPreface()
+      let pref = isGenTags ? '' : await this.processPreface()
 
       await this._api.queueSendMessage(filterTokens(pref + sender.textMessage), {
         onProgress: async (res) => {

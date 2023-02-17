@@ -11,7 +11,7 @@ import { randomBytes } from 'crypto'
 const pref = '/draw'
 const hint = [
   "正在努力作画, 稍等哦~",
-  "在画了再画了, 别急呢~",
+  "在画了在画了, 别急呢~",
   "本Ai要当一个敲腻害的画家~",
   "呀咩, 奇怪的作画要求哦~",
   "急死Ai了, 又要人家画画!!",
@@ -52,6 +52,7 @@ export class NovelAiHandler extends BaseMessageHandler {
         .catch(err => {
           sender.reply(`发生错误\n${err}`, true)
           console.log('NovelAI:Error', err)
+          this.refresh()
         })
       return false
     }
@@ -76,10 +77,10 @@ export const initParams = function(prompt: string): Array<any> {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   // 提示词相关性(CFG Scale)
-  const cfg_scale = 7.5
+  const cfg_scale = 7
   const params = [
-    prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, tanktop, {{looking at you}}, focus on face, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, {{{super detailed skin}}}, masterpiece, masterwork, detailed, unamused, good lighting, glass tint, zoom in on eyes, {{reflective eyes}}, {{hair dripping}}, water eyes, extreme close up of face",
-    "{lowres}, {{{{{{{{{{{blurry}}}}}}}}}}}, {{{{{{{{{bad hands}}}}}}}}}, {{{{{missing fingers}}}}, {{{{{{{{{{{{{extra digit}}}}}}}}}}}}}, fewer digits, small hands, error, multiple limbs, bad feet, cropped, worst quality, low quality, normal quality, jpeg artifacts, bad anatomy, long nails, {{{{interlocked fingers}}}}, milf",
+    prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, medium butt, good lighting, {{{{by wadim kashin}}}}, {{water droplets on face}} , flowing hair, glossy hair, {{{super detailed skin}}}, detailed, glass tint, zoom in on eyes, hydrous eyes",
+    "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{nude}}}, {{{{{bare flesh}}}}}",
     "None",
     "None",
     28,
