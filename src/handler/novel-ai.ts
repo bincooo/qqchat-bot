@@ -69,8 +69,8 @@ export const initParams = function(prompt: string): Array<any> {
     0,
     0,
     false,
-    960,
-    640,
+    832,
+    512,
     true,
     0.7,
     0,
@@ -116,8 +116,8 @@ export const initParams = function(prompt: string): Array<any> {
       233106276
     ],
     "subseed_strength": 0,
-    "width": 640,
-    "height": 960,
+    "width": 512,
+    "height": 832,
     "sampler_name": "Euler a",
     "cfg_scale": 7,
     "steps": 28,
@@ -133,7 +133,7 @@ export const initParams = function(prompt: string): Array<any> {
     },
     "index_of_first_image": 0,
     "infotexts": [
-      params[0] + "\nNegative prompt: " + params[1] + "\nSteps: 28, Sampler: Euler a, CFG scale: 7, Seed: 1637418386, Size: 640x960, Model hash: 0b16241c, Denoising strength: 0.7, Clip skip: 2, ENSD: 31337, First pass size: 0x0"
+      params[0] + "\nNegative prompt: " + params[1] + "\nSteps: 28, Sampler: Euler a, CFG scale: 7, Seed: 1637418386, Size: 512x832, Model hash: 0b16241c, Denoising strength: 0.7, Clip skip: 2, ENSD: 31337, First pass size: 0x0"
     ],
     "styles": [
       "None",
