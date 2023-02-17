@@ -1,43 +1,47 @@
 const sleep = (time: number) => {
   return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-};
+    setTimeout(resolve, time)
+  })
+}
+
+const isObj = (val: any) => {
+  return (typeof(val) === 'object')
+}
 
 const awaitErrorWrap = async <T, U = any>(
   promise: Promise<T>
 ): Promise<[U | null, T | null]> => {
   try {
-    const data = await promise;
-    return [null, data];
+    const data = await promise
+    return [null, data]
   } catch (err: any) {
-    return [err, null];
+    return [err, null]
   }
-};
+}
 
 const retryRequest = async <T>(
-  promise: () => Promise<T>,
+  promise: () => Promise<T> | Promise<T>,
   retryTimes = 3,
   retryInterval = 10000
 ) => {
-  let output: [any, T | null] = [null, null];
-
+  let output: [any, T | null] = [null, null]
+  let method: Promise<T> = null
   for (let a = 0; a < retryTimes; a++) {
-    output = await awaitErrorWrap(promise());
-
+    
+    output = await awaitErrorWrap(isObj(promise) ? promise : promise())
     if (output[1]) {
-      break;
+      break
     }
 
-    // console.log(`retry ${a + 1} times, error: ${output[0]}`);
-    await sleep(retryInterval);
+    // console.log(`retry ${a + 1} times, error: ${output[0]}`)
+    await sleep(retryInterval)
   }
 
   if (output[0]) {
-    throw output[0];
+    throw output[0]
   }
 
-  return output[1];
+  return output[1]
 };
 
 export default retryRequest
