@@ -13,6 +13,11 @@ let messageHandler: Array<MessageHandler | BaseMessageHandler>
 let timer: NodeJS.Timer | null = null
 let loginType: number = 2
 
+const dats = () => {
+  return new Date()
+    .getTime()
+}
+
 async function handleMessage (e: MessageEvent) {
   const sender = new Sender(e)
   try {
@@ -44,7 +49,9 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
   client.on('message', async e => {
     // 私信或at回复
     if (e.message_type === 'private' || e.atme) {
-      handleMessage(e)
+      if (e.nickname !== 'Q群管家') {
+        handleMessage(e)
+      }
     }
   })
 
@@ -56,12 +63,18 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
     const ret = await client.sendPrivateMsg(config.adminQQ, '已上线~')
   })
 
+  let dat: number  = 0
   client.on('notice.group.increase', async e => {
     if (e.user_id !== config.botQQ) {
-      handleMessage(e)
+      const ds = dats()
+      if (dat + 30000 < ds) { // 30s内只处理一次
+        handleMessage(e)
+        dat = ds
+      }
     }
   })
 
+  // qq频道
   const app = GuildApp.bind(client)
   app.on('message', e => {
     const isAt = e.message.some(item => item.id === app.tiny_id)
