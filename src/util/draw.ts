@@ -1,4 +1,5 @@
 import http from 'http'
+import https from 'https'
 import _url from 'url'
 import urlencode from 'urlencode'
 import retry from './retry'
@@ -59,7 +60,9 @@ export function draw(opts: {
           _4K(path)
             .then(url => {
               if (url) {
-                resolve(url)
+                sendGet(url).then(buffer => {
+                  resolve('base64://' + buffer.toString('base64'))
+                })
               } else {
                 resolve(path)
               }
@@ -116,10 +119,12 @@ function sendPost(url: string, dataString: string, headers?: Map<string, any>): 
     headers
   }
 
+  const proxy = (protocol === 'http:') ? http : https
+
   return new Promise<any>((resolve, reject) => {
     const chunks = []
     let size = 0
-    const req = http.request(options, (res) => {
+    const req = proxy.request(options, (res) => {
       res.on('data', (chunk) => {
         chunks.push(chunk)
         size += chunk.length
@@ -138,10 +143,11 @@ function sendPost(url: string, dataString: string, headers?: Map<string, any>): 
 }
 
 function sendGet(url: string): Promise<any> {
+  const proxy = (url.startsWith('http:')) ? http : https
   return new Promise<any>((resolve, reject) => {
     const chunks = []
     let size = 0
-    http.get(url, (res) => {
+    proxy.get(url, (res) => {
       res.on('data', (chunk) => {
         chunks.push(chunk)
         size += chunk.length

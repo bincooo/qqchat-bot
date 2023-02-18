@@ -18,9 +18,11 @@ async function main() {
   )
   .then(path => {
     console.log('NovelAI genarate to path:', path)
+    process.exit(1)
   })
   .catch(err => {
     console.log('NovelAI Error:', err)
+    process.exit(1)
   })
 
   // _4K('http://mccn.pro:7860/file=C:\\Users\\Administrator\\AppData\\Local\\Temp\\2\\tmp1i9bixpv\\tmpukv5vsnn.png')
