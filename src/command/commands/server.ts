@@ -3,12 +3,15 @@ import { BaseMessageHandler } from 'src/types'
 import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
+import { config } from '../../config'
 
 class ServerCommand extends BaseCommand {
   label = 'server'
   usage = [
-    'reboot - 重启机器人',
-    'status - 服务器状态'
+    'reboot         - 重启机器人',
+    'status         - 服务器状态',
+    'better_pic:on  - 开启画质增强',
+    'better_pic:off - 关闭画质增强'
   ]
 
   requiredAdministrator = true
@@ -29,6 +32,14 @@ class ServerCommand extends BaseCommand {
         break
       case 'status':
         sender.reply(JSON.stringify(process.memoryUsage()), true)
+        break
+      case 'better_pic:on':
+        config.api.betterPic = true
+        sender.reply('已开启画质增强~')
+        break
+      case 'better_pic:off':
+        config.api.betterPic = false
+        sender.reply('已关闭画质增强~')
         break
       default:
         sender.reply(this.helpDoc, true)

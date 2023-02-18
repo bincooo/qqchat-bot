@@ -5,6 +5,7 @@ import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
 import retry from 'src/util/retry'
 import { randomBytes } from 'crypto'
+import { config } from 'src/config'
 
 
 
@@ -44,7 +45,7 @@ export class NovelAiHandler extends BaseMessageHandler {
       )
 
       retry(
-        () => draw({ data, session_hash: this._uuid, try4K: true }),
+        () => draw({ data, session_hash: this._uuid, try4K: config.api.betterPic }),
         3,
         500
       ).then(path => {

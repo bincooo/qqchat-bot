@@ -35,6 +35,7 @@ export const config = {
     browserPath: '',
     proxyServer: 'http://master.io:7890',
     pingMs: 60000 * 5,
+    betterPic: false,
     enablePref: false,
     preface:
       '阅读并理解[tags:001]的原话。\n' +
