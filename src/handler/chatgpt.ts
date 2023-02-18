@@ -181,6 +181,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       this._uuid = this._emailPool.next()
       const opts = this._emailPool.getOpts()
       this._api.setAccount(opts.email, opts.password)
+      this._iswait = true
       try {
         await this._api.resetSession()
       } catch(e: Error) {
@@ -189,6 +190,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
           err.toString()
         )
       }
+      this._iswait = false
 
     } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)
