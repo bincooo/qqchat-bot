@@ -4,9 +4,6 @@ const sleep = (time: number) => {
   })
 }
 
-const isObj = (val: any) => {
-  return (typeof(val) === 'object')
-}
 
 const awaitErrorWrap = async <T, U = any>(
   promise: Promise<T>
@@ -25,15 +22,15 @@ const retryRequest = async <T>(
   retryInterval = 10000
 ) => {
   let output: [any, T | null] = [null, null]
-  let method: Promise<T> = null
   for (let a = 0; a < retryTimes; a++) {
     
-    output = await awaitErrorWrap(isObj(promise) ? promise : promise())
+    output = await awaitErrorWrap(promise())
+
     if (output[1]) {
       break
     }
 
-    // console.log(`retry ${a + 1} times, error: ${output[0]}`)
+    console.log(`retry ${a + 1} times, error: ${output[0]}`)
     await sleep(retryInterval)
   }
 
