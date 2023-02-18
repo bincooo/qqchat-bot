@@ -44,7 +44,7 @@ export class NovelAiHandler extends BaseMessageHandler {
       )
 
       retry(
-        draw({ data, session_hash: this._uuid, try4K: true }),
+        () => draw({ data, session_hash: this._uuid, try4K: true }),
         3,
         500
       ).then(path => {

@@ -11,26 +11,27 @@ async function main() {
   //   data, session_hash
   // })
 
-  // retry(
-  //   draw({ data, session_hash: this._uuid, try4K: true }),
-  //   3,
-  //   500
-  // )
-  // .then(path => {
-  //   console.log('NovelAI genarate to path:', path)
-  // })
-  // .catch(err => {
-  //   console.log('NovelAI Error:', err)
-  // })
-  _4K('C:\\Users\\Administrator\\AppData\\Local\\Temp\\2\\tmp1i9bixpv\\tmpukv5vsnn.png')
-    .then(path => {
-      console.log('NovelAI genarate to path:', path)
-      process.exit(1)
-    })
-    .catch(err => {
-      console.log('NovelAI Error:', err)
-      process.exit(1)
-    })
+  retry(
+    () => draw({ data, session_hash: this._uuid, try4K: true }),
+    3,
+    500
+  )
+  .then(path => {
+    console.log('NovelAI genarate to path:', path)
+  })
+  .catch(err => {
+    console.log('NovelAI Error:', err)
+  })
+
+  // _4K('http://mccn.pro:7860/file=C:\\Users\\Administrator\\AppData\\Local\\Temp\\2\\tmp1i9bixpv\\tmpukv5vsnn.png')
+  //   .then(path => {
+  //     console.log('NovelAI genarate to path:', path)
+  //     process.exit(1)
+  //   })
+  //   .catch(err => {
+  //     console.log('NovelAI Error:', err)
+  //     process.exit(1)
+  //   })
 
   // console.log('NovelAI genarate to path:', path)
   // await reset(session_hash)

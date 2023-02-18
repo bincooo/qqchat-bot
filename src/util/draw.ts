@@ -184,7 +184,6 @@ export function _4K(imgUrl: string): Promise<string> {
           ).then(val => {
             try {
               const res = JSON.parse(val)
-              console.log(res)
               if (res.code === 0 && res.msg === 'request success') {
                 if (res.data?.status !== 4) {
                   rej(new Error('try fetch 4K Error !!!: outputurl is undefined'))
