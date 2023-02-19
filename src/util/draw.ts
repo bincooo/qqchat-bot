@@ -13,7 +13,7 @@ const _globalThis: {
     picwishCn?: Page
   }
 } = {
-  spider = {
+  spider: {
   }
 }
 
