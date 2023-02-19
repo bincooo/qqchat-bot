@@ -179,12 +179,10 @@ function sendGet(url: string): Promise<any> {
 async function initPicwishCn() {
   if (!_globalThis.spider.picwishCn) {
     const [browser, page] = await getBrowser()
-    if (!page) {
-      _globalThis.spider.picwishCn = await browser.newPage()
-    }
+    _globalThis.spider.picwishCn = page ? page : await browser.newPage()
   }
 
-  intercept(page, patterns.Script('*/astro/picwish/hoisted.*.js'), {
+  intercept(_globalThis.spider.picwishCn, patterns.Script('*/astro/picwish/hoisted.*.js'), {
     onResponseReceived: event => {
       console.log(`${event.request.url} // intercepted, going to modify`)
       event.response.body += `
@@ -198,7 +196,7 @@ async function initPicwishCn() {
     }
   })
 
-  intercept(page, patterns.Script('*/astro/picwish/chunks/EnhancePreview.*.js'), {
+  intercept(_globalThis.spider.picwishCn, patterns.Script('*/astro/picwish/chunks/EnhancePreview.*.js'), {
     onResponseReceived: event => {
       console.log(`${event.request.url} // intercepted, going to modify`)
       event.response.body += `
@@ -211,10 +209,13 @@ async function initPicwishCn() {
     }
   })
 
-  await page.goto('https://picwish.cn/photo-enhancer', {
+  await _globalThis.spider.picwishCn.goto('https://picwish.cn/photo-enhancer', {
     waitUntil: 'networkidle0'
   })
 }
+
+// 比web chatgpt先初始化
+initPicwishCn()
 
 export async function tryBetter(imgUrl: string): Promise<string> {
   await initPicwishCn()
