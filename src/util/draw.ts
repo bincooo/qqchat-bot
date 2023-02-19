@@ -220,7 +220,7 @@ async function initPicwishCn() {
 }
 
 // 比web chatgpt先初始化
-initPicwishCn()
+// initPicwishCn()
 
 export async function tryBetter(imgUrl: string): Promise<string> {
   await initPicwishCn()
