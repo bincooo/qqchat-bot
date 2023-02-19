@@ -5,6 +5,7 @@ import urlencode from 'urlencode'
 import getBrowser from './browser'
 import retry from './retry'
 import type { Browser, Page } from 'puppeteer'
+import { intercept, patterns } from 'puppeteer-interceptor'
 
 
 const _globalThis: {
