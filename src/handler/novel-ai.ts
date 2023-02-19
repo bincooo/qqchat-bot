@@ -74,7 +74,8 @@ export const initParams = function(prompt: string): Array<any> {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   // 提示词相关性(CFG Scale)
-  const cfg_scale = 7
+  const cfg_scale = 7.5
+    [ width, height ] = [ 448, 640 ]//[ 512, 832 ]
   const params = [
     prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, medium butt, good lighting, {{{{by wadim kashin}}}}, {{water droplets on face}} , flowing hair, glossy hair, {{{super detailed skin}}}, detailed, glass tint, zoom in on eyes, hydrous eyes",
     "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{nude}}}, {{{{{bare flesh}}}}}",
@@ -93,8 +94,8 @@ export const initParams = function(prompt: string): Array<any> {
     0,
     0,
     false,
-    832,
-    512,
+    height,
+    width,
     true,
     0.7,
     0,
@@ -140,8 +141,8 @@ export const initParams = function(prompt: string): Array<any> {
       233106276
     ],
     "subseed_strength": 0,
-    "width": 512,
-    "height": 832,
+    "width": width,
+    "height": height,
     "sampler_name": "Euler a",
     "cfg_scale": cfg_scale,
     "steps": 28,
@@ -157,7 +158,7 @@ export const initParams = function(prompt: string): Array<any> {
     },
     "index_of_first_image": 0,
     "infotexts": [
-      `${params[0]}\nNegative prompt: ${params[1]}\nSteps: 28, Sampler: Euler a, CFG scale: ${cfg_scale}, Seed: 1637418386, Size: 512x832, Model hash: 0b16241c, Denoising strength: 0.7, Clip skip: 2, ENSD: 31337, First pass size: 0x0`
+      `${params[0]}\nNegative prompt: ${params[1]}\nSteps: 28, Sampler: Euler a, CFG scale: ${cfg_scale}, Seed: 1637418386, Size: ${width}x${height}, Model hash: 0b16241c, Denoising strength: 0.7, Clip skip: 2, ENSD: 31337, First pass size: 0x0`
     ],
     "styles": [
       "None",

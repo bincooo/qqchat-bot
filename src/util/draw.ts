@@ -2,20 +2,21 @@ import http from 'http'
 import https from 'https'
 import _url from 'url'
 import urlencode from 'urlencode'
+import getBrowser from './browser'
 import retry from './retry'
+import type { Browser, Page } from 'puppeteer'
+import { intercept, patterns } from 'puppeteer-interceptor'
 
 
-const str = function(json: any) {
-  return JSON.stringify(json)
+const _globalThis: {
+  spider: {
+    picwishCn?: Page
+  }
+} = {
+  spider = {
+  }
 }
 
-const encoded = function(json: any) {
-  const chunks = []
-  Object.keys(json).forEach(key => {
-    chunks.push(key + '=' + urlencode(json[key]))
-  })
-  return chunks.join('&')
-}
 
 /**
  * NovalAI
@@ -57,17 +58,25 @@ export function draw(opts: {
         }
         path = ('http://mccn.pro:7860/file=' + path)
         if (try4K) {
-          _4K(path)
-            .then(url => {
-              if (url) {
-                sendGet(url).then(buffer => {
-                  resolve('base64://' + buffer.toString('base64'))
-                })
-              } else {
-                resolve(path)
-              }
-            })
-            .catch(err => {
+          // _4K(path)
+          //   .then(url => {
+          //     if (url) {
+          //       sendGet(url).then(buffer => {
+          //         resolve('base64://' + buffer.toString('base64'))
+          //       })
+          //     } else {
+          //       resolve(path)
+          //     }
+          //   })
+          //   .catch(err => {
+          //     resolve(path)
+          //   })
+
+          
+          retry(() => tryBetter(path), 10, 800)
+            .then(b64 => resolve(b64))
+            .catch((err) => {
+              console.log(err)
               resolve(path)
             })
           return
@@ -164,6 +173,95 @@ function sendGet(url: string): Promise<any> {
   })
 }
 
+/**
+ * 初始化佐糖网址 - 画质提升
+ */
+async function initPicwishCn() {
+  if (!_globalThis.spider.picwishCn) {
+    const [browser, page] = await getBrowser()
+    if (!page) {
+      _globalThis.spider.picwishCn = await browser.newPage()
+    }
+  }
+
+  intercept(page, patterns.Script('*/astro/picwish/hoisted.*.js'), {
+    onResponseReceived: event => {
+      console.log(`${event.request.url} // intercepted, going to modify`)
+      event.response.body += `
+        window.picwishCn = {
+          Ie,
+          he,
+          ...window.picwishCn
+        }
+      `
+      return event.response
+    }
+  })
+
+  intercept(page, patterns.Script('*/astro/picwish/chunks/EnhancePreview.*.js'), {
+    onResponseReceived: event => {
+      console.log(`${event.request.url} // intercepted, going to modify`)
+      event.response.body += `
+        window.picwishCn = {
+          Ba,
+          ...window.picwishCn
+        }
+      `
+      return event.response
+    }
+  })
+
+  await page.goto('https://picwish.cn/photo-enhancer', {
+    waitUntil: 'networkidle0'
+  })
+}
+
+export async function tryBetter(imgUrl: string): Promise<string> {
+  await initPicwishCn()
+  const b64 = await sendGet(imgUrl)
+    .buffer.toString('base64')
+  const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
+  if (result && result.state === 1) {
+    return (await sendGet(result.image))
+  }
+  throw new Error('try better error !!!!')
+  // result.image
+}
+
+
+async function browserTryBetter(b64: string, name: string) {
+  globalThis.__name = () => undefined
+  function file() {
+    let b = atob(b64),
+    len = b.length
+    const buf = new Uint8Array(len)
+    while(len--) {
+      buf[len] = b.charCodeAt(len)
+    }
+    return new File([buf], name)
+  }
+
+  function waitReady() {
+    return new Promise((resolve, reject) => {
+      let timer = null,
+        count = 10
+      timer = setInterval(() => {
+        if (picwishCn.Ba || 0 > count--) {
+          clearInterval(timer)
+          resolve()
+        }
+      }, 500)
+    })
+  }
+
+  picwishCn.he()
+  await waitReady()
+  const result = await picwishCn.Ba(file(), f => {
+    // console.log('progress: ', Math.floor(f * .95))
+  })
+  return result
+}
+
 
 /**
  * 4K画质增强
@@ -206,7 +304,7 @@ export function _4K(imgUrl: string): Promise<string> {
         })
       }
 
-      retry(createWrap, 10, 800)
+      retry(() => createWrap, 10, 800)
         .then(resolve)
         .catch(reject)
     }
@@ -247,6 +345,17 @@ export function _4K(imgUrl: string): Promise<string> {
   })
 }
 
+const str = function(json: any) {
+  return JSON.stringify(json)
+}
+
+const encoded = function(json: any) {
+  const chunks = []
+  Object.keys(json).forEach(key => {
+    chunks.push(key + '=' + urlencode(json[key]))
+  })
+  return chunks.join('&')
+}
 
 function dat() {
   return new Date()
