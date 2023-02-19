@@ -73,8 +73,8 @@ export function draw(opts: {
           //   })
 
           
-          retry(() => tryBetter(path), 10, 800)
-            .then(b64 => resolve(b64))
+          retry(() => tryBetter(path), 3, 800)
+            .then(b64 => resolve('base64://' + b64))
             .catch((err) => {
               console.log(err)
               resolve(path)
