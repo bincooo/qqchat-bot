@@ -45,7 +45,11 @@ export class NovelAiHandler extends BaseMessageHandler {
       )
 
       retry(
-        () => draw({ data, session_hash: this._uuid, try4K: config.api.betterPic }),
+        () => draw({ data, session_hash: this._uuid, try4K: config.api.betterPic,
+          () => {
+            sender.reply('画完辣, 待我优化一番 ~', true)
+          }
+        }),
         3,
         500
       ).then(path => {

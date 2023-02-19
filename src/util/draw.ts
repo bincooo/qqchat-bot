@@ -26,6 +26,7 @@ export function draw(opts: {
   fn_index?: number
   data: Array<any>
   try4K?: boolean
+  callback?: () => void
 }): Promise<string> {
 
   const {
@@ -58,6 +59,10 @@ export function draw(opts: {
         }
         path = ('http://mccn.pro:7860/file=' + path)
         if (try4K) {
+          if (callback) {
+            callback()
+          }
+          
           // _4K(path)
           //   .then(url => {
           //     if (url) {
@@ -72,7 +77,6 @@ export function draw(opts: {
           //     resolve(path)
           //   })
 
-          
           retry(() => tryBetter(path), 3, 800)
             .then(b64 => resolve('base64://' + b64))
             .catch((err) => {
