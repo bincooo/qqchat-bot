@@ -74,7 +74,7 @@ export const initParams = function(prompt: string): Array<any> {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   // 提示词相关性(CFG Scale)
-  const cfg_scale = 7.5
+  const cfg_scale = 7.5,
     [ width, height ] = [ 448, 640 ]//[ 512, 832 ]
   const params = [
     prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, medium butt, good lighting, {{{{by wadim kashin}}}}, {{water droplets on face}} , flowing hair, glossy hair, {{{super detailed skin}}}, detailed, glass tint, zoom in on eyes, hydrous eyes",

@@ -8,10 +8,10 @@ import { config } from '../../config'
 class ServerCommand extends BaseCommand {
   label = 'server'
   usage = [
-    'reboot       - 重启机器人',
-    'status       - 服务器状态',
-    'better_pic:on  - 开启画质增强',
-    'better_pic:off - 关闭画质增强'
+    'reboot - 重启机器人',
+    'status - 服务器状态',
+    'draw:on  - 开启画质增强',
+    'draw:off - 关闭画质增强'
   ]
 
   requiredAdministrator = true
@@ -33,11 +33,11 @@ class ServerCommand extends BaseCommand {
       case 'status':
         sender.reply(JSON.stringify(process.memoryUsage()), true)
         break
-      case 'better_pic:on':
+      case 'draw:on':
         config.api.betterPic = true
         sender.reply('已开启画质增强~')
         break
-      case 'better_pic:off':
+      case 'draw:off':
         config.api.betterPic = false
         sender.reply('已关闭画质增强~')
         break
