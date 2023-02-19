@@ -8,8 +8,8 @@ import { config } from '../../config'
 class ServerCommand extends BaseCommand {
   label = 'server'
   usage = [
-    'reboot         - 重启机器人',
-    'status         - 服务器状态',
+    'reboot       - 重启机器人',
+    'status       - 服务器状态',
     'better_pic:on  - 开启画质增强',
     'better_pic:off - 关闭画质增强'
   ]
