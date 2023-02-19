@@ -218,11 +218,12 @@ async function initPicwishCn() {
 
 export async function tryBetter(imgUrl: string): Promise<string> {
   await initPicwishCn()
-  const b64 = await sendGet(imgUrl)
-    .buffer.toString('base64')
+  const b64 = (await sendGet(imgUrl))
+    .toString('base64')
   const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
   if (result && result.state === 1) {
     return (await sendGet(result.image))
+      .toString('base64')
   }
   throw new Error('try better error !!!!')
   // result.image
