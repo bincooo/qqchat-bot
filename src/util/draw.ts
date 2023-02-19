@@ -33,7 +33,8 @@ export function draw(opts: {
     data,
     session_hash,
     fn_index = 101,
-    try4K = false
+    try4K = false,
+    callback
   } = opts
 
   return new Promise<string>((resolve, reject) => {
@@ -62,7 +63,7 @@ export function draw(opts: {
           if (callback) {
             callback()
           }
-          
+
           // _4K(path)
           //   .then(url => {
           //     if (url) {
