@@ -82,7 +82,7 @@ export const initParams = function(prompt: string): Array<any> {
   }
   // 提示词相关性(CFG Scale)
   const cfg_scale = 7.5,
-    [ width, height ] = [ 448, 640 ]//[ 512, 832 ]
+    [ width, height ] = [ 512, 832 ]
   const params = [
     prompt + ", {{{{by famous artist}}}, beautiful, masterpiece, medium butt, good lighting, {{{{by wadim kashin}}}}, {{water droplets on face}} , flowing hair, glossy hair, {{{super detailed skin}}}, detailed, glass tint, zoom in on eyes, hydrous eyes",
     "nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{nude}}}, {{{{{bare flesh}}}}}",
