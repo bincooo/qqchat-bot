@@ -25,8 +25,9 @@ export default async function getBrowser(): (Browser | Page)[] {
     '--disable-default-apps',
     '--no-zygote',
     '--disable-accelerated-2d-canvas',
-    '--disable-web-security'
-    // '--disable-gpu'
+    '--disable-web-security',
+    '--disable-gpu',
+    '--window-size=780,1080'
     // '--js-flags="--max-old-space-size=1024"'
   ]
 
