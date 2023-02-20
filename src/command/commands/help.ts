@@ -12,6 +12,7 @@ export function buildHelpMessage (isAdmin: boolean, title?: string) {
 
   const content = command.map((item, key) => `${(key + 1)}: ${item.helpDoc}`).join('\n————————————————\n')
   return [
+    `${title}\n@小爱Ai + [文本 or 命令]\n! ! !  即可与Ai对话哦 ~`,
     '———————',
     '命令帮助',
     '———————',
