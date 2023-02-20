@@ -57,6 +57,7 @@
     "pkg": "^5.8.0",
     "puppeteer": "^19.4.1",
     "puppeteer-interceptor": "^2.2.0",
+    "prettier": "^2.8.4",
     "urlencode": "^1.1.0",
     "winston": "^3.8.2",
     "ws": "^8.8.0"
