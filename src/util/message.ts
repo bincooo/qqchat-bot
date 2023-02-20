@@ -1,4 +1,5 @@
 import { segment } from 'oicq'
+import logger from 'src/util/log'
 import { config } from '../config'
 import speak from './tts'
 import messageHandler from 'src/filter'
