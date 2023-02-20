@@ -30,9 +30,9 @@ export abstract class BaseCommand implements Command {
   sp(num?: number) {
     num = num ?? 0
     let val = ''
-    while(num --) {
-      val += ' '
-    }
+    // while(num --) {
+    //   val += ' '
+    // }
     return val
   }
 
