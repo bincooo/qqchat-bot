@@ -187,13 +187,31 @@ async function initPicwishCn() {
     _globalThis.spider.picwishCn = page ? page : await browser.newPage()
   }
 
+  const readline = (str: string, regex: RegExp, callback: (idx: number, line: string, container: Array<string>) => boolean /* true: stop */) => {
+    const list = prettier.format(str, { semi: false, parser: "babel" })
+      .split('\n')
+    for(let i = 0; i < list.length; i++) {
+      // console.log('new line: ', list[i])
+      if (regex.test(list[i]) && callback(i, list[i], list)) {
+        return
+      }
+    }
+  }
+
   intercept(_globalThis.spider.picwishCn, patterns.Script('*/astro/picwish/hoisted.*.js'), {
     onResponseReceived: event => {
       console.log(`${event.request.url} // intercepted, going to modify`)
+      let he:string
+      readline(event.response.body, /await [^(]{1,}\("#first-section\"\)/i, (index, line, container) => {
+        for(let i = 1; i <= 5; i++) {
+          he = ((container[index - i]).match(/[\s]+([^(]{1,})\(\)/i)??[])[1]
+          if (he) break
+        }
+        return true
+      })
       event.response.body += `
         window.picwishCn = {
-          Ie,
-          he,
+          he: ${he},
           ...window.picwishCn
         }
       `
@@ -204,9 +222,18 @@ async function initPicwishCn() {
   intercept(_globalThis.spider.picwishCn, patterns.Script('*/astro/picwish/chunks/EnhancePreview.*.js'), {
     onResponseReceived: event => {
       console.log(`${event.request.url} // intercepted, going to modify`)
+      let Ba:string
+      readline(event.response.body, /\.value = Math\.floor\(/i, (index, line, container) => {
+        for(let i = 1; i <= 5; i++) {
+          Ba = ((container[index - i]).match(/= await ([^(]{1,})\(/i)??[])[1]
+          // console.log(container[index - i], Ba)
+          if (Ba) break
+        }
+        return true
+      })
       event.response.body += `
         window.picwishCn = {
-          Ba,
+          Ba: ${Ba},
           ...window.picwishCn
         }
       `
