@@ -16,12 +16,12 @@ export async function filterTokens (content: string) {
     for (let i = 0; i < messageHandler.length; i++) {
       let isStop = false
       if (messageHandler[i] instanceof BaseMessageFilter) {
-        const [ stop, msg ] = !await (messageHandler[i] as BaseMessageFilter).handle(content)
-        isStop = stop
+        const [ stop, msg ] = await (messageHandler[i] as BaseMessageFilter).handle(content)
+        isStop = !stop
         resultMessage = msg
       } else if (typeof messageHandler[i] === 'function') {
-        const [ stop, msg ] = !await (messageHandler[i] as MessageFilter)(content)
-        isStop = stop
+        const [ stop, msg ] = await (messageHandler[i] as MessageFilter)(content)
+        isStop = !stop
         resultMessage = msg
       }
       if (isStop) {
