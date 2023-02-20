@@ -78,13 +78,14 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async initChatGPT () {
     if (!config.api.enable) return
-    const { email, password, proxyServer, pingMs, slaves } = config.api
+    const { email, password, proxyServer, pingMs, slaves, browserPath } = config.api
     this._emailPool = new EmailPool(
       {
         email,
         password,
         proxyServer,
-        heartbeatMs: pingMs
+        heartbeatMs: pingMs,
+        executablePath: browserPath
       },
       [{ email, password, uuid: this._uuid }, ...slaves ])
     this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
@@ -100,14 +101,10 @@ export class ChatGPTHandler extends BaseMessageHandler {
     if (!config.api.enable) return true
     try {
 
-      let isGenTags = false
-      if (sender.textMessage.startsWith('[prompt]') 
-        && config.api.genTags)
-      {
-        isGenTags = true
-        sender.textMessage = config.api.genTags
-          + sender.textMessage.substr(8)
-          + '\n\n仅需要给我提供prompt的内容'
+      const need = () => {
+        return !(sender.textMessage
+            .trim()
+            .startsWith('[prompt]'))
       }
 
       if (this._iswait) {
@@ -117,9 +114,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       this._iswait = true
-      let pref = isGenTags ? '' : await this.processPreface()
-
-      await this._api.queueSendMessage(filterTokens(pref + sender.textMessage), {
+      let pref = need() ? '' : await this.processPreface()
+      await this._api.queueSendMessage(await filterTokens(pref + sender.textMessage), {
         onProgress: async (res) => {
           if (res.error) {
             await this.messageErrorHandler(sender, res.error)
@@ -141,11 +137,12 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   async processPreface(): Promise<string> {
+    const { preface, precondition } = config.api
     let pref = ''
-    if (config.api.enablePref) {
-      pref = config.api.preface
-      if (!!config.api.deblocking && this._count >= MAX_DEB_COUNT) {
-        await this._api.queueSendMessage(config.api.deblocking, {
+    if (preface.enable) {
+      pref = preface.message
+      if (!!precondition && this._count >= MAX_DEB_COUNT) {
+        await this._api.queueSendMessage(precondition, {
           onProgress: async (res) => {
             if (res.response == '[DONE]') {
               this._count = 0

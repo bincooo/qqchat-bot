@@ -45,7 +45,7 @@ export class ChatGPTOfficialHandler extends BaseMessageHandler {
     A = A ?? 'AI'
 
     try {
-      const prompt = `${this.identity}\n${this.trackMessage}\n${Q}: ${filterTokens(sender.textMessage)}\n${A}:`
+      const prompt = `${this.identity}\n${this.trackMessage}\n${Q}: ${await filterTokens(sender.textMessage)}\n${A}:`
       const completion = await this._openAI.createCompletion({
         model: config.officialAPI.model,
         prompt,

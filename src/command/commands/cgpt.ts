@@ -22,20 +22,20 @@ class CgptCommand extends BaseCommand {
   async execute (sender: Sender, params: string[]) {
     switch (params[0]) {
       case 'tts:on':
-        sender.reply('open the voice mode ~', false)
+        sender.reply('已开启语音模式 ~', false)
         config.tts = true
         break
       case 'tts:off':
-        sender.reply('close the voice mode ~', false)
+        sender.reply('已关闭语音模式 ~', false)
         config.tts = false
         break
       case 'catgirl:on':
-        sender.reply('enable the cat girl ~', false)
-        config.api.enablePref = true
+        sender.reply('已开启猫娘模式 ~', false)
+        config.api.preface.enable = true
         break
       case 'catgirl:off':
-        sender.reply('disable the cat girl ~', false)
-        config.api.enablePref = false
+        sender.reply('已关闭猫娘模式 ~', false)
+        config.api.preface.enable = false
         break
       default:
         sender.reply(this.helpDoc, true)

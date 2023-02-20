@@ -40,7 +40,7 @@ export class NovelAiHandler extends BaseMessageHandler {
       sender.reply(hint[idx], true)
 
       const data = initParams(
-        filterTokens(sender?.textMessage.substr(pref.length))
+        await filterTokens(sender?.textMessage.substr(pref.length))
           .trim()
       )
 

@@ -29,3 +29,14 @@ export abstract class BaseMessageHandler {
 
   handle: MessageHandler
 }
+
+
+
+export type MessageFilter = (content: string) => (boolean | string)[] | Promise<(boolean | string)[]>
+
+export abstract class BaseMessageFilter {
+
+  reboot (): void | Promise<void> {}
+
+  handle: MessageFilter
+}

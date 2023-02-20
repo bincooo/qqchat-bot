@@ -1,31 +1,36 @@
-
 import { segment } from 'oicq'
 import { config } from '../config'
 import speak from './tts'
-const replaceMapping = {
-  '，': ',',
-  '！': '!',
-  '。': '.',
-  '？': '?'
-}
-// const noDuplicationChar = ['，', ',', '!', '！', '?', '？', '']
+import messageHandler from 'src/filter'
+import { BaseMessageFilter, MessageFilter } from 'src/types'
+
+
 
 /**
  * 消息 tokens优化
  */
-export function filterTokens (content: string) {
-  // content.replaceAll(/，|。|！/g, ' ')
+export async function filterTokens (content: string) {
   let resultMessage = ''
-  for (let i = 0; i < content.length; i++) {
-    if (resultMessage.at(-1) === content[i]) {
-      if (content[i] === ' ') continue
+  try {
+    for (let i = 0; i < messageHandler.length; i++) {
+      let isStop = false
+      if (messageHandler[i] instanceof BaseMessageFilter) {
+        const [ stop, msg ] = !await (messageHandler[i] as BaseMessageFilter).handle(content)
+        isStop = stop
+        resultMessage = msg
+      } else if (typeof messageHandler[i] === 'function') {
+        const [ stop, msg ] = !await (messageHandler[i] as MessageFilter)(content)
+        isStop = stop
+        resultMessage = msg
+      }
+      if (isStop) {
+        break
+      }
     }
-    if (replaceMapping[content[i]] !== undefined) {
-      resultMessage += replaceMapping[content[i]] as string
-    } else {
-      resultMessage += content[i]
-    }
+  } catch (err) {
+    logger.error(err)
   }
+
   return resultMessage.trim()
 }
 
