@@ -102,7 +102,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     try {
 
       const need = () => {
-        return !(sender.textMessage
+        return (sender.textMessage
             .trim()
             .startsWith('[prompt]'))
       }
@@ -114,7 +114,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       this._iswait = true
-      let pref = need() ? '' : await this.processPreface()
+      const pref = !need() ? '' : await this.processPreface()
       await this._api.queueSendMessage(await filterTokens(pref + sender.textMessage), {
         onProgress: async (res) => {
           if (res.error) {
@@ -138,6 +138,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async processPreface(): Promise<string> {
     const { preface, precondition } = config.api
+    console.log('????', preface, precondition)
     let pref = ''
     if (preface.enable) {
       pref = preface.message

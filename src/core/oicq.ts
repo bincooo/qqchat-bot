@@ -38,6 +38,10 @@ async function handleMessage (e: MessageEvent) {
   }
 }
 
+export function getClient(): null | Client {
+  return client
+}
+
 export async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessageHandler>) {
   messageHandler = initMessageHandler ?? messageHandler ?? []
   await client?.logout()
@@ -50,6 +54,10 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
     // 私信或at回复
     if (e.message_type === 'private' || e.atme) {
       if (e.nickname !== 'Q群管家') {
+        handleMessage(e)
+      }
+    } else if(!!config.botNickname) {
+      if (e.raw_message.indexOf('@' + config.botNickname) >= 0) {
         handleMessage(e)
       }
     }

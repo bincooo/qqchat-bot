@@ -3,6 +3,7 @@ export const config = {
 
   adminQQ: 0,
   botQQ: 0,
+  botNickname: '小爱Ai',
   botPassword: '',
   oicq: {
     platform: 1
@@ -62,6 +63,5 @@ export const config = {
       '"Detailed CG illustration, (best quality), (mid-shot), (masterpiece:1.5), beautiful detailed girl, full body, (1 girl:1.2), long flowing hair, (stunning eyes:1.3), (beautiful face:1.3), (feminine figure:1.3), (romantic setting:1.3), (soft lighting:1.2), (delicate features:1.2)"。\n' +
       '阅读并理解以上内容。\n\n用prompt描述: '
   },
-  tts: false,
-  client: null
+  tts: false
 }

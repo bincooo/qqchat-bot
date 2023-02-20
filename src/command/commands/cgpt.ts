@@ -8,12 +8,12 @@ import messageHandlers from './../../handler'
 class CgptCommand extends BaseCommand {
   label = 'cgpt'
   usage = [
-    'tts:on      - 开启语音',
-    'tts:off     - 关闭语音',
-    'catgirl:on  - 开启猫娘',
-    'catgirl:off - 关闭猫娘'
-    + '\n----\n/draw [prompt] - ai作画'
-    + '\nhttp://h.icu-web.tk:8082/novel-ai-tag | 可通过该站点定制标签'
+    `tts:on      ${this.sp(12)}开启语音`,
+    `tts:off     ${this.sp(12)}关闭语音`,
+    `catgirl:on  ${this.sp(10)}开启猫娘`,
+    `catgirl:off ${this.sp(10)}关闭猫娘`
+    + '\n----\n/draw [prompt] - ai作画\n'
+    + '\nhttp://h.icu-web.tk:8082/tag\n可通过该站点定制ai绘画标签'
   ]
 
   requiredAdministrator = false

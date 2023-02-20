@@ -27,5 +27,14 @@ export abstract class BaseCommand implements Command {
     return true
   }
 
+  sp(num?: number) {
+    num = num ?? 0
+    let val = ''
+    while(num --) {
+      val += ' '
+    }
+    return val
+  }
+
   execute (sender: Sender, params?: string[] | undefined) { throw new Error('this is abstract class!') }
 }

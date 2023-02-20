@@ -5,7 +5,7 @@ export const helpHandler: MessageHandler = function (sender) {
   const e: MessageEvent = sender.getEventObject()
   if (e.notice_type === 'group' && e.sub_type === 'increase') {
     try {
-      e.group.sendMsg('欢迎 '+e.nickname+' 加入\n@小爱Ai+[文本]可与Ai对话哦~\n\n' + buildHelpMessage(false), false)
+      e.group.sendMsg(buildHelpMessage(false, '欢迎 '+e.nickname+' 加入\n@小爱Ai+[文本]可与Ai对话哦~'), false)
     } catch(err) {
       console.log('HelpHandler:Error', err)
     }

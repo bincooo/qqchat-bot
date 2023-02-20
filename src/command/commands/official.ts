@@ -19,15 +19,15 @@ async function reloadConfig (key: string, value: any) {
 class OfficialCommand extends BaseCommand {
   label = 'official'
   usage = [
-    'get                   \n获取当前配置',
-    'key [key]             \n设置 key',
-    'model [model]         \n设置 model',
-    'maxTrackCount [count] \n设置会话跟踪上限',
-    'identity [identity]   \n设置人格（使用==连接多个）',
-    'maxTokens [n]         \n设置回复消息占用token',
-    'maxTrackCount [n]     \n设置最大记忆对话次数',
-    'temperature [0-1]     \n设置回答问题的概率系数 0-1',
-    'stop [Q, A]           \n设置问答名称，使用==连接 Humen==AI'
+    'get                   \n获取当前配置\n',
+    'key [key]             \n设置 key\n',
+    'model [model]         \n设置 model\n',
+    'maxTrackCount [count] \n设置会话跟踪上限\n',
+    'identity [identity]   \n设置人格（使用==连接多个）\n',
+    'maxTokens [n]         \n设置回复消息占用token\n',
+    'maxTrackCount [n]     \n设置最大记忆对话次数\n',
+    'temperature [0-1]     \n设置回答问题的概率系数 0-1\n',
+    'stop [Q, A]           \n设置问答名称，使用==连接 例子: Humen==Ai\n'
     // 'prop [key] [value] // 设置配置项'
   ]
 
