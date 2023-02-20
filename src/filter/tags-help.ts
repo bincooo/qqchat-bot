@@ -1,5 +1,5 @@
 import { MessageFilter } from 'src/types'
-import { config } from 'config'
+import { config } from 'src/config'
 
 export const tagsHelpFilter: MessageFilter = function (content: string) {
   let resultMessage = ''
