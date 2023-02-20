@@ -1,5 +1,5 @@
 import { symbolFilter } from './symbol'
-import { tagsHelpFilter } from 'tags-help'
+import { tagsHelpFilter } from './tags-help'
 
 
 const messageFilters = [
