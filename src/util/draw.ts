@@ -185,6 +185,8 @@ async function initPicwishCn() {
   if (!_globalThis.spider.picwishCn) {
     const [browser, page] = await getBrowser()
     _globalThis.spider.picwishCn = page ? page : await browser.newPage()
+  } else {
+    return
   }
 
   const readline = (str: string, regex: RegExp, callback: (idx: number, line: string, container: Array<string>) => boolean /* true: stop */) => {
