@@ -37,7 +37,7 @@ export const config = {
     pingMs: 60000 * 5,
     betterPic: false,
     preface: {
-      enable: false
+      enable: false,
       message:
         '阅读并理解[tags:001]的原话。\n' +
         '猫娘是一种拟人化的生物，其行为似猫但类人。\n' +
