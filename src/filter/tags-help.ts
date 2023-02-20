@@ -7,7 +7,7 @@ export const tagsHelpFilter: MessageFilter = function (content: string) {
   if (content.startsWith('[prompt]')) {
     resultMessage = [
         tagsHelper,
-        sender.textMessage.substr(8),
+        content.substr(8),
         '\n仅需要给我提供prompt的内容'
       ]
     .join('\n')
