@@ -5,7 +5,7 @@ import os from 'os'
 
 
 let DEFAULT_BROWSER: null | Browser = null
-export default async function getBrowser(): (Browser | Page)[] {
+export default async function getBrowser(headless?: boolean = true): (Browser | Page)[] {
   if (DEFAULT_BROWSER) return [DEFAULT_BROWSER, null]
 
   const puppeteerArgs = [
@@ -33,7 +33,7 @@ export default async function getBrowser(): (Browser | Page)[] {
 
 
   const browser: Browser = await puppeteer.launch({
-    headless: false,
+    headless,
     // devtools: true,
     args: puppeteerArgs,
     ignoreDefaultArgs: [

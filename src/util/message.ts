@@ -1,6 +1,7 @@
 import { segment } from 'oicq'
 import logger from 'src/util/log'
 import { config } from '../config'
+import { Sender } from 'src/model/sender'
 import speak from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
@@ -11,16 +12,19 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
  * 消息 tokens优化
  */
 export async function filterTokens (content: string) {
+  const filters = messageHandler.filter(item => item.type === 0)
+  return _filterTokens(content, filters).trim()
+}
+
+async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender) {
+  if (filters.length === 0) return content.trim()
   let resultMessage = ''
+
   try {
-    for (let i = 0; i < messageHandler.length; i++) {
+    for (let i = 0; i < filters.length; i++) {
       let isStop = false
-      if (messageHandler[i] instanceof BaseMessageFilter) {
-        const [ stop, msg ] = await (messageHandler[i] as BaseMessageFilter).handle(content)
-        isStop = !stop
-        resultMessage = msg
-      } else if (typeof messageHandler[i] === 'function') {
-        const [ stop, msg ] = await (messageHandler[i] as MessageFilter)(content)
+      if (filters[i] instanceof BaseMessageFilter) {
+        const [ stop, msg ] = await (filters[i] as BaseMessageFilter).handle(content)
         isStop = !stop
         resultMessage = msg
       }
@@ -78,9 +82,9 @@ async function recallLdGif() {
   }
 }
 
-async function loading(render: any, isEnd: boolean = false) {
+async function loading(sender: Sender, isEnd: boolean = false) {
   if (!isEnd) {
-    const ret = await render.reply(ldGif)
+    const ret = await Sender.reply(ldGif)
     mids.push(ret.message_id)
   }
 }
@@ -98,7 +102,7 @@ function cacheMessage(conversationId: string): any {
   return cached
 }
 
-export const onMessage = (data: any, render: any) => {
+export const onMessage = (data: any, sender: Sender) => {
   let cached: any = cacheMessage(data.conversationId)
 
   if (data.response) {
@@ -124,15 +128,17 @@ export const onMessage = (data: any, render: any) => {
       isEnd = true
       if (cached.idx < cached.msg.length) {
         // console.log('ts: ', cached.msg.substr(cached.idx))
-        const msg = cached.msg.substr(cached.idx)
+        let msg = cached.msg.substr(cached.idx)
+        const filters = messageHandler.filter(item => item.type === 1)
+        msg = _filterTokens(msg, filters, sender)
         if (msg && msg.trim()) {
           if (config.tts) {
             speak({ text: msg })
-              .then(path => render.reply(segment.record(path), true))
+              .then(path => sender.reply(segment.record(path), true))
               .then(recallLdGif)
           }
           else {
-            render.reply(msg, true)
+            sender.reply(msg, true)
               .then(recallLdGif)
           }
         }
@@ -144,19 +150,21 @@ export const onMessage = (data: any, render: any) => {
     cached.msg = data.response
     if (index > 0 && cached.idx < index) {
       // console.log('ts: ', data.response.substr(cached.idx, index))
-      const msg = data.response.substr(cached.idx, index)
+      let msg = data.response.substr(cached.idx, index)
+      const filters = messageHandler.filter(item => item.type === 1)
+      msg = _filterTokens(msg, filters)
       if (msg && msg.trim()) {
         isEnd = false
         if (config.tts) {
           recallLdGif()
           speak({ text: msg }).then(path => {
-            render.reply(segment.record(path), true)
-              .then(() => loading(render, isEnd))
+            sender.reply(segment.record(path), true)
+              .then(() => loading(sender, isEnd))
           })
         } else {
           recallLdGif()
-          render.reply(msg, true)
-            .then(() => loading(render, isEnd))
+          sender.reply(msg, true)
+            .then(() => loading(sender, isEnd))
         }
       }
       cached.idx = index

@@ -32,11 +32,11 @@ export abstract class BaseMessageHandler {
 
 
 
-export type MessageFilter = (content: string) => (boolean | string)[] | Promise<(boolean | string)[]>
+export type MessageFilter = (content: string, sender?: Sender) => (boolean | string)[] | Promise<(boolean | string)[]>
 
 export abstract class BaseMessageFilter {
 
-  reboot (): void | Promise<void> {}
+  type?: number
 
   handle: MessageFilter
 }

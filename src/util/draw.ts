@@ -118,7 +118,7 @@ export function reset(hash: string) {
 }
 
 
-function sendPost(url: string, dataString: string, headers?: Map<string, any>): Promise<any> {
+export function sendPost(url: string, dataString: string, headers?: Map<string, any>): Promise<any> {
   const {
     protocol,
     hostname,
@@ -157,7 +157,7 @@ function sendPost(url: string, dataString: string, headers?: Map<string, any>): 
   })
 }
 
-function sendGet(url: string): Promise<any> {
+export function sendGet(url: string): Promise<any> {
   const proxy = (url.startsWith('http:')) ? http : https
   return new Promise<any>((resolve, reject) => {
     const chunks = []
