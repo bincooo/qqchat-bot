@@ -22,7 +22,7 @@ export class Sender {
     this._eventObject = e
     this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
     if (!!config.botNickname) {
-      this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')
+      this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
     }
     if (!(e instanceof GuildMessage)) {
       this.userId = e.sender?.user_id || e.user_id

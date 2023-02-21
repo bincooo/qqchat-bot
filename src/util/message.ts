@@ -13,7 +13,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
  */
 export async function filterTokens (content: string) {
   const filters = messageHandler.filter(item => item.type === 0)
-  return _filterTokens(content, filters).trim()
+  return (await _filterTokens(content, filters)).trim()
 }
 
 async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender) {
@@ -130,7 +130,7 @@ export const onMessage = (data: any, sender: Sender) => {
         // console.log('ts: ', cached.msg.substr(cached.idx))
         let msg = cached.msg.substr(cached.idx)
         const filters = messageHandler.filter(item => item.type === 1)
-        msg = _filterTokens(msg, filters, sender)
+        msg = await _filterTokens(msg, filters, sender)
         if (msg && msg.trim()) {
           if (config.tts) {
             speak({ text: msg })
