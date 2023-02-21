@@ -31,7 +31,7 @@ export class CatgirlFilter extends BaseMessageFilter {
     this.type = 1
   }
 
-  handle = async (content: string, sender: Sender) => {
+  handle = async (content: string, sender?: Sender) => {
     let resultMessage = ''
     const { preface, betterPic } = config.api
 

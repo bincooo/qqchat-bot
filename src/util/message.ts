@@ -24,7 +24,7 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
     for (let i = 0; i < filters.length; i++) {
       let isStop = false
       if (filters[i] instanceof BaseMessageFilter) {
-        const [ stop, msg ] = await (filters[i] as BaseMessageFilter).handle(content)
+        const [ stop, msg ] = await (filters[i] as BaseMessageFilter).handle(content, sender)
         isStop = !stop
         resultMessage = msg
       }
