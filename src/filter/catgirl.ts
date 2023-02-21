@@ -36,8 +36,8 @@ export class CatgirlFilter extends BaseMessageFilter {
     const { preface, betterPic } = config.api
 
     if (preface.enable && preface.image) {
-
-      const result = (content.match(/\[([a-z_A-Z]{1,},[^\]]+)]/i)??[])[1]
+      const regex = /\[([a-z_A-Z]{1,},[^\]]+)]/i
+      const result = (content.match(regex)??[])[1]
       if (!result) return [ true, content ]
       try {
         // 开启猫娘图文模式
@@ -45,7 +45,14 @@ export class CatgirlFilter extends BaseMessageFilter {
           .split(',')
           .filter(item => !!item.trim())
         const prompt = initParams(`petite, 1girl, solo, {{cat ear}}, pink hair, very long hair, school uniform, ${split.join(',')},{{{{{extreme close up of face}}}}}, {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, tanktop, {{looking at you}}, focus on face, dark blue skirt, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, detailed, good lighting, glass tint, zoom in on eyes, {{reflective eyes}}, {{hair dripping}}, water eyes,`)
-        const path = await retry(
+        
+        const m1 = (content.match(/【([^】]{1,})】/i)??[])[1]??''
+        const m2 = (content.match(/\[([^\]]{1,})\]/i)??[])[1]??''
+        console.log('cat girl test >> m1: ' + m1 + ', m2: ' + m2)
+
+
+
+        retry(
           () => draw({
             prompt,
             session_hash: this._uuid,
@@ -54,17 +61,20 @@ export class CatgirlFilter extends BaseMessageFilter {
           3,
           500
         )
+        .then(path => {
+          this.fontImage(path, m1, m2)
+            .then(npath => {
+              const buf = fs.readFileSync(npath)
+              sender.reply(segment.image('base64://' + buf.toString('base64')))
+            })
+            .catch(err => {
+              console.error('the "cat girl" graphic mode failed: ', err)
+            })
+        })
 
-        const m1 = (content.match(/【([^】]{1,})】/i)??[])[1]??''
-        const m2 = (content.match(/\[([^\]]{1,})\]/i)??[])[1]??''
-        console.log('cat girl test >> m1: ' + m1 + ', m2: ' + m2)
-
-        const newpath = await this.fontImage(path, m1, m2)
-        const buf = await fs.readFileSync(newpath)
-        sender.reply(segment.image('base64://' + buf.toString('base64')))
-
+        return [ false, content.replace(regex, '') ]
       } catch(err) {
-        console.log(err)
+        console.error(err)
       }
     }
 
