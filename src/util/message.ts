@@ -102,7 +102,7 @@ function cacheMessage(conversationId: string): any {
   return cached
 }
 
-export const onMessage = (data: any, sender: Sender) => {
+export const onMessage = async (data: any, sender: Sender) => {
   let cached: any = cacheMessage(data.conversationId)
 
   if (data.response) {
