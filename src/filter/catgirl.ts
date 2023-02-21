@@ -2,7 +2,7 @@ import { segment } from 'oicq'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { initParams } from 'src/handler/novel-ai'
 import { config } from 'src/config'
-import { sendGet } from 'src/util/draw'
+import { draw, sendGet } from 'src/util/draw'
 import { Sender } from 'src/model/sender'
 import retry from 'src/util/retry'
 import Jimp from 'jimp'
@@ -47,7 +47,7 @@ export class CatgirlFilter extends BaseMessageFilter {
         const prompt = initParams(`petite, 1girl, solo, {{cat ear}}, pink hair, very long hair, school uniform, ${split.join(',')},{{{{{extreme close up of face}}}}}, {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, tanktop, {{looking at you}}, focus on face, dark blue skirt, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, detailed, good lighting, glass tint, zoom in on eyes, {{reflective eyes}}, {{hair dripping}}, water eyes,`)
         
         const m1 = (content.match(/【([^】]{1,})】/i)??[])[1]??''
-        const m2 = (content.match(/\[([^\]]{1,})\]/i)??[])[1]??''
+        const m2 = (content.match(/\(([^\]]{1,})\)/i)??[])[1]??''
         console.log('cat girl test >> m1: ' + m1 + ', m2: ' + m2)
 
 
@@ -62,7 +62,7 @@ export class CatgirlFilter extends BaseMessageFilter {
           500
         )
         .then(path => {
-          this.fontImage(path, m1, m2)
+          this.drawFont(path, m1, m2)
             .then(npath => {
               const buf = fs.readFileSync(npath)
               sender.reply(segment.image('base64://' + buf.toString('base64')))
@@ -81,7 +81,7 @@ export class CatgirlFilter extends BaseMessageFilter {
     return [ true, content ]
   }
 
-  async fontImage(url: string, m1: string, m2?:stirng = ''): Promise<string> {
+  async drawFont(url: string, m1: string, m2?:stirng = ''): Promise<string> {
     const buf = await sendGet(url)
     const drawPath = await this.save(buf)
     const executor = util.promisify(execcmd.exec)
