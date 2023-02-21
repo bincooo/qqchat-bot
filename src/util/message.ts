@@ -123,13 +123,13 @@ export const onMessage = async (data: any, sender: Sender) => {
       
     }
   
+    const filters = messageHandler.filter(item => item.type === 1)
     //console.log(index, data.response)
     if (data.response == '[DONE]') {
       isEnd = true
       if (cached.idx < cached.msg.length) {
         // console.log('ts: ', cached.msg.substr(cached.idx))
         let msg = cached.msg.substr(cached.idx)
-        const filters = messageHandler.filter(item => item.type === 1)
         msg = await _filterTokens(msg, filters, sender)
         if (msg && msg.trim()) {
           if (config.tts) {
@@ -151,8 +151,7 @@ export const onMessage = async (data: any, sender: Sender) => {
     if (index > 0 && cached.idx < index) {
       // console.log('ts: ', data.response.substr(cached.idx, index))
       let msg = data.response.substr(cached.idx, index)
-      const filters = messageHandler.filter(item => item.type === 1)
-      msg = _filterTokens(msg, filters)
+      msg = await _filterTokens(msg, filters, sender)
       if (msg && msg.trim()) {
         isEnd = false
         if (config.tts) {
