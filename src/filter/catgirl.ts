@@ -44,17 +44,15 @@ export class CatgirlFilter extends BaseMessageFilter {
         const split = result.replaceAll('\.', '')
           .split(',')
           .filter(item => !!item.trim())
-        const prompt = initParams(`petite, 1girl, solo, {{cat ear}}, pink hair, very long hair, school uniform, ${split.join(',')},{{{{{extreme close up of face}}}}}, {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, tanktop, {{looking at you}}, focus on face, dark blue skirt, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, detailed, good lighting, glass tint, zoom in on eyes, {{reflective eyes}}, {{hair dripping}}, water eyes,`)
+        const data = initParams(`petite, 1girl, solo, {{cat ear}}, pink hair, very long hair, school uniform, ${split.join(',')},{{{{{extreme close up of face}}}}}, {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, tanktop, {{looking at you}}, focus on face, dark blue skirt, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, detailed, good lighting, glass tint, zoom in on eyes, {{reflective eyes}}, {{hair dripping}}, water eyes,`)
         
         const m1 = (content.match(/【([^】]{1,})】/i)??[])[1]??''
         const m2 = (content.match(/\(([^\]]{1,})\)/i)??[])[1]??''
-        console.log('cat girl test >> m1: ' + m1 + ', m2: ' + m2)
-
-
+        console.log('"cat girl" test >> prompt: [' + split.join(',') + '] m1: ' + m1 + ', m2: ' + m2)
 
         retry(
           () => draw({
-            prompt,
+            data,
             session_hash: this._uuid,
             try4K: false
           }),
