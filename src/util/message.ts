@@ -158,8 +158,8 @@ export const onMessage = async (data: any, sender: Sender) => {
     cached.msg = data.response
     if (index > 0 && cached.idx < index) {
       // console.log('ts: ', data.response.substr(cached.idx, index))
-      let msg = data.response.substr(cached.idx, index)
-      console.log('163 onMessage test: ', msg)
+      let msg = data.response.substr(cached.idx, index - cached.idx)
+      console.log('163 onMessage test: ', msg, index - cached.idx)
       msg = await _filterTokens(msg, filters, sender)
       if (msg && msg.trim()) {
         isEnd = false
