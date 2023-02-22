@@ -179,6 +179,14 @@ export const onMessage = async (data: any, sender: Sender) => {
     if (index > 0 && condition(index, cached)) {
       // console.log('ts: ', data.response.substr(cached.idx, index))
       let msg = data.response.substr(cached.idx, index - cached.idx)
+
+      cached.old = {
+        idx: cached.idx,
+        fragment: msg
+      }
+      cached.idx = index
+      cacheMessage(data.conversationId, cached)
+
       console.log('162 onMessage test: ', msg, cached.idx, index)
       msg = await _filterTokens(msg, filters, sender)
       if (msg && msg.trim()) {
@@ -196,13 +204,6 @@ export const onMessage = async (data: any, sender: Sender) => {
             .then(() => loading(sender, isEnd))
         }
       }
-
-      cached.old = {
-        idx: cached.idx,
-        fragment: msg
-      }
-      cached.idx = index
-      cacheMessage(data.conversationId, cached)
     }
   }
 }
