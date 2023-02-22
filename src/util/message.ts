@@ -88,9 +88,16 @@ async function recallLdGif() {
 }
 
 
-function loading(sender: Sender, isEnd: boolean = false) {
+export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean) {
+  if (init) {
+    isEnd = _isEnd
+    sender.reply(ldGif)
+      .then(res => mids.push(res.message_id))
+    return
+  }
+
   // 三秒内无回应, 发送加载Gif
-  if (!isEnd && (lastLoading + 3000) < dat()) {
+  if (!_isEnd && (lastLoading + 3000) < dat()) {
     sender.reply(ldGif)
       .then(res => mids.push(res.message_id))
   }
@@ -154,9 +161,8 @@ export const onMessage = async (data: any, sender: Sender) => {
     if (data.response == '[DONE]') {
       isEnd = true
       if (condition(cached.message.length, cached)) {
-        // console.log('ts: ', cached.message.substr(cached.idx))
         let msg = cached.message.substr(cached.idx)
-        console.log('139 onMessage test: ', msg)
+        // console.log('139 onMessage test: ', msg)
         msg = await _filterTokens(msg, filters, sender)
         if (msg && msg.trim()) {
           lastLoading = dat()
@@ -187,7 +193,7 @@ export const onMessage = async (data: any, sender: Sender) => {
       cached.idx = index
       cacheMessage(data.conversationId, cached)
 
-      console.log('162 onMessage test: ', msg, cached.idx, index)
+      // console.log('162 onMessage test: ', msg, cached.idx, index)
       msg = await _filterTokens(msg, filters, sender)
       if (msg && msg.trim()) {
         isEnd = false

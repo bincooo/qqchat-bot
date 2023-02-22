@@ -3,7 +3,7 @@ import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import logger from 'src/util/log'
-import { filterTokens, onMessage } from 'src/util/message'
+import { filterTokens, onMessage, loading } from 'src/util/message'
 import { randomBytes } from 'crypto'
 
 const MAX_DEB_COUNT = 10
@@ -114,6 +114,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       this._iswait = true
+      loading(sender, false, true)
       const pref = !need() ? '' : await this.processPreface()
       await this._api.queueSendMessage(await filterTokens(pref + sender.textMessage), {
         onProgress: async (res) => {
