@@ -136,6 +136,7 @@ export const onMessage = async (data: any, sender: Sender) => {
       if (cached.idx < cached.msg.length) {
         // console.log('ts: ', cached.msg.substr(cached.idx))
         let msg = cached.msg.substr(cached.idx)
+        console.log('139 onMessage test: ', msg)
         msg = await _filterTokens(msg, filters, sender)
         if (msg && msg.trim()) {
           lastLoading = dat()
@@ -158,6 +159,7 @@ export const onMessage = async (data: any, sender: Sender) => {
     if (index > 0 && cached.idx < index) {
       // console.log('ts: ', data.response.substr(cached.idx, index))
       let msg = data.response.substr(cached.idx, index)
+      console.log('163 onMessage test: ', msg)
       msg = await _filterTokens(msg, filters, sender)
       if (msg && msg.trim()) {
         isEnd = false
