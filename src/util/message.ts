@@ -92,7 +92,7 @@ function loading(sender: Sender, isEnd: boolean = false) {
   // 三秒内无回应, 发送加载Gif
   if (!isEnd && (lastLoading + 3000) < dat()) {
     sender.reply(ldGif)
-      .then(res = > mids.push(res.message_id))
+      .then(res => mids.push(res.message_id))
   }
 }
 
