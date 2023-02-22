@@ -97,8 +97,12 @@ function loading(sender: Sender, isEnd: boolean = false) {
 }
 
 declare type Cached = {
+  old?: {
+    idx: number,
+    fragment?: string
+  }
   idx: number
-  msg: string
+  message: string
 }
 
 function cacheMessage(conversationId: string, cached?: Cached): Cached {
@@ -115,7 +119,7 @@ function cacheMessage(conversationId: string, cached?: Cached): Cached {
 
   let c: Cached = {
     idx: 0,
-    msg: ''
+    message: ''
   }
   conversationMsgMap.set(conversationId, c)
   return c
@@ -142,12 +146,16 @@ export const onMessage = async (data: any, sender: Sender) => {
     }
   
     const filters = messageHandler.filter(item => item.type === 1)
+    const condition = (index: number, cached: Cached) => {
+      return (cached.idx !== cached.old?.idx && cached.idx < index)
+    }
+
     //console.log(index, data.response)
     if (data.response == '[DONE]') {
       isEnd = true
-      if (cached.idx < cached.msg.length) {
-        // console.log('ts: ', cached.msg.substr(cached.idx))
-        let msg = cached.msg.substr(cached.idx)
+      if (condition(cached.message.length, cached)) {
+        // console.log('ts: ', cached.message.substr(cached.idx))
+        let msg = cached.message.substr(cached.idx)
         console.log('139 onMessage test: ', msg)
         msg = await _filterTokens(msg, filters, sender)
         if (msg && msg.trim()) {
@@ -167,8 +175,8 @@ export const onMessage = async (data: any, sender: Sender) => {
       conversationMsgMap.delete(data.conversationId)
       return
     }
-    cached.msg = data.response
-    if (index > 0 && cached.idx < index) {
+    cached.message = data.response
+    if (index > 0 && condition(index, cached)) {
       // console.log('ts: ', data.response.substr(cached.idx, index))
       let msg = data.response.substr(cached.idx, index - cached.idx)
       console.log('162 onMessage test: ', msg, cached.idx, index)
@@ -187,6 +195,11 @@ export const onMessage = async (data: any, sender: Sender) => {
           sender.reply(msg, true)
             .then(() => loading(sender, isEnd))
         }
+      }
+
+      cached.old = {
+        idx: cached.idx,
+        fragment: msg
       }
       cached.idx = index
       cacheMessage(data.conversationId, cached)
