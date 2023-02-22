@@ -34,7 +34,7 @@ export class Sender {
     return this._eventObject
   }
 
-  async reply (content: Sendable, quote?: boolean): any {
+  async reply(content: Sendable, quote?: boolean): any {
     return await this._eventObject.reply(content, quote)
   }
 

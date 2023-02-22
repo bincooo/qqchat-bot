@@ -104,7 +104,7 @@ function cacheMessage(conversationId: string): any {
 
 export const onMessage = async (data: any, sender: Sender) => {
   let cached: any = cacheMessage(data.conversationId)
-
+  console.log('onMessage: ', data, sender)
   if (data.response) {
     let index
     for (let i in breakBlocks) {
