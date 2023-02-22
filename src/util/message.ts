@@ -88,11 +88,11 @@ async function recallLdGif() {
 }
 
 
-async function loading(sender: Sender, isEnd: boolean = false) {
+function loading(sender: Sender, isEnd: boolean = false) {
   // 三秒内无回应, 发送加载Gif
   if (!isEnd && (lastLoading + 3000) < dat()) {
-    const ret = sender.reply(ldGif)
-    mids.push(ret.message_id)
+    sender.reply(ldGif)
+      .then(res = > mids.push(res.message_id))
   }
 }
 
