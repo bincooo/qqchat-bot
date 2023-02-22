@@ -124,7 +124,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
           if (res.response == '[DONE]') {
             this._count ++
           }
-          onMessage(res, sender)
+          await onMessage(res, sender)
         }
       }, this._uuid)
     } catch (err) {

@@ -21,7 +21,7 @@ export class Sender {
   constructor (e: MessageEvent) {
     this._eventObject = e
     this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
-    if (!!config.botNickname) {
+    if (!e.atme && !!config.botNickname) {
       this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
     }
     if (!(e instanceof GuildMessage)) {

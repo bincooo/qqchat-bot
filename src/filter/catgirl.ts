@@ -47,7 +47,7 @@ export class CatgirlFilter extends BaseMessageFilter {
         const data = initParams(`petite, 1girl, solo, {{cat ear}}, pink hair, very long hair, school uniform, ${split.join(',')},{{{{{extreme close up of face}}}}}, {{{{by famous artist}}}, beautiful, masterpiece, reflective hair, medium butt, good lighting, tanktop, {{looking at you}}, focus on face, dark blue skirt, {{{{by wadim kashin}}}}, {{{{ray tracing}}}}, {{water droplets on face}} , flowing hair, glossy hair, hair is water, {{{super detailed skin}}}, masterpiece, masterwork, detailed, good lighting, glass tint, zoom in on eyes, {{reflective eyes}}, {{hair dripping}}, water eyes,`)
         
         const m1 = (content.match(/【([^】]{1,})】/i)??[])[1]??''
-        const m2 = (content.match(/\(([^\]]{1,})\)/i)??[])[1]??''
+        const m2 = (content.match(/\(([^\)]{1,})\)/i)??[])[1]??''
         console.log('"cat girl" test >> prompt: [' + split.join(',') + '] m1: ' + m1 + ', m2: ' + m2)
 
         retry(
@@ -102,7 +102,7 @@ export class CatgirlFilter extends BaseMessageFilter {
     // fontsize=55:x=40:y=40
     const fontsize = 'fontsize=28:x=15:y=15'
     const { err } = await executor(`${cmd} -i ${jpg} -vf "drawtext=fontfile=static/font.ttf:${fontsize}:fontcolor=black:text='${text}':shadowx=0:shadowy=0:alpha=1" -y ${fontjpg}`)
-    console.log('err', err)
+    // console.log('err', err)
     if (err) throw err
 
     const image = await Jimp.read(drawPath)
