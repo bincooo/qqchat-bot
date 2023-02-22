@@ -96,17 +96,29 @@ function loading(sender: Sender, isEnd: boolean = false) {
   }
 }
 
-function cacheMessage(conversationId: string): any {
+declare type Cached = {
+  idx: number
+  msg: string
+}
+
+function cacheMessage(conversationId: string, cached?: Cached): Cached {
+  if (cached) {
+    if(conversationMsgMap.has(conversationId))
+      conversationMsgMap.delete(conversationId)
+    conversationMsgMap.set(conversationId, cached)
+    return cached
+  }
+
   if (conversationMsgMap.has(conversationId)) {
     return conversationMsgMap.get(conversationId)
   }
 
-  let cached = {
+  let c: Cached = {
     idx: 0,
     msg: ''
   }
-  conversationMsgMap.set(conversationId, cached)
-  return cached
+  conversationMsgMap.set(conversationId, c)
+  return c
 }
 
 export const onMessage = async (data: any, sender: Sender) => {
@@ -159,7 +171,7 @@ export const onMessage = async (data: any, sender: Sender) => {
     if (index > 0 && cached.idx < index) {
       // console.log('ts: ', data.response.substr(cached.idx, index))
       let msg = data.response.substr(cached.idx, index - cached.idx)
-      console.log('163 onMessage test: ', msg, index - cached.idx)
+      console.log('162 onMessage test: ', msg, cached.idx, index - cached.idx)
       msg = await _filterTokens(msg, filters, sender)
       if (msg && msg.trim()) {
         isEnd = false
@@ -177,6 +189,7 @@ export const onMessage = async (data: any, sender: Sender) => {
         }
       }
       cached.idx = index
+      cacheMessage(data.conversationId, cached)
     }
   }
 }
