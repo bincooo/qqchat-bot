@@ -41,6 +41,10 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
 
 
 
+function dat(): number {
+  return new Date()
+    .getTime()
+}
 
 
 // --------------------------
@@ -66,6 +70,7 @@ const breakBlocks = [
 
 const mids: Array<string> = []
 let isEnd: boolean = true
+let lastLoading: number = dat()
 
 setInterval(() => {
   if (isEnd) {
@@ -82,10 +87,14 @@ async function recallLdGif() {
   }
 }
 
+
 async function loading(sender: Sender, isEnd: boolean = false) {
-  if (!isEnd) {
-    const ret = await Sender.reply(ldGif)
+  // 三秒内无回应, 发送加载Gif
+  const millis = dat()
+  if (!isEnd && (lastLoading + 3000) < millis) {
+    const ret = await sender.reply(ldGif)
     mids.push(ret.message_id)
+    lastLoading = millis
   }
 }
 
@@ -104,7 +113,7 @@ function cacheMessage(conversationId: string): any {
 
 export const onMessage = async (data: any, sender: Sender) => {
   let cached: any = cacheMessage(data.conversationId)
-  console.log('onMessage: ', data, sender)
+
   if (data.response) {
     let index
     for (let i in breakBlocks) {
@@ -120,7 +129,6 @@ export const onMessage = async (data: any, sender: Sender) => {
         if (index == -1) break
         if (index > 0) break
       }
-      
     }
   
     const filters = messageHandler.filter(item => item.type === 1)
@@ -138,9 +146,8 @@ export const onMessage = async (data: any, sender: Sender) => {
               .then(recallLdGif)
           }
           else {
-            const promise = sender.reply(msg, true)
-            console.log('142 ??? is promise ???', promise)
-            promise.then(recallLdGif)
+            sender.reply(msg, true)
+              .then(recallLdGif)
           }
         }
       }
@@ -158,15 +165,13 @@ export const onMessage = async (data: any, sender: Sender) => {
         if (config.tts) {
           recallLdGif()
           speak({ text: msg }).then(path => {
-            const promise = sender.reply(segment.record(path), true)
-            console.log('163 ??? is promise ???', promise)
-            promise.then(() => loading(sender, isEnd))
+            sender.reply(segment.record(path), true)
+              .then(() => loading(sender, isEnd))
           })
         } else {
           recallLdGif()
-          const promise = sender.reply(msg, true)
-          console.log('168 ??? is promise ???', promise)
-          promise.then(() => loading(sender, isEnd))
+          sender.reply(msg, true)
+            .then(() => loading(sender, isEnd))
         }
       }
       cached.idx = index
