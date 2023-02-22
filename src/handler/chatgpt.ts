@@ -156,6 +156,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
+    loading(sender, true, true)
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
         .getHours()

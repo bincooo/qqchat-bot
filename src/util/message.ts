@@ -91,8 +91,11 @@ async function recallLdGif() {
 export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean) {
   if (init) {
     isEnd = _isEnd
-    sender.reply(ldGif)
-      .then(res => mids.push(res.message_id))
+    if (!_isEnd) {
+      sender.reply(ldGif)
+        .then(res => mids.push(res.message_id))
+      lastLoading = dat()
+    }
     return
   }
 
