@@ -90,11 +90,9 @@ async function recallLdGif() {
 
 async function loading(sender: Sender, isEnd: boolean = false) {
   // 三秒内无回应, 发送加载Gif
-  const millis = dat()
-  if (!isEnd && (lastLoading + 3000) < millis) {
-    const ret = await sender.reply(ldGif)
+  if (!isEnd && (lastLoading + 3000) < dat()) {
+    const ret = sender.reply(ldGif)
     mids.push(ret.message_id)
-    lastLoading = millis
   }
 }
 
@@ -140,6 +138,7 @@ export const onMessage = async (data: any, sender: Sender) => {
         let msg = cached.msg.substr(cached.idx)
         msg = await _filterTokens(msg, filters, sender)
         if (msg && msg.trim()) {
+          lastLoading = dat()
           if (config.tts) {
             speak({ text: msg })
               .then(path => sender.reply(segment.record(path), true))
@@ -162,6 +161,7 @@ export const onMessage = async (data: any, sender: Sender) => {
       msg = await _filterTokens(msg, filters, sender)
       if (msg && msg.trim()) {
         isEnd = false
+        lastLoading = dat()
         if (config.tts) {
           recallLdGif()
           speak({ text: msg }).then(path => {
