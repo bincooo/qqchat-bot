@@ -138,8 +138,9 @@ export const onMessage = async (data: any, sender: Sender) => {
               .then(recallLdGif)
           }
           else {
-            sender.reply(msg, true)
-              .then(recallLdGif)
+            const promise = sender.reply(msg, true)
+            console.log('142 ??? is promise ???', promise)
+            promise.then(recallLdGif)
           }
         }
       }
@@ -157,13 +158,15 @@ export const onMessage = async (data: any, sender: Sender) => {
         if (config.tts) {
           recallLdGif()
           speak({ text: msg }).then(path => {
-            sender.reply(segment.record(path), true)
-              .then(() => loading(sender, isEnd))
+            const promise = sender.reply(segment.record(path), true)
+            console.log('163 ??? is promise ???', promise)
+            promise.then(() => loading(sender, isEnd))
           })
         } else {
           recallLdGif()
-          sender.reply(msg, true)
-            .then(() => loading(sender, isEnd))
+          const promise = sender.reply(msg, true)
+          console.log('168 ??? is promise ???', promise)
+          promise.then(() => loading(sender, isEnd))
         }
       }
       cached.idx = index
