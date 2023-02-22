@@ -80,7 +80,11 @@ export function draw(opts: {
           //   })
 
           retry(() => tryBetter(path), 3, 800)
-            .then(b64 => resolve('base64://' + b64))
+            .then(b64 => {
+              if (b64) {
+                resolve('base64://' + b64)
+              } else resolve(path)
+            })
             .catch((err) => {
               console.log(err)
               resolve(path)
@@ -227,6 +231,10 @@ async function initPicwishCn() {
       console.log(`${event.request.url} // intercepted, going to modify`)
       let Ba:string
       readline(event.response.body, /\.value = Math\.floor\(/i, (index, line, container) => {
+        // source: " } = await Ba(await i(q), (F) => (p.value = Math.floor(F * 0.95)))"
+        Ba = (line.match(/= await ([^(]{1,})\(await/i)??[])[1]
+        if (Ba) return true
+
         for(let i = 1; i <= 5; i++) {
           Ba = ((container[index - i]).match(/= await ([^(]{1,})\(/i)??[])[1]
           // console.log(container[index - i], Ba)
