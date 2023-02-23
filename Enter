@@ -1,0 +1,12 @@
+#!/bin/bash
+declare ticket=$1
+declare path='.'
+if [ "$(dirname $0)" == '/usr/local/bin' ];then
+  set $path='/bot'
+fi
+
+if [ ! -z "$ticket" ];then
+  `echo -n $ticket > $path/ticket.txt`
+else
+  echo 'Error!'
+fi
