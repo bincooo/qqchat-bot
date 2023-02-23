@@ -46,7 +46,7 @@
     "typescript": "*"
   },
   "dependencies": {
-    "cgpt": "3.5.4-test-20",
+    "cgpt": "3.5.4-test-21",
     "chalk": "^5.2.0",
     "esbuild": "^0.16.10",
     "ffmpeg-static": "^2.0.0",
