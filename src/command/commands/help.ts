@@ -1,8 +1,9 @@
 import { segment } from 'oicq'
 import commands from '.'
-import { Sender } from '../../model/sender'
+import { Sender } from 'src/model/sender'
 import { BaseCommand } from '../command'
 import { getClient } from 'src/core/oicq'
+import { config } from 'src/config'
 
 export function buildHelpMessage (isAdmin: boolean, title?: string) {
   const command = commands.filter(item => {
@@ -12,7 +13,7 @@ export function buildHelpMessage (isAdmin: boolean, title?: string) {
 
   const content = command.map((item, key) => `${(key + 1)}: ${item.helpDoc}`).join('\n————————————————\n')
   return [
-    `${title}\n@小爱Ai + [文本 or 命令]\n! ! !  即可与Ai对话哦 ~`,
+    `${title??''}\n@${config.botNickname} + [文本 or 命令]\n! ! !  即可与Ai对话哦 ~`,
     '———————',
     '命令帮助',
     '———————',
