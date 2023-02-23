@@ -100,9 +100,13 @@ export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean
   }
 
   // 三秒内无回应, 发送加载Gif
-  if (!_isEnd && (lastLoading + 3000) < dat()) {
-    sender.reply(ldGif)
-      .then(res => mids.push(res.message_id))
+  if (!_isEnd) {
+    setTimeout(() => {
+      if (!isEnd) {
+        sender.reply(ldGif)
+          .then(res => mids.push(res.message_id))
+      }
+    }, 3000)
   }
 }
 
