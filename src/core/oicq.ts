@@ -132,6 +132,7 @@ function loginHelper(client) {
         const ticket = data.toString().trim()
         if (ticket) {
           console.log("submitSlider: " + ticket)
+          fs.writeFile('./ticket.txt', '', (err) => {})
           client.submitSlider(ticket)
         }
       }
@@ -143,6 +144,7 @@ function loginHelper(client) {
         const ticket = data.toString().trim()
         if (ticket) {
           console.log("submitSmsCode: " + ticket)
+          fs.writeFile('./ticket.txt', '', (err) => {})
           client.submitSmsCode(ticket)
         }
       }

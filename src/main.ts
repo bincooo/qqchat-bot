@@ -38,13 +38,13 @@ async function main () {
       })
       .then(async () => await loadHandlerConfig())
       .then(async () => {
-        config.client = await initOicq(MessageHandlers)
+        await initOicq(MessageHandlers)
       })
       .catch(err => { throw err })
   } else {
     Object.assign(config, await loadConfig())
     await loadHandlerConfig()
-    config.client = await initOicq(MessageHandlers)
+    await initOicq(MessageHandlers)
   }
 }
 

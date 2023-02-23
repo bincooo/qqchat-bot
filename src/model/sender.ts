@@ -3,6 +3,8 @@ import { MessageEvent } from 'src/types'
 import { GuildMessage } from 'oicq-guild/lib/message'
 import { Sendable } from 'oicq'
 
+import { getClient } from 'src/core/oicq'
+
 /**
  * 消息对象的封装
  */
@@ -39,6 +41,6 @@ export class Sender {
   }
 
   async recallMsg(id: string): any {
-    return await config.client.deleteMsg(id)
+    return await getClient()?.deleteMsg(id)
   }
 }

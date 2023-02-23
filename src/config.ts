@@ -3,10 +3,10 @@ export const config = {
 
   adminQQ: 0,
   botQQ: 0,
-  botNickname: '小爱Ai',
+  botNickname: '猫小爱',
   botPassword: '',
   oicq: {
-    platform: 1
+    platform: 5
   },
 
   // handler config...

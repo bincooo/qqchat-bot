@@ -5,7 +5,7 @@ import { Sender } from 'src/model/sender'
 import speak from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
-
+import { getClient } from 'src/core/oicq'
 
 
 /**
@@ -83,7 +83,7 @@ setInterval(() => {
 async function recallLdGif() {
   const mid = mids.shift()
   if (mid) {
-    await config.client.deleteMsg(mid)
+    await getClient()?.deleteMsg(mid)
   }
 }
 
