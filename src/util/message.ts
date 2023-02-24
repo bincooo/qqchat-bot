@@ -70,7 +70,7 @@ async function recallLdGif() {
   }
 }
 
-
+let loadLock = false
 export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean) {
   if (init) {
     isEnd = _isEnd
@@ -85,22 +85,34 @@ export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean
   // 三秒内无回应, 发送加载Gif
   if (!_isEnd) {
     let timer: NodeJS.Timer | null = null
-    timer = setInterval(() => {
-      const clear = () => {
-        if (timer) {
-          clearTimeout(timer)
-          timer = null
-        }
+    const clear = () => {
+      if (timer) {
+        clearTimeout(timer)
+        timer = null
       }
+    }
+
+    timer = setInterval(() => {
       if (isEnd) {
         clear()
+        recallLdGif()
         return
       }
 
       if (previousTimestamp + 3000 < dat()) {
         clear()
-        sender.reply(ldGif)
-          .then(res => mids.push(res.message_id))
+        if (!loadLock) {
+          recallLdGif()
+          loadLock = true
+          sender.reply(ldGif)
+            .then(res => {
+              mids.push(res.message_id)
+              loadLock =false
+            })
+            .catch(err => {
+              loadLock =false
+            })
+        } 
       }
     }, 300)
   }

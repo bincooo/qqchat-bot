@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto'
 import { WebSocket } from 'ws'
-import { exec } from 'child_process'
+import util from 'util'
+import execcmd from 'child_process'
 import path from 'path'
 import fs from 'fs'
 import ffmpeg from 'ffmpeg-static'
@@ -17,7 +18,9 @@ function mp3ToAmr(filepath, outputDir = './amr') {
       return
     }
     const cmdStr = `${ffmpegPath} -y -i ${filepath} -ac 1 -ar 8000 ${outputDir}/${filename}.amr`
-    exec(cmdStr, (err, stdout, stderr) => {
+    const executor = util.promisify(execcmd.exec)
+    
+    executor(cmdStr, (err, stdout, stderr) => {
       if (err) {
         reject('error:' + stderr)
       } else {
