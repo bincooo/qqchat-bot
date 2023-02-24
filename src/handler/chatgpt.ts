@@ -3,7 +3,7 @@ import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import logger from 'src/util/log'
-import { filterTokens, onMessage, loading } from 'src/util/message'
+import { filterTokens, onMessage, loading, recallLdGif } from 'src/util/message'
 import { randomBytes } from 'crypto'
 
 const MAX_DEB_COUNT = 10
@@ -156,7 +156,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
-    loading(sender, true, true)
+    recallLdGif()
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
         .getHours()
