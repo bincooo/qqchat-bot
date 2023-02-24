@@ -6,6 +6,7 @@ import speak from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { getClient } from 'src/core/oicq'
+import * as parser from './parser'
 
 
 /**
@@ -49,28 +50,10 @@ function dat(): number {
 
 // --------------------------
 const ldGif = segment.image('./loading.gif')
-const conversationMsgMap = new Map()
-const breakBlocks = [
-  // '```'
-  function(text, index) {
-    const block = '```'
-    const currIndex = text.lastIndexOf(block)
-    if (currIndex < 0 || currIndex < index) {
-      return 0
-    }
-    if (currIndex + block.length <= index) {
-      return -1
-    }
-    return currIndex + block.length
-  },
-  '。\n',
-  '。', 
-  '.\n',
-]
-
 const mids: Array<string> = []
 let isEnd: boolean = true
-let lastLoading: number = dat()
+let previousTimestamp: number = dat()
+let globalParser: null | parser.MessageParser
 
 setInterval(() => {
   if (isEnd) {
@@ -94,127 +77,100 @@ export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean
     if (!_isEnd) {
       sender.reply(ldGif)
         .then(res => mids.push(res.message_id))
-      lastLoading = dat()
+      previousTimestamp = dat()
     }
     return
   }
 
   // 三秒内无回应, 发送加载Gif
   if (!_isEnd) {
-    setTimeout(() => {
-      if (!isEnd && lastLoading + 2800 < dat()) {
+    let timer: NodeJS.Timer | null = null
+    timer = setInterval(() => {
+      const clear = () => {
+        if (timer) {
+          clearTimeout(timer)
+          timer = null
+        }
+      }
+      if (isEnd) {
+        clear()
+        return
+      }
+
+      if (previousTimestamp + 3000 < dat()) {
+        clear()
         sender.reply(ldGif)
           .then(res => mids.push(res.message_id))
       }
-    }, 3000)
+    }, 300)
   }
 }
 
-declare type Cached = {
-  old?: {
-    idx: number,
-    fragment?: string
-  }
-  idx: number
-  message: string
-}
 
-function cacheMessage(conversationId: string, cached?: Cached): Cached {
-  if (cached) {
-    if(conversationMsgMap.has(conversationId))
-      conversationMsgMap.delete(conversationId)
-    conversationMsgMap.set(conversationId, cached)
-    return cached
-  }
+function initParser() {
+  if (globalParser) return
 
-  if (conversationMsgMap.has(conversationId)) {
-    return conversationMsgMap.get(conversationId)
+  const codeCondit = (text, index) => {
+    const block = '```'
+    const currIndex = text.lastIndexOf(block)
+    if (currIndex < 0 || currIndex < index) {
+      return 0 // continue
+    }
+    if (currIndex + block.length <= index) {
+      return -1 // break
+    }
+    return currIndex + block.length
   }
 
-  let c: Cached = {
-    idx: 0,
-    message: ''
-  }
-  conversationMsgMap.set(conversationId, c)
-  return c
+  const condition: Array<parser.Condition> = [
+    codeCondit,
+    "。\n",
+    "。", 
+    ".\n"
+  ]
+
+  globalParser = new parser.MessageParser({ condition })
 }
 
 export const onMessage = async (data: any, sender: Sender) => {
-  let cached: any = cacheMessage(data.conversationId)
+  initParser()
 
   if (data.response) {
-    let index
-    for (let i in breakBlocks) {
-      const block = breakBlocks[i]
-      if (typeof(block) == 'string') {
-        index = data.response.lastIndexOf(block)
-          if (index > 0) {
-            index += block.length
-            break
-          }
-      } else {
-        index = block(data.response, cached.idx)
-        if (index == -1) break
-        if (index > 0) break
-      }
-    }
-  
     const filters = messageHandler.filter(item => item.type === 1)
-    const condition = (index: number, cached: Cached) => {
-      return (cached.idx !== cached.old?.idx && cached.idx < index)
-    }
-
     //console.log(index, data.response)
-    if (data.response == '[DONE]') {
-      isEnd = true
-      if (condition(cached.message.length, cached)) {
-        let msg = cached.message.substr(cached.idx)
-        // console.log('139 onMessage test: ', msg)
-        msg = await _filterTokens(msg, filters, sender)
-        if (msg && msg.trim()) {
-          lastLoading = dat()
+    let message: string | null = globalParser.resolve(data)
+    const isDone = () => (data.response == '[DONE]')
+
+
+    if (!!message) {
+      message = await _filterTokens(message, filters, sender)
+      if (!!message) {
+        isEnd = false
+        previousTimestamp = dat()
+
+        if (isDone()) {
+          isEnd = true
           if (config.tts) {
-            speak({ text: msg })
+            speak({ text: message })
               .then(path => sender.reply(segment.record(path), true))
               .then(recallLdGif)
           }
           else {
-            sender.reply(msg, true)
+            sender.reply(message, true)
               .then(recallLdGif)
           }
-        }
-      }
-      recallLdGif()
-      conversationMsgMap.delete(data.conversationId)
-      return
-    }
-    cached.message = data.response
-    if (index > 0 && condition(index, cached)) {
-      // console.log('ts: ', data.response.substr(cached.idx, index))
-      let msg = data.response.substr(cached.idx, index - cached.idx)
-
-      cached.old = {
-        idx: cached.idx,
-        fragment: msg
-      }
-      cached.idx = index
-      cacheMessage(data.conversationId, cached)
-
-      // console.log('162 onMessage test: ', msg, cached.idx, index)
-      msg = await _filterTokens(msg, filters, sender)
-      if (msg && msg.trim()) {
-        isEnd = false
-        lastLoading = dat()
-        if (config.tts) {
-          recallLdGif()
-          speak({ text: msg }).then(path => {
-            sender.reply(segment.record(path), true)
-              .then(() => loading(sender, isEnd))
-          })
         } else {
-          recallLdGif()
-          sender.reply(msg, true)
-            .then(() => loading(sender, isEnd))
+          if (config.tts) {
+            recallLdGif()
+            speak({ text: message }).then(path => {
+              sender.reply(segment.record(path), true)
+                .then(() => loading(sender, isEnd))
+            })
+          } else {
+            recallLdGif()
+            sender.reply(message, true)
+              .then(() => loading(sender, isEnd))
+          }
         }
       }
     }
