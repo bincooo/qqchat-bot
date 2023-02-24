@@ -64,16 +64,18 @@ export class MessageParser {
       }
     }
 
+    const IsDONE = (data.response === '[DONE]')
     const assert = (c: Cached) => {
-      return (c.index !== c.old?.index && c.index < index)
+      const _index = IsDONE ? c.message.length : index
+      return (c.index !== c.old?.index && c.index < _index)
     }
 
-    if (data.response === '[DONE]') {
+    cached.message = data.response
+    if (IsDONE) {
       this._cacheMapper.delete(data.conversationId)
       return assert(cached) ? cached.message.substr(cached.index) : null
     }
 
-    cached.message = data.response
     if (index > 0 && assert(cached)) {
       const message = data.response.substr(cached.index, index - cached.index)
       const old = {
