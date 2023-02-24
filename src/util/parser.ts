@@ -30,13 +30,11 @@ export class MessageParser {
   cacheMessage(conversationId: string, cached?: Cached): Cached {
     if (cached) {
       this._cacheMapper.set(conversationId, cached)
-      console.log(1, cached)
       return cached
     }
 
     if (this._cacheMapper.has(conversationId)) {
       const ca = this._cacheMapper.get(conversationId)
-      console.log(2, ca)
       return ca
     }
 
@@ -44,13 +42,12 @@ export class MessageParser {
       index: 0,
       message: ''
     }
-    this._cacheMapper.set(conversationId, cached)
+    this._cacheMapper.set(conversationId, _new)
     return _new
   }
 
   resolve(data: ChatResponse): string | null {
     const cached = this.cacheMessage(data.conversationId)
-    console.log('cached', cached)
     let index,
       condition = [... this._condition]
     for (let i in condition) {
