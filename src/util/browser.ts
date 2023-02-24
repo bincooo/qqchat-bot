@@ -98,11 +98,11 @@ export async function md2jpg(htmlText: string): Promise<string> {
     dontClose = false
   }
 
-  fs.writeFile(`./amr/${uid}.html`, htmlText, (err) => {
+  const html = path.join(path.resolve(), `amr/${genUid()}.html`)
+  fs.writeFile(html, htmlText, (err) => {
     console.log(err)
   })
 
-  const html = path.join(path.resolve(), `amr/${genUid()}.html`)
   await page.goto('file://' + html, {
     waitUntil: 'networkidle0'
   })
