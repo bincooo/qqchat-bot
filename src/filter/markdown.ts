@@ -67,7 +67,7 @@ export class MdFilter extends BaseMessageFilter {
         this._messageContiner.push(content)
         console.log('assert_three', this._messageContiner)
         this.__md2jpg(sender, [ str, this._messageContiner.join('\n'), '\n', str ].join(''))
-        return [ true, result ]
+        return [ true, '' ]
       }
     }
     return [ false, content ]
@@ -86,7 +86,7 @@ export class MdFilter extends BaseMessageFilter {
 
 
   async __md2jpg(sender: Sender, content: string) {
-    const b64 = await md2jpg(genTemplate(result))
+    const b64 = await md2jpg(genTemplate(content))
     sender.reply(segment.image('base64://' + b64), true)
   }
 }
