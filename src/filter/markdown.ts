@@ -11,7 +11,7 @@ export class MdFilter extends BaseMessageFilter {
 
   handle = async (content: string, sender?: Sender, done?: boolean) => {
     const str = '```'
-    if (!_isMd && content.endsWith(str)) {
+    if (!this._isMd && content.endsWith(str)) {
       this._isMd = true
       return [ false, content.substr(0, content.length - str.length) ]
     }
