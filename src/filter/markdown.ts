@@ -21,10 +21,12 @@ export class MdFilter extends BaseMessageFilter {
     while(index < methods.length) {
       const [ match, result ] = this[methods[index]].call(this, content, done)
       if (match) {
-        const b64 = await md2jpg(result)
-        sender.reply(segment.image('base64://' + b64), true)
-        // return [ false, result ]
-        return [ false, '' ]
+        if (!this._matchMarkdown) {
+          const b64 = await md2jpg(result)
+          sender.reply(segment.image('base64://' + b64), true)
+          return [ false, '' ]
+        }
+        return [ false, result ]
       }
       index++
     }
