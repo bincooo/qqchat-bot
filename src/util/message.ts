@@ -17,7 +17,7 @@ export async function filterTokens (content: string) {
   return (await _filterTokens(content, filters)).trim()
 }
 
-async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender) {
+async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender, done?: boolean) {
   if (filters.length === 0) return content.trim()
   let resultMessage = ''
 
@@ -25,7 +25,7 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
     for (let i = 0; i < filters.length; i++) {
       let isStop = false
       if (filters[i] instanceof BaseMessageFilter) {
-        const [ stop, msg ] = await (filters[i] as BaseMessageFilter).handle(content, sender)
+        const [ stop, msg ] = await (filters[i] as BaseMessageFilter).handle(content, sender, done)
         isStop = !stop
         resultMessage = msg
       }
@@ -155,7 +155,7 @@ export const onMessage = async (data: any, sender: Sender) => {
 
 
     if (!!message) {
-      message = await _filterTokens(message, filters, sender)
+      message = await _filterTokens(message, filters, sender, isDone())
       if (!!message) {
         isEnd = false
         previousTimestamp = dat()
