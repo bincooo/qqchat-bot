@@ -45,7 +45,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
   const browser: Browser = await puppeteer.launch({
     headless,
     // devtools: true,
-    defaultViewport: { width: 510, height: 920 },
+    defaultViewport: { width: 510, height: 350 },
     args: puppeteerArgs,
     ignoreDefaultArgs: [
       '--disable-extensions',
