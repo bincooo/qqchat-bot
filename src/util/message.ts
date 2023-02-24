@@ -57,17 +57,18 @@ let globalParser: null | parser.MessageParser
 
 setInterval(() => {
   if (isEnd) {
-    while (mids.length > 0) {
-      recallLdGif()
-    }
+    recallLdGif()
   }
 }, 1000)
 
 async function recallLdGif() {
-  const mid = mids.shift()
-  if (mid) {
-    await getClient()?.deleteMsg(mid)
-  }
+  let mid
+  do {
+    mid = mids.shift()
+    if (mid) {
+      await getClient()?.deleteMsg(mid)
+    }
+  } while(!!mid)
 }
 
 let loadLock = false
@@ -103,6 +104,7 @@ export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean
         clear()
         if (!loadLock) {
           recallLdGif()
+          if (isEnd) return
           loadLock = true
           sender.reply(ldGif)
             .then(res => {

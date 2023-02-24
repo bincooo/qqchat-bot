@@ -1,7 +1,17 @@
 import type { Browser, Page } from 'puppeteer'
 import puppeteer from 'puppeteer-extra'
+import { randomBytes } from 'crypto'
+import path from 'path'
 import fs from 'fs'
 import os from 'os'
+
+
+function genUid(): string {
+  return randomBytes(16)
+    .toString('hex')
+    .toLowerCase()
+    .substr(0, 10)
+}
 
 
 let DEFAULT_BROWSER: null | Browser = null
@@ -27,7 +37,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
     '--disable-accelerated-2d-canvas',
     '--disable-web-security',
     '--disable-gpu',
-    '--window-size=780,920'
+    '--window-size=510,920'
     // '--js-flags="--max-old-space-size=1024"'
   ]
 
@@ -35,6 +45,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
   const browser: Browser = await puppeteer.launch({
     headless,
     // devtools: true,
+    defaultViewport: { width: 510, height: 920 },
     args: puppeteerArgs,
     ignoreDefaultArgs: [
       '--disable-extensions',
@@ -47,7 +58,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
 
   const [ page ] = await browser.pages()
   DEFAULT_BROWSER = browser
-  return [browser, page]
+  return [ browser, page ]
 }
 
 
@@ -77,4 +88,20 @@ export const defaultChromeExecutablePath = (): string => {
         : '/usr/bin/google-chrome-stable'
     }
   }
+}
+
+export async function md2jpg(markdownText: string): Promise<string> {
+  let [ browser, page ] = getBrowser()
+  if (!page) {
+    page = await browser.newPage()
+  }
+
+  const html = path.join(path.resolve(), `amr/${genUid()}.html`)
+  await page.goto('file://' + html, {
+    waitUntil: 'networkidle0'
+  })
+  const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
+  await page.screenshot({ path: jpg, fullPage: true })
+  const buf = fs.readFileSync(jpg)
+  return buf.toString('base64')
 }
