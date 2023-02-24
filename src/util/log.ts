@@ -3,7 +3,9 @@ import winston, { createLogger, format, transports } from 'winston'
 const { combine, timestamp, label, printf } = format
 
 const logFormat = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] ${level}: ${message}`
+  const { path, filename } = (arguments[1]).main
+  const file = filename.replace(path + '/', '')
+  return `${timestamp} [${file}] ${level}: ${message}`
 })
 
 const logger = createLogger({

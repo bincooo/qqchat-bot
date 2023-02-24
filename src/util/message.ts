@@ -66,10 +66,12 @@ export async function recallLdGif() {
   let mid
   do {
     mid = mids.shift()
-    const result = await getClient()?.deleteMsg(mid)
-    if (!result) {
-      await delay(800)
-      await getClient()?.deleteMsg(mid)
+    if(mid) {
+      const result = await getClient()?.deleteMsg(mid)
+      if (!result) {
+        await delay(800)
+        await getClient()?.deleteMsg(mid)
+      }
     }
   } while(!!mid)
 }
