@@ -47,7 +47,7 @@ export class MessageParser {
 
   resolve(data: ChatResponse): string | null {
     const cached = this.cacheMessage(data.conversationId)
-
+    console.log('cached', cached)
     let index,
       condition = [... this._condition]
     for (let i in condition) {
