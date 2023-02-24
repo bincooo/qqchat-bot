@@ -57,7 +57,7 @@ let previousTimestamp: number = dat()
 let globalParser: null | parser.MessageParser
 
 setInterval(() => {
-  console.log('60 setInterval', isEnd)
+  // console.log('60 setInterval', isEnd)
   if (isEnd) {
     recallLdGif()
   }
@@ -81,12 +81,7 @@ let loadLock = false
 export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean) {
   if (init) {
     isEnd = _isEnd
-    if (!_isEnd) {
-      sender.reply(ldGif)
-        .then(res => mids.push(res.message_id))
-      previousTimestamp = dat()
-    }
-    return
+    previousTimestamp = dat()
   }
 
   // 三秒内无回应, 发送加载Gif

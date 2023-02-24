@@ -86,6 +86,11 @@ export class MdFilter extends BaseMessageFilter {
 
 
   async __md2jpg(sender: Sender, content: string) {
+    const b = '```markdown'
+    if (content.startsWith(b)) {
+      content = content.substr(b.length)
+      content = content.substr(0, content.length - 3)
+    }
     const b64 = await md2jpg(genTemplate(content))
     sender.reply(segment.image('base64://' + b64), true)
   }
