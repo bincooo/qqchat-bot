@@ -100,7 +100,7 @@ export async function md2jpg(htmlText: string): Promise<string> {
 
   const html = path.join(path.resolve(), `amr/${genUid()}.html`)
   fs.writeFile(html, htmlText, (err) => {
-    console.log(err)
+    if(err) console.log(err)
   })
 
   await page.goto('file://' + html, {
