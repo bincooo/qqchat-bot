@@ -41,7 +41,7 @@ export class MessageParser {
       idx: 0,
       message: ''
     }
-    this._cacheMapper.set(conversationId, c)
+    this._cacheMapper.set(conversationId, cached)
     return _new
   }
 
