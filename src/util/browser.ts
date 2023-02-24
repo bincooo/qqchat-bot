@@ -1,3 +1,4 @@
+import delay from 'delay'
 import type { Browser, Page } from 'puppeteer'
 import puppeteer from 'puppeteer-extra'
 import { randomBytes } from 'crypto'
@@ -106,6 +107,9 @@ export async function md2jpg(htmlText: string): Promise<string> {
   await page.goto('file://' + html, {
     waitUntil: 'networkidle0'
   })
+
+  await page.reload()
+  await delay(800)
   const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
   await page.screenshot({ path: jpg, fullPage: true })
   if (!dontClose) {

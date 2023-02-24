@@ -7,7 +7,7 @@ const str = '```'
 
 export class MdFilter extends BaseMessageFilter {
   protected _matchMarkdown: boolean = false
-
+  protected _messageContiner: Array<string> = []
   constructor() {
     super()
     this.type = 1
@@ -17,7 +17,7 @@ export class MdFilter extends BaseMessageFilter {
     if (!!content) [ true, content ]
 
     let index = 0
-    const methods = [ 'assert_one', 'assert_two', 'assert_three' ]
+    const methods = [ 'assert_one', 'assert_two', 'assert_three', 'assert_four' ]
     while(index < methods.length) {
       const [ match, result ] = this[methods[index]].call(this, content, done)
       if (match) {
@@ -40,6 +40,7 @@ export class MdFilter extends BaseMessageFilter {
     const match = (!this._matchMarkdown && content.endsWith(str))
     if (match) {
       this._matchMarkdown = true
+      this._messageContiner = []
       const result = content.substr(0, content.length - str.length)
       return [ true, result ]
     }
@@ -53,6 +54,7 @@ export class MdFilter extends BaseMessageFilter {
     const match = (this._matchMarkdown && content.endsWith(str))
     if (match) {
       this._matchMarkdown = false
+      this._messageContiner.push(content)
       const result = [ str, content ].join('')
       return [ true, result ]
     }
@@ -66,9 +68,21 @@ export class MdFilter extends BaseMessageFilter {
     if (done) {
       if (this._matchMarkdown) {
         this._matchMarkdown = false
+        this._messageContiner.push(content)
+        console.log('assert_three', this._messageContiner)
         const result = [ str, content, '\n', str ].join('')
         return [ true, result ]
       }
+    }
+    return [ false, content ]
+  }
+
+  /**
+   * message Container
+   */
+  assert_four(content: string, done: boolean) {
+    if (this._matchMarkdown) {
+      this._messageContiner.push(content)
     }
     return [ false, content ]
   }

@@ -181,14 +181,18 @@ export const onMessage = async (data: any, sender: Sender) => {
               .then(recallLdGif)
           }
         } else {
+          const ld = () => {
+            if (!isEnd)
+              loading(sender, isEnd)
+          }
           if (config.tts) {
             speak({ text: message }).then(path => {
               sender.reply(segment.record(path), true)
-                .then(() => loading(sender, isEnd))
+                .then(ld)
             })
           } else {
             sender.reply(message, true)
-              .then(() => loading(sender, isEnd))
+              .then(ld)
           }
         }
       }
