@@ -1,14 +1,14 @@
 import { ChatResponse } from 'cgpt'
 
 
-declare type Condition = (string | (tex: string, idx: number) => number)
-declare type Cached = {
+export type Condition = (string | (tex: string, idx: number) => number)
+export type Cached = {
   old?: { index: number, fragment?: string }
   index: number
   message: string
 }
 
-class MessageParser {
+export class MessageParser {
   protected _condition: Array<Condition>
   protected _cacheMapper = new Map<string, Cached>()
 
@@ -88,10 +88,4 @@ class MessageParser {
 
     return null
   }
-}
-
-export default MessageParser
-export {
-  Condition,
-  Cached
 }
