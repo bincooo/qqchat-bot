@@ -19,6 +19,7 @@ export async function filterTokens (content: string) {
 }
 
 async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender, done?: boolean) {
+  console.log('debug _filterTokens')
   if (filters.length === 0) return content.trim()
   let resultMessage = ''
 
