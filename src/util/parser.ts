@@ -66,7 +66,7 @@ export class MessageParser {
 
     const IsDONE = (data.response === '[DONE]')
     const assert = (c: Cached) => {
-      const _index = IsDONE ? c.message.length : index
+      const _index = IsDONE ? c.message?.length : index
       return (c.index !== c.old?.index && c.index < _index)
     }
 
