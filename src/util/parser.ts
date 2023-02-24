@@ -30,14 +30,17 @@ export class MessageParser {
   cacheMessage(conversationId: string, cached?: Cached): Cached {
     if (cached) {
       this._cacheMapper.set(conversationId, cached)
+      console.log(1, cached)
       return cached
     }
 
     if (this._cacheMapper.has(conversationId)) {
-      return this._cacheMapper.get(conversationId)
+      const ca = this._cacheMapper.get(conversationId)
+      console.log(2, ca)
+      return ca
     }
 
-    let _new: Cached = {
+    const _new: Cached = {
       index: 0,
       message: ''
     }
