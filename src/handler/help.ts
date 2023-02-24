@@ -10,7 +10,7 @@ export const helpHandler: MessageHandler = function (sender) {
         .then(result => {
           setTimeout(
             () => getClient()?.deleteMsg(result.message_id),
-            3000
+            5000
           )
         })
     } catch(err) {
