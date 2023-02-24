@@ -57,6 +57,7 @@ let previousTimestamp: number = dat()
 let globalParser: null | parser.MessageParser
 
 setInterval(() => {
+  console.log('60 setInterval', isEnd)
   if (isEnd) {
     recallLdGif()
   }
@@ -164,6 +165,7 @@ export const onMessage = async (data: any, sender: Sender) => {
     if (!!message) {
       message = await _filterTokens(message, filters, sender, isDone())
       if (!!message) {
+        console.log('message ======', message)
         isEnd = false
         previousTimestamp = dat()
 
