@@ -38,7 +38,7 @@ export class MessageParser {
     }
 
     let _new: Cached = {
-      idx: 0,
+      index: 0,
       message: ''
     }
     this._cacheMapper.set(conversationId, cached)
@@ -69,7 +69,7 @@ export class MessageParser {
     }
 
     if (data.response === '[DONE]') {
-      conversationMsgMap.delete(data.conversationId)
+      this._cacheMapper.delete(data.conversationId)
       return assert(cached) ? cached.message.substr(cached.index) : null
     }
 
