@@ -19,13 +19,8 @@ export class MdFilter extends BaseMessageFilter {
     let index = 0
     const methods = [ 'assert_one', 'assert_two', 'assert_three', 'assert_four' ]
     while(index < methods.length) {
-      const [ match, result ] = this[methods[index]].call(this, content, done)
+      const [ match, result ] = this[methods[index]].call(this, content, sender, done)
       if (match) {
-        if (!this._matchMarkdown) {
-          const b64 = await md2jpg(genTemplate(result))
-          sender.reply(segment.image('base64://' + b64), true)
-          return [ false, '' ]
-        }
         return [ false, result ]
       }
       index++
@@ -36,7 +31,7 @@ export class MdFilter extends BaseMessageFilter {
   /**
    * is markdown start block
    */
-  assert_one(content: string, done: boolean): (boolean | string)[] {
+  assert_one(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
     const match = (!this._matchMarkdown && content.endsWith(str))
     if (match) {
       this._matchMarkdown = true
@@ -50,13 +45,14 @@ export class MdFilter extends BaseMessageFilter {
   /**
    * is markdown end block
    */
-  assert_two(content: string, done: boolean): boolean {
+  assert_two(content: string, sender?: Sender, done: boolean): boolean {
     const match = (this._matchMarkdown && content.endsWith(str))
     if (match) {
       this._matchMarkdown = false
       this._messageContiner.push(content)
-      const result = [ str, content ].join('')
-      return [ true, result ]
+      console.log('assert_two', this._messageContiner)
+      this.__md2jpg(sender, [ str, this._messageContiner.join('\n') ].join(''))
+      return [ true, '' ]
     }
     return [ false, content ]
   }
@@ -64,13 +60,13 @@ export class MdFilter extends BaseMessageFilter {
   /**
    * unknown
    */
-  assert_three(content: string, done: boolean) {
+  assert_three(content: string, sender?: Sender, done: boolean) {
     if (done) {
       if (this._matchMarkdown) {
         this._matchMarkdown = false
         this._messageContiner.push(content)
         console.log('assert_three', this._messageContiner)
-        const result = [ str, content, '\n', str ].join('')
+        this.__md2jpg(sender, [ str, this._messageContiner.join('\n'), '\n', str ].join(''))
         return [ true, result ]
       }
     }
@@ -83,8 +79,15 @@ export class MdFilter extends BaseMessageFilter {
   assert_four(content: string, done: boolean) {
     if (this._matchMarkdown) {
       this._messageContiner.push(content)
+      return [ true, '' ]
     }
     return [ false, content ]
+  }
+
+
+  __md2jpg(sender: Sender, content: string) {
+    const b64 = await md2jpg(genTemplate(result))
+    sender.reply(segment.image('base64://' + b64), true)
   }
 }
 
