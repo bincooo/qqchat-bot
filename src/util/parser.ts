@@ -70,12 +70,12 @@ export class MessageParser {
       return (c.index !== c.old?.index && c.index < _index)
     }
 
-    cached.message = data.response
     if (IsDONE) {
       this._cacheMapper.delete(data.conversationId)
       return assert(cached) ? cached.message.substr(cached.index) : null
     }
 
+    cached.message = data.response
     if (index > 0 && assert(cached)) {
       const message = data.response.substr(cached.index, index - cached.index)
       const old = {
