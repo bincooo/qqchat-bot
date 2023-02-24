@@ -35,6 +35,7 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
       }
     }
   } catch (err) {
+    console.log('?????', err)
     logger.error(err)
   }
 

@@ -22,7 +22,7 @@ export class MdFilter extends BaseMessageFilter {
       const [ match, result ] = this[methods[index]].call(this, content, done)
       if (match) {
         if (!this._matchMarkdown) {
-          const b64 = await md2jpg(result)
+          const b64 = await md2jpg(genTemplate(result))
           sender.reply(segment.image('base64://' + b64), true)
           return [ false, '' ]
         }

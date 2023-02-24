@@ -6,6 +6,11 @@ const logFormat = printf(({ level, message, label, timestamp }) => {
   return `${timestamp} [${label}] ${level}: ${message}`
 })
 
+const getLabel = function (callingModule) {
+    const parts = callingModule.filename.split('/')
+    return parts[parts.length - 2] + '/' + parts.pop()
+}
+
 const logger = createLogger({
   levels: { ...winston.config.npm.levels, notice: 3 },
   transports: [

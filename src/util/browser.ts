@@ -90,13 +90,17 @@ export const defaultChromeExecutablePath = (): string => {
   }
 }
 
-export async function md2jpg(markdownText: string): Promise<string> {
+export async function md2jpg(htmlText: string): Promise<string> {
   let [ browser, page ] = await getBrowser()
   let dontClose = true
   if (!page) {
     page = await browser.newPage()
     dontClose = false
   }
+
+  fs.writeFile(`./amr/${uid}.html`, htmlText, (err) => {
+    console.log(err)
+  })
 
   const html = path.join(path.resolve(), `amr/${genUid()}.html`)
   await page.goto('file://' + html, {
