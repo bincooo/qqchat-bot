@@ -7,6 +7,7 @@ import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
+import delay from 'delay'
 
 
 /**
@@ -61,11 +62,13 @@ setInterval(() => {
   }
 }, 1000)
 
-async function recallLdGif() {
+export async function recallLdGif() {
   let mid
   do {
     mid = mids.shift()
-    if (mid) {
+    const result = await getClient()?.deleteMsg(mid)
+    if (!result) {
+      await delay(1000)
       await getClient()?.deleteMsg(mid)
     }
   } while(!!mid)
