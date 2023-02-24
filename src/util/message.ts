@@ -68,7 +68,7 @@ export async function recallLdGif() {
     mid = mids.shift()
     const result = await getClient()?.deleteMsg(mid)
     if (!result) {
-      await delay(1000)
+      await delay(800)
       await getClient()?.deleteMsg(mid)
     }
   } while(!!mid)
@@ -91,7 +91,7 @@ export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean
     let timer: NodeJS.Timer | null = null
     const clear = () => {
       if (timer) {
-        clearTimeout(timer)
+        clearInterval(timer)
         timer = null
       }
     }
@@ -178,13 +178,11 @@ export const onMessage = async (data: any, sender: Sender) => {
           }
         } else {
           if (config.tts) {
-            recallLdGif()
             speak({ text: message }).then(path => {
               sender.reply(segment.record(path), true)
                 .then(() => loading(sender, isEnd))
             })
           } else {
-            recallLdGif()
             sender.reply(message, true)
               .then(() => loading(sender, isEnd))
           }

@@ -14,6 +14,8 @@ export class MdFilter extends BaseMessageFilter {
   }
 
   handle = async (content: string, sender?: Sender, done?: boolean) => {
+    if (!!content) [ true, content ]
+
     let index = 0
     const methods = [ 'assert_one', 'assert_two', 'assert_three' ]
     while(index < methods.length) {

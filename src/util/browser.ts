@@ -91,7 +91,7 @@ export const defaultChromeExecutablePath = (): string => {
 }
 
 export async function md2jpg(markdownText: string): Promise<string> {
-  let [ browser, page ] = getBrowser()
+  let [ browser, page ] = await getBrowser()
   let dontClose = true
   if (!page) {
     page = await browser.newPage()
