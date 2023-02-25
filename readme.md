@@ -92,6 +92,8 @@ docker logs -f [container_name or container_id]
   // 自定义错误
   4001 Ai作画失败
   4002 markdown转图片失败
+```
+
 ## 感谢
 
 - https://github.com/takayama-lily/oicq
