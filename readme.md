@@ -83,8 +83,15 @@ docker logs -f [container_name or container_id]
 
 ## 👀效果
 
-
-
+## 常见错误码
+ ```bash
+  // web chatgpt 会话错误
+  429  1hours 限制
+  403  发送消息失败
+  5001 消息队列已满
+  // 自定义错误
+  4001 Ai作画失败
+  4002 markdown转图片失败
 ## 感谢
 
 - https://github.com/takayama-lily/oicq

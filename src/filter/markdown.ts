@@ -91,8 +91,12 @@ export class MdFilter extends BaseMessageFilter {
       content = content.substr(b.length)
       content = content.substr(0, content.length - 3)
     }
-    const b64 = await md2jpg(genTemplate(content))
-    sender.reply(segment.image('base64://' + b64), true)
+    try {
+      const b64 = await md2jpg(genTemplate(content))
+      sender.reply(segment.image('base64://' + b64), true)
+    } catch(error: Error) {
+      sender.reply('——————————————\nError: 4002\n' + error + '\n\n生成markdown图片失败辣 ...', true)
+    }
   }
 }
 
