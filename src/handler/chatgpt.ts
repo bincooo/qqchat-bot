@@ -58,6 +58,12 @@ class EmailPool {
   getOpts(): any {
     return this._opts
   }
+
+  resetCurrOpts(): string {
+    const account = this._emails[this._currentIndex]
+    account.uuid = genUid()
+    return account.uuid
+  }
 }
 
 export class ChatGPTHandler extends BaseMessageHandler {
@@ -105,6 +111,12 @@ export class ChatGPTHandler extends BaseMessageHandler {
         return !(sender.textMessage
             .trim()
             .startsWith('[prompt]'))
+      }
+
+      if (sender.textMessage?.trim() === '!reset') {
+        this._uuid = this._emailPool.resetCurrOpts()
+        sender.reply('当前会话已重置 ~')
+        return false
       }
 
       if (this._iswait) {
