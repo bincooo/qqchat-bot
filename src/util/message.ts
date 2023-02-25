@@ -54,9 +54,10 @@ let globalParser: null | parser.MessageParser
 let globalStatManager: null | StatManager
 
 
-export function globalLoading(sender: Sender) {
+export function globalLoading(sender: Sender, other? { init: boolean, isEnd: boolean }) {
   initStatManager()
-  globalStatManager.sendLoading(sender, { init: true, isEnd: false })
+  const _other = other??{ init: true, isEnd: false }
+  globalStatManager.sendLoading(sender, _other)
 }
 
 export async function globalRecall() {
@@ -97,8 +98,7 @@ class StatManager {
     }
   ) {
     if (other?.init) {
-      this._isEnd = other?.isEnd
-      this._previousTimestamp = dat()
+      this.setIsEnd(other.isEnd)
     }
 
     this.clear()
@@ -109,8 +109,8 @@ class StatManager {
         return
       }
       if (this._previousTimestamp + 3000 < dat()) {
-        await this.recall()
         const result = await sender.reply(this._GIF)
+        await this.recall()
         this._messageContiner.push(result.message_id)
         this.clear()
       }
@@ -181,16 +181,12 @@ export const onMessage = async (data: any, sender: Sender) => {
     //console.log(index, data.response)
     let message: string | null = globalParser.resolve(data)
     const isDone = () => (data.response == '[DONE]')
+    globalStatManager.setIsEnd(isDone())
 
-    if (isDone()) {
-      globalStatManager.setIsEnd(true)
-    }
-    
     if (!!message) {
       message = await _filterTokens(message, filters, sender, isDone())
       if (!!message) {
         console.log('message ======', message)
-        globalStatManager.setIsEnd(false)
 
         if (isDone()) {
           if (config.tts) {

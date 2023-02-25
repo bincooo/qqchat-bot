@@ -130,7 +130,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }, this._uuid)
     } catch (err) {
       await this.messageErrorHandler(sender, err)
-      logger.error(err)
     }
     
     this._iswait = false
@@ -156,7 +155,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
-    await globalRecall()
+    console.log('[chatgpt.ts] 158 messageErrorHandler', err)
+    globalLoading(sender, { init: true, isEnd: true })
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
         .getHours()
