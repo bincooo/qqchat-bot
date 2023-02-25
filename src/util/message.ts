@@ -97,7 +97,7 @@ class StatManager {
     }
   ) {
     if (other?.init) {
-      this._isEnd = isEnd
+      this._isEnd = other?.isEnd
       this._previousTimestamp = dat()
     }
 
