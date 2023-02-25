@@ -182,12 +182,12 @@ export const onMessage = async (data: any, sender: Sender) => {
     let message: string | null = globalParser.resolve(data)
     const isDone = () => (data.response == '[DONE]')
 
-
+    if (isDone()) {
+      globalStatManager.setIsEnd(true)
+    }
+    
     if (!!message) {
       message = await _filterTokens(message, filters, sender, isDone())
-      if (isDone()) {
-        globalStatManager.setIsEnd(true)
-      }
       if (!!message) {
         console.log('message ======', message)
         globalStatManager.setIsEnd(false)
