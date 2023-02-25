@@ -54,7 +54,10 @@ let globalParser: null | parser.MessageParser
 let globalStatManager: null | StatManager
 
 
-export function globalLoading(sender: Sender, other? { init: boolean, isEnd: boolean }) {
+export function globalLoading(sender: Sender, other?: {
+  init: boolean
+  isEnd: boolean
+}) {
   initStatManager()
   const _other = other??{ init: true, isEnd: false }
   globalStatManager.sendLoading(sender, _other)
