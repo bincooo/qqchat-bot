@@ -1,4 +1,4 @@
-import { segment } from 'oicq'
+import { segment, Sendable } from 'oicq'
 import logger from 'src/util/log'
 import { config } from '../config'
 import { Sender } from 'src/model/sender'
@@ -50,74 +50,94 @@ function dat(): number {
 
 
 // --------------------------
-const ldGif = segment.image('./loading.gif')
-const mids: Array<string> = []
-let isEnd: boolean = true
-let previousTimestamp: number = dat()
 let globalParser: null | parser.MessageParser
+let globalStatManager: null | StatManager
 
-setInterval(() => {
-  // console.log('60 setInterval', isEnd)
-  if (isEnd) {
-    recallLdGif()
-  }
-}, 1000)
 
-export async function recallLdGif() {
-  let mid
-  do {
-    mid = mids.shift()
-    if(mid) {
-      const result = await getClient()?.deleteMsg(mid)
-      if (!result) {
-        await delay(800)
-        await getClient()?.deleteMsg(mid)
-      }
-    }
-  } while(!!mid)
+export function globalLoading(sender: Sender) {
+  initStatManager()
+  globalStatManager.sendLoading(sender, { init: true, isEnd: false })
 }
 
-let loadLock = false
-export function loading(sender: Sender, _isEnd?: boolean = false, init?: boolean) {
-  if (init) {
-    isEnd = _isEnd
-    previousTimestamp = dat()
+export async function globalRecall() {
+  initStatManager()
+  await globalStatManager.recall()
+}
+
+
+class StatManager {
+
+  protected _GIF: Sendable = segment.image('./loading.gif')
+  protected _messageContiner: Array<string> = []
+  protected _isEnd: boolean = true
+  protected _previousTimestamp: number = 0
+  protected _timer: NodeJS.Timer | null = null
+  protected _globalTimer: NodeJS.Timer
+
+  constructor() {
+    this._globalTimer = setInterval(() => {
+      if (this._isEnd) {
+        this.recall()
+      }
+    }, 1000)
   }
 
-  // 三秒内无回应, 发送加载Gif
-  if (!_isEnd) {
-    let timer: NodeJS.Timer | null = null
-    const clear = () => {
-      if (timer) {
-        clearInterval(timer)
-        timer = null
-      }
+  clear() {
+    if (this._timer) {
+      clearInterval(this._timer)
+      this._timer = null
+    }
+  }
+
+  sendLoading(
+    sender: Sender,
+    other?: {
+      init: boolean
+      isEnd: boolean
+    }
+  ) {
+    if (other?.init) {
+      this._isEnd = isEnd
+      this._previousTimestamp = dat()
     }
 
-    timer = setInterval(() => {
-      if (isEnd) {
-        clear()
-        recallLdGif()
+    this.clear()
+    this._timer = setInterval(async () => {
+      if (this._isEnd) {
+        this.clear()
+        await this.recall()
         return
       }
-
-      if (previousTimestamp + 3000 < dat()) {
-        clear()
-        if (!loadLock) {
-          recallLdGif()
-          if (isEnd) return
-          loadLock = true
-          sender.reply(ldGif)
-            .then(res => {
-              mids.push(res.message_id)
-              loadLock =false
-            })
-            .catch(err => {
-              loadLock =false
-            })
-        } 
+      if (this._previousTimestamp + 3000 < dat()) {
+        await this.recall()
+        const result = await sender.reply(this._GIF)
+        this._messageContiner.push(result.message_id)
+        this.clear()
       }
-    }, 300)
+    }, 500)
+  }
+
+  async recall() {
+    let messageId
+    do {
+      messageId = this._messageContiner.shift()
+      if(messageId) {
+        const result = await getClient()?.deleteMsg(messageId)
+        if (!result) {
+          await delay(500)
+          await getClient()?.deleteMsg(messageId)
+        }
+      }
+    } while(!!messageId)
+  }
+
+  setIsEnd(isEnd: boolean) {
+    this._isEnd = isEnd
+    if (isEnd) {
+      this._previousTimestamp = dat() + 60 * 1000
+      return
+    }
+    this._previousTimestamp = dat()
   }
 }
 
@@ -147,8 +167,14 @@ function initParser() {
   globalParser = new parser.MessageParser({ condition })
 }
 
+function initStatManager() {
+  if (globalStatManager) return
+  globalStatManager = new StatManager()
+}
+
 export const onMessage = async (data: any, sender: Sender) => {
   initParser()
+  initStatManager()
 
   if (data.response) {
     const filters = messageHandler.filter(item => item.type === 1)
@@ -161,33 +187,27 @@ export const onMessage = async (data: any, sender: Sender) => {
       message = await _filterTokens(message, filters, sender, isDone())
       if (!!message) {
         console.log('message ======', message)
-        isEnd = false
-        previousTimestamp = dat()
+        globalStatManager.setIsEnd(false)
 
         if (isDone()) {
-          isEnd = true
+          globalStatManager.setIsEnd(true)
           if (config.tts) {
-            speak({ text: message })
-              .then(path => sender.reply(segment.record(path), true))
-              .then(recallLdGif)
+            const path = await speak({ text: message })
+            await sender.reply(segment.record(path), true)
+            await globalStatManager.recall()
           }
           else {
-            sender.reply(message, true)
-              .then(recallLdGif)
+            await sender.reply(message, true)
+            await globalStatManager.recall()
           }
         } else {
-          const ld = () => {
-            if (!isEnd)
-              loading(sender, isEnd)
-          }
           if (config.tts) {
-            speak({ text: message }).then(path => {
-              sender.reply(segment.record(path), true)
-                .then(ld)
-            })
+            const path = await speak({ text: message })
+            await sender.reply(segment.record(path), true)
+            globalStatManager.sendLoading(sender)
           } else {
-            sender.reply(message, true)
-              .then(ld)
+            await sender.reply(message, true)
+            globalStatManager.sendLoading(sender)
           }
         }
       }
