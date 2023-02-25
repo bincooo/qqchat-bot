@@ -185,12 +185,14 @@ export const onMessage = async (data: any, sender: Sender) => {
 
     if (!!message) {
       message = await _filterTokens(message, filters, sender, isDone())
+      if (isDone()) {
+        globalStatManager.setIsEnd(true)
+      }
       if (!!message) {
         console.log('message ======', message)
         globalStatManager.setIsEnd(false)
 
         if (isDone()) {
-          globalStatManager.setIsEnd(true)
           if (config.tts) {
             const path = await speak({ text: message })
             await sender.reply(segment.record(path), true)
