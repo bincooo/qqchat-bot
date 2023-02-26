@@ -50,7 +50,6 @@ export class MdFilter extends BaseMessageFilter {
     if (match) {
       this._matchMarkdown = false
       this._messageContiner.push(content)
-      console.log('assert_two', this._messageContiner)
       this.__md2jpg(sender, [ str, this._messageContiner.join('\n') ].join(''))
       return [ true, '' ]
     }
@@ -65,7 +64,6 @@ export class MdFilter extends BaseMessageFilter {
       if (this._matchMarkdown) {
         this._matchMarkdown = false
         this._messageContiner.push(content)
-        console.log('assert_three', this._messageContiner)
         this.__md2jpg(sender, [ str, this._messageContiner.join('\n'), '\n', str ].join(''))
         return [ true, '' ]
       }
