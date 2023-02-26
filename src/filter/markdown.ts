@@ -50,7 +50,7 @@ export class MdFilter extends BaseMessageFilter {
     if (content.startsWith('[markdown]')) {
       this._isMarkdown = true
       this._messageContiner = []
-      content = content.substr(10)
+      this._messageContiner.push(content.substr(10))
       if (done) {
         return await doit()
       }
