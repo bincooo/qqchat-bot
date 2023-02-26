@@ -22,6 +22,15 @@ export class CodeFilter extends BaseMessageFilter {
       return [ false, resultMessage.trim() ]
     }
 
+    if (content.startsWith('[md]')) {
+      resultMessage = [
+          '用markdown格式: ```makrdown (内容) ``` 回答:\n\n'
+          content.substr(6)
+        ]
+      .join('\n')
+      return [ false, resultMessage.trim() ]
+    }
+
     return [ true, content ]
   }
 }
