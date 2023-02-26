@@ -6,8 +6,8 @@ const logFormat = printf(({ level, message, label, timestamp }) => {
   // const result = message?.map((item) => {
   //   return (item instanceof Error) ? item.stack : item
   // })
-  console.log(message)
-  console.dir(message)
+  console.log('=== printf log', message)
+  console.dir('=== printf dir', message)
   return `${timestamp} [${label}] ${level}: ${message}`
 })
 
