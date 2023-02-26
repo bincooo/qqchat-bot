@@ -92,7 +92,7 @@ export const defaultChromeExecutablePath = (): string => {
 }
 
 export async function md2jpg(htmlText: string): Promise<string> {
-  let [ browser, page ] = await getBrowser()
+  let [ browser, page ] = await getBrowser(false)
   let dontClose = true
   if (!page) {
     page = await browser.newPage()
