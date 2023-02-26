@@ -188,11 +188,12 @@ export const onMessage = async (data: any, sender: Sender) => {
     let message: string | null = globalParser.resolve(data)
     const isDone = () => (data.response === '[DONE]')
     globalStatManager.setIsEnd(isDone())
-    if (config.debug) {
-      console.log('response message ====== [' + isDone() + ']', data, message)
-    }
-    if (!!message) {
-      message = await _filterTokens(message, filters, sender, isDone())
+    
+    if (!!message || isDone()) {
+      message = await _filterTokens(message??'', filters, sender, isDone())
+      if (config.debug) {
+        console.log('response message ====== [' + isDone() + ']', data, message)
+      }
       if (!!message) {
         if (isDone()) {
           if (config.tts) {
