@@ -25,7 +25,7 @@ export class CodeFilter extends BaseMessageFilter {
     if (content.startsWith('[md]') || content.startsWith('[md:latex]')) {
       resultMessage = [
           (content.startsWith('[md:latex]') ? '数学公式使用latex格式。' : ''),
-          '用我定义的格式回复，格式为```markdown [xx] ```，格式中的[xx]替换成你的回答并回复我：\n\n',
+          '用我定义的格式回复，格式为```markdown [xx] ```，格式中的[xx]替换成你的回答并回复我：\n',
           content.replace('[md]', '')
             .replace('[md:latex]', '')
         ]

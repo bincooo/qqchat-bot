@@ -12,8 +12,9 @@
 code::before {
   color: #0000ff;
   content: attr(title);
+  display: block;
 }
 
 mjx-container[jax="CHTML"][display="true"] {
-  display: inline-block !important
+  display: inline-block !important;
 }

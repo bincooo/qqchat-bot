@@ -109,11 +109,14 @@ export async function md2jpg(htmlText: string): Promise<string> {
   })
 
   await page.reload()
+  await page.goto('file://' + html, {
+    waitUntil: 'networkidle0'
+  })
   await delay(800)
   const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
   await page.screenshot({ path: jpg, fullPage: true })
   if (!dontClose) {
-    await page.close()
+    // await page.close()
   }
   const buf = fs.readFileSync(jpg)
   return buf.toString('base64')
