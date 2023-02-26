@@ -11,7 +11,9 @@ class ServerCommand extends BaseCommand {
     `reboot   ${this.sp(7)}重启机器人`,
     `status   ${this.sp(9)}服务器状态`,
     `draw:on  ${this.sp(6)}开启画质增强`,
-    `draw:off ${this.sp(6)}关闭画质增强`
+    `draw:off ${this.sp(6)}关闭画质增强`,
+    `debug:on ${this.sp(6)}开启调试模式`,
+    `debug:off ${this.sp(6)}关闭调试模式`
   ]
 
   requiredAdministrator = true
@@ -41,6 +43,12 @@ class ServerCommand extends BaseCommand {
         config.api.betterPic = false
         sender.reply('已关闭画质增强~')
         break
+      case 'debug:on':
+        config.debug = true
+        sender.reply('已开启调试模式~')
+      case 'debug:off':
+        config.debug = false
+        sender.reply('已关闭调试模式~')
       default:
         sender.reply(this.helpDoc, true)
         break

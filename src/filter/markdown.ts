@@ -2,6 +2,7 @@ import { BaseMessageFilter } from 'src/types'
 import { Sender } from 'src/model/sender'
 import { segment } from 'oicq'
 import { md2jpg } from 'src/util/browser'
+import { config } from 'src/config'
 
 const str = '```'
 
@@ -39,7 +40,9 @@ export class MdFilter extends BaseMessageFilter {
     if (done && this._isMarkdown) {
       this._isMarkdown = false
       this._messageContiner.push(content)
-      // console.log('_messageContiner', this._messageContiner.join('\n'))
+      if (config.debug) {
+        console.log('_messageContiner', this._messageContiner.join('\n'))
+      }
       await this.__md2jpg(sender, this._messageContiner.join('\n'))
       this._messageContiner = []
       return [ true, '' ]
@@ -78,7 +81,9 @@ export class MdFilter extends BaseMessageFilter {
     if (match) {
       this._isCode = false
       this._messageContiner.push(content)
-      console.log('_messageContiner', this._messageContiner.join('\n'))
+      if (config.debug) {
+        console.log('_messageContiner', this._messageContiner.join('\n'))
+      }
       await this.__md2jpg(sender, [ str, this._messageContiner.join('\n') ].join(''))
       return [ true, '' ]
     }
@@ -93,7 +98,9 @@ export class MdFilter extends BaseMessageFilter {
       if (this._isCode) {
         this._isCode = false
         this._messageContiner.push(content)
-        console.log('_messageContiner', this._messageContiner.join('\n'))
+        if (config.debug) {
+          console.log('_messageContiner', this._messageContiner.join('\n'))
+        }
         await this.__md2jpg(sender, [ str, this._messageContiner.join('\n'), '\n', str ].join(''))
         return [ true, '' ]
       }
