@@ -26,7 +26,8 @@ export class CodeFilter extends BaseMessageFilter {
       resultMessage = [
           (content.startsWith('[md:latex]') ? 'latex格式\n' : ''),
           '用我定义的格式回复，格式为```markdown [xx] ```，[xx]替换成你的回答：\n\n',
-          content.substr(6)
+          content.replace('[md]', '')
+            .replace('[md:latex]', '')
         ]
       .join('\n')
       return [ false, resultMessage.trim() ]
