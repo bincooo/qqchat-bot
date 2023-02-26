@@ -3,12 +3,15 @@ import winston, { createLogger, format, transports } from 'winston'
 const { combine, timestamp, label, printf } = format
 
 const logFormat = printf(({ level, message, label, timestamp }) => {
-  // const result = message?.map((item) => {
-  //   return (item instanceof Error) ? item.stack : item
-  // })
-  console.log('=== printf log', message)
-  console.dir('=== printf dir', message)
-  return `${timestamp} [${label}] ${level}: ${message}`
+  let result = message
+  if (message instanceof Error) {
+    result = message.stack
+  } else if (message instanceof Array) {
+    result = message?.map((item) => {
+      return (item instanceof Error) ? item.stack : item
+    })
+  }
+  return `${timestamp} [${label}] ${level}: ${result}`
 })
 
 const logger = createLogger({
