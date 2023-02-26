@@ -37,9 +37,8 @@ export class MdFilter extends BaseMessageFilter {
   }
 
   async assert_one(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
-    if (done && this._isMarkdown) {
-      this._isMarkdown = false
-      this._messageContiner.push(content)
+
+    const doit = () => {
       if (config.debug) {
         console.log('_messageContiner', this._messageContiner.join('\n'))
       }
@@ -47,15 +46,25 @@ export class MdFilter extends BaseMessageFilter {
       this._messageContiner = []
       return [ true, '' ]
     }
+
     if (content.startsWith('[markdown]')) {
       this._isMarkdown = true
       this._messageContiner = []
       content = content.substr(10)
+      if (done) {
+        return doit()
+      }
     }
+    
     if (this._isMarkdown) {
       this._messageContiner.push(content)
+      if (done) {
+        this._isMarkdown = false
+        return doit()
+      }
       return [ true, '' ]
     }
+
     return [ false, content ]
   }
 
