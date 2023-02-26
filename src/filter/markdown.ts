@@ -6,7 +6,8 @@ import { md2jpg } from 'src/util/browser'
 const str = '```'
 
 export class MdFilter extends BaseMessageFilter {
-  protected _matchMarkdown: boolean = false
+  protected _isMarkdown: boolean = false
+  protected _isCode: boolean = false
   protected _messageContiner: Array<string> = []
   constructor() {
     super()
@@ -17,7 +18,13 @@ export class MdFilter extends BaseMessageFilter {
     if (!!content) [ true, content ]
 
     let index = 0
-    const methods = [ 'assert_one', 'assert_two', 'assert_three', 'assert_four' ]
+    const methods = [
+      'assert_one',
+      'assert_two',
+      'assert_three',
+      'assert_four',
+      'assert_five'
+    ]
     while(index < methods.length) {
       const [ match, result ] = await (this[methods[index]].call(this, content, sender, done))
       if (match) {
@@ -28,13 +35,34 @@ export class MdFilter extends BaseMessageFilter {
     return [ true, content ]
   }
 
+  async assert_one(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
+    if (done) {
+      this._isMarkdown = false
+      this._messageContiner.push(content)
+      // console.log('_messageContiner', this._messageContiner.join('\n'))
+      await this.__md2jpg(sender, this._messageContiner.join('\n'))
+      this._messageContiner = []
+      return [ true, '' ]
+    }
+    if (content.startsWith('[markdown]')) {
+      this._isMarkdown = true
+      this._messageContiner = []
+      content = content.substr(10)
+    }
+    if (this._isMarkdown) {
+      this._messageContiner.push(content)
+      return [ true, '' ]
+    }
+    return [ false, content ]
+  }
+
   /**
    * is markdown start block
    */
-  async assert_one(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
-    const match = (!this._matchMarkdown && content.endsWith(str))
+  async assert_two(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
+    const match = (!this._isCode && content.endsWith(str))
     if (match) {
-      this._matchMarkdown = true
+      this._isCode = true
       this._messageContiner = []
       const result = content.substr(0, content.length - str.length)
       return [ true, result ]
@@ -45,10 +73,10 @@ export class MdFilter extends BaseMessageFilter {
   /**
    * is markdown end block
    */
-  async assert_two(content: string, sender?: Sender, done: boolean): boolean {
-    const match = (this._matchMarkdown && content.endsWith(str))
+  async assert_three(content: string, sender?: Sender, done: boolean): boolean {
+    const match = (this._isCode && content.endsWith(str))
     if (match) {
-      this._matchMarkdown = false
+      this._isCode = false
       this._messageContiner.push(content)
       console.log('_messageContiner', this._messageContiner.join('\n'))
       await this.__md2jpg(sender, [ str, this._messageContiner.join('\n') ].join(''))
@@ -60,15 +88,16 @@ export class MdFilter extends BaseMessageFilter {
   /**
    * unknown
    */
-  async assert_three(content: string, sender?: Sender, done: boolean) {
+  async assert_four(content: string, sender?: Sender, done: boolean) {
     if (done) {
-      if (this._matchMarkdown) {
-        this._matchMarkdown = false
+      if (this._isCode) {
+        this._isCode = false
         this._messageContiner.push(content)
         console.log('_messageContiner', this._messageContiner.join('\n'))
         await this.__md2jpg(sender, [ str, this._messageContiner.join('\n'), '\n', str ].join(''))
         return [ true, '' ]
       }
+      this._isCode = false
     }
     return [ false, content ]
   }
@@ -76,8 +105,8 @@ export class MdFilter extends BaseMessageFilter {
   /**
    * message Container
    */
-  assert_four(content: string, done: boolean) {
-    if (this._matchMarkdown) {
+  assert_five(content: string, done: boolean) {
+    if (this._isCode) {
       this._messageContiner.push(content)
       return [ true, '' ]
     }
