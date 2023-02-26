@@ -24,7 +24,7 @@ export class CodeFilter extends BaseMessageFilter {
 
     if (content.startsWith('[md]')) {
       resultMessage = [
-          '用markdown格式: ```makrdown (内容) ``` 回答:\n\n'
+          '用markdown格式: ```makrdown (内容) ``` 回答:\n\n',
           content.substr(6)
         ]
       .join('\n')
