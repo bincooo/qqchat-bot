@@ -36,7 +36,7 @@ export class MdFilter extends BaseMessageFilter {
   }
 
   async assert_one(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
-    if (done) {
+    if (done && this._isMarkdown) {
       this._isMarkdown = false
       this._messageContiner.push(content)
       // console.log('_messageContiner', this._messageContiner.join('\n'))
