@@ -38,7 +38,7 @@ export class MdFilter extends BaseMessageFilter {
 
   async assert_one(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
 
-    const doit = () => {
+    const doit = async () => {
       if (config.debug) {
         console.log('_messageContiner', this._messageContiner.join('\n'))
       }
@@ -52,15 +52,15 @@ export class MdFilter extends BaseMessageFilter {
       this._messageContiner = []
       content = content.substr(10)
       if (done) {
-        return doit()
+        return await doit()
       }
     }
-    
+
     if (this._isMarkdown) {
       this._messageContiner.push(content)
       if (done) {
         this._isMarkdown = false
-        return doit()
+        return await doit()
       }
       return [ true, '' ]
     }
