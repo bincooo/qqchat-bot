@@ -14,6 +14,9 @@ import delay from 'delay'
  * 消息 tokens优化
  */
 export async function filterTokens (content: string) {
+  if (config.debug) {
+    console.log('request message ======', content)
+  }
   const filters = messageHandler.filter(item => item.type === 0)
   return (await _filterTokens(content, filters)).trim()
 }
@@ -187,10 +190,11 @@ export const onMessage = async (data: any, sender: Sender) => {
     globalStatManager.setIsEnd(isDone())
 
     if (!!message) {
+      if (config.debug) {
+        console.log('response message ======', message)
+      }
       message = await _filterTokens(message, filters, sender, isDone())
       if (!!message) {
-        console.log('message ======', message)
-
         if (isDone()) {
           if (config.tts) {
             const path = await speak({ text: message })
