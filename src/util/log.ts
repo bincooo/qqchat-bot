@@ -3,7 +3,7 @@ import winston, { createLogger, format, transports } from 'winston'
 const { combine, timestamp, label, printf } = format
 
 const logFormat = printf(({ level, message, label, timestamp }) => {
-  const result = message.map((item) => {
+  const result = message?.map((item) => {
     return (item instanceof Error) ? item.stack : item
   })
   return `${timestamp} [${label}] ${level}: ${result}`
