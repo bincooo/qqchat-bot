@@ -46,9 +46,11 @@ class ServerCommand extends BaseCommand {
       case 'debug:on':
         config.debug = true
         sender.reply('已开启调试模式~')
+        break
       case 'debug:off':
         config.debug = false
         sender.reply('已关闭调试模式~')
+        break
       default:
         sender.reply(this.helpDoc, true)
         break
