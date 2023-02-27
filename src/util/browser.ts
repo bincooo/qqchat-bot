@@ -92,8 +92,8 @@ export const defaultChromeExecutablePath = (): string => {
 }
 
 export async function md2jpg(htmlText: string): Promise<string> {
-  // let [ browser, page ] = await getBrowser(false)
-  let [ browser, page ] = await getBrowser()
+  let [ browser, page ] = await getBrowser(false)
+  // let [ browser, page ] = await getBrowser()
   let dontClose = true
   if (!page) {
     page = await browser.newPage()
@@ -113,7 +113,7 @@ export async function md2jpg(htmlText: string): Promise<string> {
   const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
   await page.screenshot({ path: jpg, fullPage: true })
   if (!dontClose) {
-    await page.close()
+    // await page.close()
   }
   return fs.readFileSync(jpg)
     .toString('base64')
