@@ -53,7 +53,9 @@ async function main() {
   // console.log(html)
   const [browser, page] = await getBrowser(false)
   await page.goto('file://' + html_path)
-  console.log('html path: ', html_path)
+  const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
+  await page.screenshot({ path: jpg, fullPage: true })
+  console.log('jpg path: ', jpg)
 }
 
 
