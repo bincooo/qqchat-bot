@@ -48,10 +48,10 @@ async function main() {
 
   const uid = genUid()
   const html = await genTemplate('折戟沉沙。丿', markdownText)
-  fs.writeFile(`./amr/${uid}.html`, html, (err) => {})
+  fs.writeFile(`amr/${uid}.html`, html, (err) => {})
   // console.log(html)
   const [browser, page] = await getBrowser()
-  const html_path = path.join(__dirname, `./amr/${uid}.html`)
+  const html_path = path.join(__dirname, `amr/${uid}.html`)
   await page.goto('file://' + html_path)
   console.log('html path: ', html_path)
 }
