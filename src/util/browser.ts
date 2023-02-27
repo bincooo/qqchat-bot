@@ -38,7 +38,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
     '--disable-accelerated-2d-canvas',
     '--disable-web-security',
     '--disable-gpu',
-    '--window-size=710,350'
+    // '--window-size=710,350'
     // '--js-flags="--max-old-space-size=1024"'
   ]
 

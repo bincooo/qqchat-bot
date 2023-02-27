@@ -52,6 +52,7 @@ async function main() {
   fs.writeFile(html_path, html, (err) => { console.log('write file Error', err) })
   // console.log(html)
   const [browser, page] = await getBrowser(false)
+  await page.setViewport({ width: 710, height: 350 })
   await page.goto('file://' + html_path)
   const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
   await page.screenshot({ path: jpg, fullPage: true })
