@@ -150,7 +150,7 @@ export class MdFilter extends BaseMessageFilter {
   }
 }
 
-async function genTemplate(nickname: string, md: string) {
+export async function genTemplate(nickname: string, md: string) {
   let short = ""
   const markdownText = md.replaceAll('"', '\\"')
     .replaceAll(/([^$]{1})\$([^$]{1,})\$/g, '$$$$$2$$$$')
