@@ -7,6 +7,7 @@ import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
+import { japaneseUnicodeParser } from 'src/util/lang'
 import delay from 'delay'
 
 
@@ -194,10 +195,17 @@ export const onMessage = async (data: any, sender: Sender) => {
       if (config.debug) {
         console.log('response message ====== [' + isDone() + ']', data, message)
       }
+
+      const parserJapen = (tex: string) => {
+        const count = japaneseUnicodeParser.count(tex)
+        return (text.length / 2 < count) ? 'ja-JP-AoiNeural' : null
+      }
       if (!!message) {
         if (isDone()) {
           if (config.tts) {
-            const path = await speak({ text: message })
+            
+
+            const path = await speak({ text: message, vname: parserJapen() })
             await sender.reply(segment.record(path), true)
             await globalStatManager.recall()
           }
@@ -207,7 +215,7 @@ export const onMessage = async (data: any, sender: Sender) => {
           }
         } else {
           if (config.tts) {
-            const path = await speak({ text: message })
+            const path = await speak({ text: message, vname: parserJapen() })
             await sender.reply(segment.record(path), true)
             globalStatManager.sendLoading(sender)
           } else {
