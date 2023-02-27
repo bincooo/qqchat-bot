@@ -198,7 +198,7 @@ export const onMessage = async (data: any, sender: Sender) => {
 
       const parserJapen = (tex: string) => {
         const count = japaneseUnicodeParser.count(tex)
-        return (text.length / 2 < count) ? 'ja-JP-AoiNeural' : null
+        return (tex.length / 2 < count) ? 'ja-JP-AoiNeural' : null
       }
       if (!!message) {
         if (isDone()) {
