@@ -5,6 +5,7 @@ import execcmd from 'child_process'
 import path from 'path'
 import fs from 'fs'
 import ffmpeg from 'ffmpeg-static'
+import { config } from 'src/config'
 
 
 const ffmpegPath = ffmpeg.path
@@ -88,7 +89,9 @@ async function conn(): Promise<WebSocket> {
     })
   return new Promise((resolve, reject) => {
     ws.on('open', () => { 
-      console.log('MS_TTS is open: ' + cid)
+      if (config.debug) {
+        console.log('MS_TTS is open: ' + cid)
+      }
       resolve(ws)
     })
     ws.on('close', (code, reason) => {
@@ -217,7 +220,9 @@ async function speak(
 
   const cid = genCid()
   const ssml = buildSsml(config)
-  console.log('speak:\r\n' + ssml)
+  if (config.debug) {
+    console.log('speak:\r\n' + ssml)
+  }
   const combi = new Promise((resolve, reject) => {
     timerMap.set(cid, { resolve, reject })
     const speechConfig = {
