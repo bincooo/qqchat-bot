@@ -47,7 +47,7 @@ async function main() {
 - 经常健身`
 
   const uid = genUid()
-  const html = genTemplate('折戟沉沙。丿', markdownText)
+  const html = await genTemplate('折戟沉沙。丿', markdownText)
   fs.writeFile(`./amr/${uid}.html`, html, (err) => {})
   // console.log(html)
   const [browser, page] = await getBrowser()
