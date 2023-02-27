@@ -198,14 +198,20 @@ export const onMessage = async (data: any, sender: Sender) => {
 
       const parserJapen = (tex: string) => {
         const count = japaneseUnicodeParser.count(tex)
-        return (tex.length / 2 < count) ? 'ja-JP-AoiNeural' : null
+        const is = (tex.length / 2 < count)
+        return {
+          vname: is ? 'ja-JP-AoiNeural' : 'zh-CN-XiaoshuangNeural',
+          rate: is ? -5 : 0,
+          pitch: is ? 6 : 0
+        }
       }
+      
       if (!!message) {
         if (isDone()) {
           if (config.tts) {
             
 
-            const path = await speak({ text: message, vname: parserJapen(message) })
+            const path = await speak({ text: message, ...parserJapen(message) })
             await sender.reply(segment.record(path), true)
             await globalStatManager.recall()
           }
@@ -215,7 +221,7 @@ export const onMessage = async (data: any, sender: Sender) => {
           }
         } else {
           if (config.tts) {
-            const path = await speak({ text: message, vname: parserJapen(message) })
+            const path = await speak({ text: message, ...parserJapen(message) })
             await sender.reply(segment.record(path), true)
             globalStatManager.sendLoading(sender)
           } else {

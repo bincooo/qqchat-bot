@@ -166,7 +166,9 @@ declare type Config = {
   vname?: string
   sname?: string
   degree?: number
-  lexicon?: string
+  lexicon?: string,
+  rate?: number,
+  pitch?: number
 }
 
 
@@ -176,14 +178,16 @@ function buildSsml(config: Config) {
     vname = 'zh-CN-XiaoshuangNeural',
     sname = 'general',
     degree = 1.0,
-    lexicon = ''
+    lexicon = '',
+    rate = 0,
+    pitch = 0
   } = config
 
   if (!lexicon) {
     return `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
       <voice name="${vname}">
         <mstts:express-as style="${sname}" styledegree="${degree}">
-          <prosody rate="0%" pitch="0%">${text}</prosody>
+          <prosody rate="${rate}%" pitch="${pitch}%">${text}</prosody>
         </mstts:express-as>
       </voice>
      </speak>`
@@ -192,7 +196,7 @@ function buildSsml(config: Config) {
       <voice name="${vname}">
         <lexicon uri="${lexicon}"/>
           <mstts:express-as style="${sname}" styledegree="${degree}">
-            <prosody rate="0%" pitch="0%">${text}</prosody>
+            <prosody rate="${rate}%" pitch="${pitch}%">${text}</prosody>
           </mstts:express-as>
         </lexicon>
       </voice>
