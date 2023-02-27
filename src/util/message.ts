@@ -202,8 +202,7 @@ export const onMessage = async (data: any, sender: Sender) => {
         const is = (japaneseUnicodeParser.filter(tex).length * .2 < count)
         return {
           vname: is ? 'ja-JP-AoiNeural' : 'zh-CN-XiaoshuangNeural',
-          rate: is ? -5 : 0,
-          pitch: is ? 6 : 0
+          rate: is ? -5 : 0
         }
       }
       
