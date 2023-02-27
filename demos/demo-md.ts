@@ -14,37 +14,7 @@ function genUid(): string {
 }
 
 async function main() {
-  const markdownText = `# 简历
-
-## 个人信息
-- 姓名：李田所
-- 年龄：24岁
-- 性别：男
-- 学历：本科
-- 毕业时间：2023年6月
-- 专业：新闻传播学
-
-## 联系方式
-- 手机号码：13912345678
-- 邮箱：litiansuo@email.com
-
-## 求职意向
-- 应聘岗位：科技新闻编辑
-- 求职公司：HOMO之家
-
-## 教育背景
-- 学校：某大学
-- 时间：2019年-2023年
-- 专业：新闻传播学
-
-## 工作经历
-- 公司：某会员制餐厅
-- 时间：2020年-2021年
-- 职位：服务员
-
-## 爱好
-- 喜欢喝红茶
-- 经常健身`
+  const markdownText = `例如：\n\n$$y' + ycos x = sin x$$\n\n其积分因子为$mu(x) = e^{int cos x dx} = e^{sin x}$，代入公式得：\n\n$$y = \frac{1}{e^{sin x}}(int e^{sin x} sin x dx + C)$$\n\n其中$int e^{sin x} sin x dx$无法用初等函数表示，只能用级数表示。`
 
   const uid = genUid()
   const html = await genTemplate('折戟沉沙。丿', markdownText)
