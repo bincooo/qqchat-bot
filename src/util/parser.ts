@@ -56,14 +56,14 @@ export class MessageParser {
         const len = (condit.match(/([0-9]+):.+/)??[])[1]
         condit = !len ? condit : condit.substr(len.length + 1)
         index = data.response.lastIndexOf(condit)
-          if (index > 0) {
-            index += condit.length
-            if (len) {
-              if (parseInt(len) < index - cached.idx) {
-                break
-              }
-            } else break
-          }
+        if (index > 0) {
+          index += condit.length
+          if (len) {
+            if (parseInt(len) < index - cached.index) {
+              break
+            }
+          } else break
+        }
       } else {
         index = condit(data.response, cached.index)
         if (index == -1 || index > 0) break
