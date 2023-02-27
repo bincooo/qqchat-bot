@@ -205,7 +205,7 @@ export const onMessage = async (data: any, sender: Sender) => {
           if (config.tts) {
             
 
-            const path = await speak({ text: message, vname: parserJapen() })
+            const path = await speak({ text: message, vname: parserJapen(message) })
             await sender.reply(segment.record(path), true)
             await globalStatManager.recall()
           }
@@ -215,7 +215,7 @@ export const onMessage = async (data: any, sender: Sender) => {
           }
         } else {
           if (config.tts) {
-            const path = await speak({ text: message, vname: parserJapen() })
+            const path = await speak({ text: message, vname: parserJapen(message) })
             await sender.reply(segment.record(path), true)
             globalStatManager.sendLoading(sender)
           } else {

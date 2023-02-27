@@ -318,7 +318,6 @@ async function browserTryBetter(b64: string, name: string) {
 
 
 export async function shortURL(url: string) {
-  console.log('shortURL', url)
   return new Promise<string>((resolve, reject) => {
     const ip = virtualIP()
     const formData = new FormData()
