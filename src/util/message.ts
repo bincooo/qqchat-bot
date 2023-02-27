@@ -198,7 +198,7 @@ export const onMessage = async (data: any, sender: Sender) => {
 
       const parserJapen = (tex: string) => {
         const count = japaneseUnicodeParser.count(tex)
-        const is = (tex.length / 2 < count)
+        const is = (tex.length * .3 < count) // 0.3的权重，超过这个阈值就判定它是日文
         return {
           vname: is ? 'ja-JP-AoiNeural' : 'zh-CN-XiaoshuangNeural',
           rate: is ? -5 : 0,
