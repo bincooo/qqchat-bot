@@ -62,5 +62,5 @@ async function main1() {
   console.log(path)
 }
 
-main1()
+main()
 .then(() => process.exit(1))
