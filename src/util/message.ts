@@ -129,10 +129,10 @@ class StatManager {
       messageId = this._messageContiner.shift()
       if(messageId) {
         const result = await getClient()?.deleteMsg(messageId)
-        if (!result) {
-          await delay(500)
-          await getClient()?.deleteMsg(messageId)
-        }
+        // if (!result) {
+        //   await delay(500)
+        //   await getClient()?.deleteMsg(messageId)
+        // }
       }
     } while(!!messageId)
   }

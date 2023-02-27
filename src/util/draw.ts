@@ -1,5 +1,6 @@
 import http from 'http'
 import https from 'https'
+import FormData from 'form-data'
 import _url from 'url'
 import urlencode from 'urlencode'
 import getBrowser from './browser'
@@ -122,12 +123,16 @@ export function reset(hash: string) {
 }
 
 
-export function sendPost(url: string, dataString: string, headers?: Map<string, any>): Promise<any> {
+export function sendPost(url: string, data: string | FormData, headers?: Map<string, any>): Promise<any> {
+  if (typeof(data) !== 'string') {
+    headers = { ...data.getHeaders(), ...(headers??{}) }
+  }
   const {
     protocol,
     hostname,
     pathname,
-    port
+    port,
+    search
   } = _url.parse(url)
   const options = {
     protocol,
@@ -135,11 +140,11 @@ export function sendPost(url: string, dataString: string, headers?: Map<string, 
     port,
     method: "POST",
     path: pathname,
-    headers
+    headers,
+    search
   }
 
   const proxy = (protocol === 'http:') ? http : https
-
   return new Promise<any>((resolve, reject) => {
     const chunks = []
     let size = 0
@@ -156,7 +161,11 @@ export function sendPost(url: string, dataString: string, headers?: Map<string, 
     }).on('error', (err) => {
       reject(err)
     })
-    req.write(dataString)
+    if (typeof(data) === 'string') {
+      req.write(data)
+    } else {
+      data.pipe(req)
+    }
     req.end()
   })
 }
@@ -311,11 +320,14 @@ async function browserTryBetter(b64: string, name: string) {
 export async function shortURL(url: string) {
   return new Promise<string>((resolve, reject) => {
     const ip = virtualIP()
-    sendPost(`https://hk.ft12.com/multi.php?url=www.985.so${url}`, "", {
-      'X-Forwarded-For': ip,
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    const formData = new FormData()
+    formData.append("url", url)
+    formData.append("host", "hk")
+    formData.append("random", `20305174902795030`)
+
+    sendPost(`https://hk.ft12.com/multi.php`, formData, {
       'Proxy-Connection': 'keep-alive',
-      'Origin': 'http://transcode.imperial-vision.com:8080',
+      'Origin': 'https://www.985.so',
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
     }).then(val => {
       try {

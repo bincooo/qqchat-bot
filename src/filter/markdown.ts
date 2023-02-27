@@ -158,6 +158,9 @@ async function genTemplate(nickname: string, md: string) {
     .replaceAll('\\\\"', '\\"')
     .replaceAll('\n', '\\n')
   // https://hk.ft12.com/multi.php?url=www.985.so
-  short = await shortURL('https://bincooo.github.com/qrcode?tex=' + btoa(encodeURI(markdownText)))
+  short = await shortURL('https://bincooo.github.io/cdn/md/index.html?tex=' + btoa(encodeURI(markdownText)))
+  if (config.debug) {
+    console.log('short URL: ', short)
+  }
   return `<!doctype html><html><head><meta charset="utf-8"/><title>Marked in the browser</title><link href="default.css"rel="stylesheet"/><link href="github-md.css"rel="stylesheet"/><script src="github-md.js"></script><script src="tex-chtml.js"></script><script src="jquery.min.js"></script><script src="jquery.qrcode.min.js"></script></head><body><div id="header"><div>By ${nickname}</div></div><div id="content"></div><div id="footer"><div class="qrc"><div id="qrcode"></div></div><div class="md-download"><a href="javascript:d()">点击下载</a></div></div><script src="marked.min.js"></script><script>let val="${markdownText}",url="${short}";if(!val){const tex=location.search if(tex.startsWith('?tex=')){val=decodeURI(atob(tex.substr(5)))}}if(!url){url="https://bincooo.github.io/vuepress-doc"}val=val.replaceAll(/([^$]{1})\$([^$]{1,})\$/g,'$$$$$2$$$$');document.getElementById('content').innerHTML=marked.parse(val);hljs.highlightAll();MathJax.typeset();let codes=document.querySelectorAll('code');codes.forEach(item=>{let lang=item.classList[0]?.split('-')[1];if(lang){item.title=\`[lang:$\{lang}]\`}});$('#qrcode').qrcode({width:120,height:120,background:"#f0f0f0",foreground:"#000000",correctLevel:0,text:url});function download(filename,text){var element=document.createElement('a');element.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(text));element.setAttribute('download',filename);element.style.display='none';document.body.appendChild(element);element.click();document.body.removeChild(element)}function d(){download('marked.md',val)}</script></body></html>`
 }
