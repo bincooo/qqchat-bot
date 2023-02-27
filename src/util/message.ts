@@ -114,7 +114,7 @@ class StatManager {
         await this.recall()
         return
       }
-      if (this._previousTimestamp + 3000 < dat()) {
+      if (this._previousTimestamp + 2500 < dat()) {
         const result = await sender.reply(this._GIF)
         await this.recall()
         this._messageContiner.push(result.message_id)
@@ -187,9 +187,9 @@ export const onMessage = async (data: any, sender: Sender) => {
     //console.log(index, data.response)
     let message: string | null = globalParser.resolve(data)
     const isDone = () => (data.response === '[DONE]')
-    globalStatManager.setIsEnd(isDone())
     
     if (!!message || isDone()) {
+      globalStatManager.setIsEnd(isDone())
       message = await _filterTokens(message??'', filters, sender, isDone())
       if (config.debug) {
         console.log('response message ====== [' + isDone() + ']', data, message)
