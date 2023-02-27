@@ -11,7 +11,7 @@ body{font-family:"Microsoft Yahei",Helvetica,arial,sans-serif;font-size:14px;lin
     color: #383838;
   }
   #qrcode {
-    float: right;
+    text-align: right;
   }
   #qrcode > canvas {
     border: 1px solid #cbcbcb;
@@ -27,8 +27,6 @@ body{font-family:"Microsoft Yahei",Helvetica,arial,sans-serif;font-size:14px;lin
     float: right;
   }
 
-  #footer > .md-download {
-    position: relative;
-    left: calc(100% - 60px);
-    top: 170px;
+  #footer > .qrc .md-download {
+    text-align: right;
   }
