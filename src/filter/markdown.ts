@@ -152,14 +152,16 @@ export class MdFilter extends BaseMessageFilter {
 
 export async function genTemplate(nickname: string, md: string) {
   let short = ""
-  const markdownText = md.replaceAll('"', '\\"')
+  const mdText = md
+    .replaceAll('"', '\\"')
     .replaceAll(/([^$]{1})\$([^$]{1,})\$/g, '$$$$$2$$$$')
+  const markdownText = mdText
     .replaceAll('\\', '\\\\')
     .replaceAll('\\\\"', '\\"')
     .replaceAll('\n', '\\n')
   // https://hk.ft12.com/multi.php?url=www.985.so
   try {
-    short = await shortURL('https://bincooo.github.io/cdn/md/index.html?tex=' + btoa(encodeURI(markdownText)))
+    short = await shortURL('https://bincooo.github.io/cdn/md/index.html?tex=' + btoa(encodeURI(mdText)))
     // if (config.debug) {
       console.log('short URL: ', short)
     // }
