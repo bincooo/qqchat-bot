@@ -63,4 +63,4 @@ async function main1() {
 }
 
 main()
-.then(() => process.exit(1))
+// .then(() => process.exit(1))
