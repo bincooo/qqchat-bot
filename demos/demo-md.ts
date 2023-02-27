@@ -51,7 +51,7 @@ async function main() {
   const html_path = path.join(__dirname, `../amr/${uid}.html`)
   fs.writeFile(html_path, html, (err) => { console.log('write file Error', err) })
   // console.log(html)
-  const [browser, page] = await getBrowser()
+  const [browser, page] = await getBrowser(false)
   await page.goto('file://' + html_path)
   console.log('html path: ', html_path)
 }
