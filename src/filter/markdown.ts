@@ -161,7 +161,10 @@ export async function genTemplate(nickname: string, md: string) {
     .replaceAll('\n', '\\n')
   // https://hk.ft12.com/multi.php?url=www.985.so
   try {
-    short = await shortURL('https://bincooo.github.io/cdn/md/index.html?tex=' + btoa(encodeURI(mdText)))
+    const jsonString = `{
+      "name": "${nickname}"
+    }`
+    short = await shortURL('https://bincooo.github.io/cdn/md/index.html?tex=' + btoa(encodeURI(mdText)) + '&d=' + btoa(encodeURI(jsonString)))
     if (config.debug) {
       console.log('short URL: ', short)
     }
