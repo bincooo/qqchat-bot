@@ -38,7 +38,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
     '--disable-accelerated-2d-canvas',
     '--disable-web-security',
     '--disable-gpu',
-    '--window-size=710,350'
+    '--window-size=510,350'
     // '--js-flags="--max-old-space-size=1024"'
   ]
 
@@ -46,7 +46,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
   const browser: Browser = await puppeteer.launch({
     headless,
     // devtools: true,
-    defaultViewport: { width: 710, height: 350 },
+    defaultViewport: { width: 510, height: 350 },
     args: puppeteerArgs,
     ignoreDefaultArgs: [
       '--disable-extensions',
