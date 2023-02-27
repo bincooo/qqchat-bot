@@ -20,6 +20,8 @@ export class Sender {
 
   public userId: number
 
+  public nickname: string
+
   constructor (e: MessageEvent) {
     this._eventObject = e
     this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
@@ -28,6 +30,7 @@ export class Sender {
     }
     if (!(e instanceof GuildMessage)) {
       this.userId = e.sender?.user_id || e.user_id
+      this.nickname = e.sender?.nickname || e.nickname
       this.isAdmin = this.userId === Number(config.adminQQ)
     }
   }
