@@ -165,9 +165,9 @@ function initParser() {
 
   const condition: Array<parser.Condition> = [
     codeCondit,
-    "100:。\n",
-    "100:。",
-    "100:.\n"
+    "50:。\n",
+    "50:。",
+    "50:.\n"
   ]
 
   globalParser = new parser.MessageParser({ condition })

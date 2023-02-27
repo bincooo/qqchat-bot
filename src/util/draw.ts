@@ -308,6 +308,29 @@ async function browserTryBetter(b64: string, name: string) {
 }
 
 
+export async function shortURL(url: string) {
+  return new Promise<string>((resolve, reject) => {
+    const ip = virtualIP()
+    sendPost(`https://hk.ft12.com/multi.php?url=www.985.so${url}`, "", {
+      'X-Forwarded-For': ip,
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Proxy-Connection': 'keep-alive',
+      'Origin': 'http://transcode.imperial-vision.com:8080',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
+    }).then(val => {
+      try {
+        const res = JSON.parse(val)
+        if (res.status === 1) {
+          resolve(res.url)
+        } else reject(new Error("Error: genarate short URL fail !!"))
+      } catch(err) {
+        reject(err)
+      }
+    }).catch(err => reject(err))
+  })
+}
+
+
 /**
  * 4K画质增强
  */
