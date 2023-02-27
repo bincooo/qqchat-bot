@@ -51,12 +51,18 @@ export class MessageParser {
     let index,
       condition = [... this._condition]
     for (let i in condition) {
-      const condit = condition[i]
+      let condit = condition[i]
       if (typeof(condit) == 'string') {
+        const len = (condit.match(/([0-9]+):.+/)??[])[1]
+        condit = !len ? condit : condit.substr(len.length + 1)
         index = data.response.lastIndexOf(condit)
           if (index > 0) {
             index += condit.length
-            break
+            if (len) {
+              if (parseInt(len) < index - cached.idx) {
+                break
+              }
+            } else break
           }
       } else {
         index = condit(data.response, cached.index)
