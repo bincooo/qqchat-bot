@@ -28,6 +28,12 @@ class JapaneseUnicodeParser {
     }
     return count
   }
+
+  filter(str: string): string {
+    return str
+      .replace(/[0-9\s\n]+/g, '')
+      .replace(/[`:_.~!@#$%^&*() \+ =<>?"{}|, \/ ;' \\ [ \] ·~！@#￥%……&*（）—— \+ ={}|《》？：“”【】、；‘’，。、]/g, '')
+  }
 }
 
 export const japaneseUnicodeParser = new JapaneseUnicodeParser()

@@ -198,7 +198,8 @@ export const onMessage = async (data: any, sender: Sender) => {
 
       const parserJapen = (tex: string) => {
         const count = japaneseUnicodeParser.count(tex)
-        const is = (tex.length * .3 < count) // 0.3的权重，超过这个阈值就判定它是日文
+        // 0.2 的权重，超过这个阈值就判定它是日文
+        const is = (japaneseUnicodeParser.filter(tex).length * .2 < count)
         return {
           vname: is ? 'ja-JP-AoiNeural' : 'zh-CN-XiaoshuangNeural',
           rate: is ? -5 : 0,
@@ -209,8 +210,6 @@ export const onMessage = async (data: any, sender: Sender) => {
       if (!!message) {
         if (isDone()) {
           if (config.tts) {
-            
-
             const path = await speak({ text: message, ...parserJapen(message) })
             await sender.reply(segment.record(path), true)
             await globalStatManager.recall()
