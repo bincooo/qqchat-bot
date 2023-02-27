@@ -201,6 +201,7 @@ function buildSsml(config: Config) {
 }
 
 
+// https://azure.microsoft.com/zh-cn/products/cognitive-services/text-to-speech/#features
 async function speak(
   config: Config,
   type: string = 'audio-24khz-96kbitrate-mono-mp3'
