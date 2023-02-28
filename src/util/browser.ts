@@ -38,7 +38,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
     '--disable-accelerated-2d-canvas',
     '--disable-web-security',
     '--disable-gpu',
-    '--window-size=710,350'
+    '--window-size=650,350'
     // '--js-flags="--max-old-space-size=1024"'
   ]
 
@@ -46,7 +46,7 @@ export default async function getBrowser(headless?: boolean = true): (Browser | 
   const browser: Browser = await puppeteer.launch({
     headless,
     // devtools: true,
-    defaultViewport: { width: 710, height: 350 },
+    defaultViewport: { width: 650, height: 350 },
     args: puppeteerArgs,
     ignoreDefaultArgs: [
       '--disable-extensions',
@@ -92,8 +92,8 @@ export const defaultChromeExecutablePath = (): string => {
 }
 
 export async function md2jpg(htmlText: string): Promise<string> {
-  let [ browser, page ] = await getBrowser(false)
-  // let [ browser, page ] = await getBrowser()
+  // let [ browser, page ] = await getBrowser(false)
+  let [ browser, page ] = await getBrowser()
   let dontClose = true
   if (!page) {
     page = await browser.newPage()
@@ -113,7 +113,7 @@ export async function md2jpg(htmlText: string): Promise<string> {
   const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
   await page.screenshot({ path: jpg, fullPage: true })
   if (!dontClose) {
-    // await page.close()
+    await page.close()
   }
   return fs.readFileSync(jpg)
     .toString('base64')

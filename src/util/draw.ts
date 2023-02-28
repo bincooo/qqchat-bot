@@ -324,7 +324,7 @@ export async function shortURL(url: string) {
     formData.append("url", url)
     formData.append("host", "hk")
     formData.append("random", `20305174902795030`)
-
+    // https://www.985.so/
     sendPost(`https://hk.ft12.com/multi.php`, formData, {
       'X-Forwarded-For': ip,
       'Origin': 'https://www.985.so',
