@@ -10,7 +10,6 @@ services:
       - ENABLED_X11VNC=yes
     volumes:
       - ./data:/bot/data
-      - ./amr:/bot/amr
       - ./src:/bot/src
       - ./demos:/bot/demos
     extra_hosts:
