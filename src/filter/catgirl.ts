@@ -79,7 +79,7 @@ export class CatgirlFilter extends BaseMessageFilter {
     return [ true, content ]
   }
 
-  async drawFont(url: string, m1: string, m2?:stirng = ''): Promise<string> {
+  async drawFont(url: string, m1: string, m2?: string = ''): Promise<string> {
     const buf = await sendGet(url)
     const drawPath = await this.save(buf)
     const executor = util.promisify(execcmd.exec)

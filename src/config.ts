@@ -1,6 +1,7 @@
 
 export const config = {
-
+  debug: false,
+  docker: false,
   adminQQ: 0,
   botQQ: 0,
   botNickname: '猫小爱',

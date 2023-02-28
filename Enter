@@ -2,7 +2,7 @@
 declare ticket=$1
 declare path='.'
 if [ "$(dirname $0)" == '/usr/local/bin' ];then
-  set $path='/bot'
+  set $path='/app'
 fi
 
 if [ ! -z "$ticket" ];then

@@ -100,24 +100,30 @@ function doLogin (client: Client) {
 
   client.on('system.login.slider', function (e) {
     loginType = 0
-  //   inquirer.prompt({ type: 'input', message: '输入ticket：...\n', name: 'ticket' })
-  //     .then(({ ticket }) => this.submitSlider(String(ticket).trim()))
+    if (!config.docker) {
+      inquirer.prompt({ type: 'input', message: '输入ticket：...\n', name: 'ticket' })
+        .then(({ ticket }) => this.submitSlider(String(ticket).trim()))
+    }
   })
 
   client.on('system.login.device', function (e) {
     loginType = 1
     client.sendSmsCode()
-    // inquirer.prompt({ type: 'input', message: '请输入手机验证码...\n', name: 'code' })
-    //   .then(({ code }) => this.submitSmsCode(String(code).trim()))
+    if (!config.docker) {
+      inquirer.prompt({ type: 'input', message: '请输入手机验证码...\n', name: 'code' })
+        .then(({ code }) => this.submitSmsCode(String(code).trim()))
+    }
   })
 
   client.on('system.login.qrcode', function (e) {
     loginType = 2
-  //   inquirer.prompt({ type: 'input', message: '回车刷新二维码，等待扫码中...\n', name: 'enter' })
-  //     .then(() => { this.login() })
+    if (!config.docker) {
+      inquirer.prompt({ type: 'input', message: '回车刷新二维码，等待扫码中...\n', name: 'enter' })
+        .then(() => { this.login() })
+    }
   })
 
-  if (!timer) {
+  if (!timer && !config.docker) {
     console.log(chalk.green('请在15秒内完成登录 ...'))
     timer = setInterval(() => loginHelper(client), 15 * 1000)
   }
