@@ -12,5 +12,4 @@ if [ $ENABLED_X11VNC == 'yes' ]; then
 fi
 
 cd /app
-npm i
 npm run dev -y
