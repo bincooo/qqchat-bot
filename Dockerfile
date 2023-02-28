@@ -3,6 +3,7 @@ FROM bincooo/chrome-vnc:latest
 WORKDIR /app
 
 ADD . /app
+ADD Enter /usr/local/bin
 RUN chmod +x /usr/local/bin/Enter
 RUN chmod +x /app/docker-entrypoint.sh
 
