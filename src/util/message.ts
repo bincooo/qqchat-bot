@@ -20,7 +20,7 @@ export async function filterTokens (content: string, sender?: Sender) {
     console.log('request message ======', content)
   }
   const filters = messageHandler.filter(item => item.type === 0)
-  return (await _filterTokens(content, filters, sender)).trim()
+  return (await _filterTokens(content, filters, sender))
 }
 
 async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender, done?: boolean) {
