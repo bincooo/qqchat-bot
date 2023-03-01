@@ -9,7 +9,7 @@ RUN chmod +x /app/docker-entrypoint.sh
 
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 RUN apt-get update \
-  && apt-get install -y make gcc \
+  && apt-get install -y make gcc g++ \
   && rm -rf /var/lib/apt/lists/*
 
 RUN npm i
