@@ -3,7 +3,7 @@ import logger from './util/log'
 import { initOicq } from './core/oicq'
 import MessageHandlers from './handler'
 import { existsConfig, loadConfig, writeConfig } from './util/config'
-import { config } from './config'
+import { config, preset } from './config'
 import { run } from './auto'
 import chalk from 'chalk'
 
@@ -23,6 +23,11 @@ async function main () {
   console.log(chalk.green('如果有用点个star吧 !!!'))
 
   const exist = existsConfig()
+  const presetPath = process.cwd() + '/preset.json'
+  if (existsConfig(presetPath)) {
+    Object.assign(preset, await loadConfig(presetPath))
+  }
+  
   if (!exist) {
     await run()
       .then(async (conf) => {

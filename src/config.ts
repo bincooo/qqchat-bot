@@ -67,3 +67,7 @@ export const config = {
   },
   tts: false
 }
+
+export const preset: any = {
+  active: ""
+}

@@ -1,5 +1,6 @@
 import type { DiscussMessageEvent, GroupMessageEvent, PrivateMessageEvent } from 'oicq'
 import type { GuildMessage } from 'oicq-guild/lib/message'
+import { QueueReply } from 'cgpt'
 import { Sender } from './model/sender'
 
 export interface envConfig {
@@ -31,8 +32,9 @@ export abstract class BaseMessageHandler {
 }
 
 
-
-export type MessageFilter = (content: string, sender?: Sender) => (boolean | string)[] | Promise<(boolean | string)[]>
+// return [ boolean, (string | QueueReply)]
+// boolean: 是否继续拦截 true 是 false 否
+export type MessageFilter = (content: string, sender?: Sender) => (boolean | string | QueueReply)[] | Promise<(boolean | string | QueueReply)[]>
 
 export abstract class BaseMessageFilter {
   /**

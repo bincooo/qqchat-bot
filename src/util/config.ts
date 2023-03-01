@@ -6,22 +6,22 @@ import chalk from 'chalk'
 
 const configFile = process.cwd() + '/config.json'
 
-export async function loadConfig () {
-  const str = (await readFile(configFile)).toString()
+export async function loadConfig (config?: string) {
+  const str = (await readFile(config??configFile)).toString()
   return JSON.parse(str)
 }
 
-export function existsConfig () {
-  return existsSync(configFile)
+export function existsConfig (config?: string) {
+  return existsSync(config??configFile)
 }
 
-export async function validConfigFile () {
-  if (!existsConfig) {
-    console.error(`请正确配置config.json文件(已自动生成 ${configFile} ，填写对应值即可)`)
-    await writeConfig(config)
-    process.exit()
-  }
-}
+// export async function validConfigFile () {
+//   if (!existsConfig) {
+//     console.error(`请正确配置config.json文件(已自动生成 ${configFile} ，填写对应值即可)`)
+//     await writeConfig(config)
+//     process.exit()
+//   }
+// }
 
 export async function writeConfig (config: object) {
   const content = JSON.stringify(config, null, 2)

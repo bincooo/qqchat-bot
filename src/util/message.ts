@@ -5,6 +5,7 @@ import { Sender } from 'src/model/sender'
 import speak from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
+import { QueueReply } from 'cgpt'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
 import { japaneseUnicodeParser } from 'src/util/lang'
@@ -24,15 +25,15 @@ export async function filterTokens (content: string) {
 
 async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender, done?: boolean) {
   if (filters.length === 0) return content.trim()
-  let resultMessage = ''
+  let resultMessage: QueueReply = ''
 
   try {
     for (let i = 0; i < filters.length; i++) {
       let isStop = false
       if (filters[i] instanceof BaseMessageFilter) {
-        const [ stop, msg ] = await (filters[i] as BaseMessageFilter).handle(content, sender, done)
+        const [ stop, reply ] = await (filters[i] as BaseMessageFilter).handle(content, sender, done)
         isStop = !stop
-        resultMessage = msg
+        resultMessage = reply
       }
       if (isStop) {
         break
@@ -42,7 +43,7 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
     logger.error(err)
   }
 
-  return resultMessage.trim()
+  return resultMessage??content?.trim()
 }
 
 
@@ -168,7 +169,7 @@ function initParser() {
     codeCondit,
     "80:。\n",
     "80:。",
-    "80:.\n"
+    "100:.\n"
   ]
 
   globalParser = new parser.MessageParser({ condition })

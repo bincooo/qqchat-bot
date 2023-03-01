@@ -107,12 +107,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
     if (!config.api.enable) return true
     try {
 
-      const need = () => {
-        return !(sender.textMessage
-            .trim()
-            .startsWith('[prompt]'))
-      }
-
       if (sender.textMessage?.trim() === '!reset') {
         this._uuid = this._emailPool.resetCurrOpts()
         sender.reply('当前会话已重置 ~')
@@ -125,10 +119,14 @@ export class ChatGPTHandler extends BaseMessageHandler {
         return false
       }
 
-      this._iswait = true
       globalLoading(sender)
-      const pref = !need() ? '' : await this.processPreface()
-      await this._api.queueSendMessage(await filterTokens(pref + sender.textMessage), {
+      const message = await filterTokens(sender.textMessage)
+      if (!message) {
+        return false
+      }
+
+      this._iswait = true
+      await this._api.queueSendMessage(message, {
         onProgress: async (res) => {
           if (res.error) {
             await this.messageErrorHandler(sender, res.error)
@@ -146,24 +144,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
     
     this._iswait = false
     return false
-  }
-
-  async processPreface(): Promise<string> {
-    const { preface, precondition } = config.api
-    let pref = ''
-    if (preface.enable) {
-      pref = preface.message
-      if (!!precondition && this._count >= MAX_DEB_COUNT) {
-        await this._api.queueSendMessage(precondition, {
-          onProgress: async (res) => {
-            if (res.response == '[DONE]') {
-              this._count = 0
-            }
-          }
-        }, this._uuid)
-      }
-    }
-    return pref
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
