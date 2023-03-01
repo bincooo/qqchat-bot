@@ -39,7 +39,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const player = content.trim()
         .split(" ")[1]
       if (player) {
-        const obj = preset.player?.filter(item => item.key === player.trim())
+        const obj = preset.player?.find(item => item.key === player.trim())
         if (obj) {
           preset.active = obj.key
           sender.reply("已开启，那我们开始聊天吧 ~")
@@ -55,7 +55,7 @@ export class PlayerFilter extends BaseMessageFilter {
         this._active = preset.active
       }
 
-      const player = preset.player?.filter(item => item.key === preset.active)
+      const player = preset.player?.find(item => item.key === preset.active)
       if (!!player) {
         const result: QueueReply = async (reply) => {
           // training

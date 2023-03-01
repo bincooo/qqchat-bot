@@ -119,13 +119,13 @@ export class ChatGPTHandler extends BaseMessageHandler {
         return false
       }
 
-      globalLoading(sender)
       const message = await filterTokens(sender.textMessage, sender)
       if (!message) {
         return false
       }
 
       this._iswait = true
+      globalLoading(sender)
       await this._api.queueSendMessage(message, {
         onProgress: async (res) => {
           if (res.error) {
