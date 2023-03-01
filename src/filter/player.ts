@@ -59,23 +59,26 @@ export class PlayerFilter extends BaseMessageFilter {
         this._count = 0
         this._active = preset.active
       }
-      const getPalyer = () => {
-        if (typeof preset.player === 'string') {
-          return preset.player
-        } else {
-          return preset.player?.find(item => item.key === preset.active)
-        }
-      }
-      const player = getPalyer()
+
+      const player =  preset.player?.find(item => item.key === preset.active)
       if (!!player) {
         const result: QueueReply = async (reply) => {
-          for(let index = 0; index < player.training?.length; index++) {
-            const message = player.training[index]
-            await reply(message)
+          // training
+          if (typeof player.training === 'string') {
+            if (player.training) {
+              await reply(message)
+            }
+          } else {
+            for(let index = 0; index < player.training?.length; index++) {
+              const message = player.training[index]
+              if (message) {
+                await reply(message)
+              }
+            }
           }
+
           return content
         }
-        
         return [ false, result ]
       }
     }
