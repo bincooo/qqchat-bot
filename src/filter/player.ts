@@ -26,8 +26,8 @@ const MAX_COUNT = 10
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
-  protected _active?: string
-  protected _count: number = 0
+  protected _active: string = ""
+  protected _count: number = MAX_COUNT
 
   constructor() {
     super()
@@ -42,7 +42,7 @@ export class PlayerFilter extends BaseMessageFilter {
         const obj = preset.player?.find(item => item.key === player.trim())
         if (obj) {
           preset.active = obj.key
-          sender.reply("已开启，那我们开始聊天吧 ~")
+          sender.reply("已开启【" + preset.active + "】，那我们开始聊天吧 ~")
           return [ false, "" ]
         }
       }
@@ -50,13 +50,14 @@ export class PlayerFilter extends BaseMessageFilter {
 
     if (!!preset.active) {
       this._count ++
+
+      if(this._active === preset.active && this._count <= MAX_COUNT) {
+        return [ true, content ]
+      }
+
       if (this._active !== preset.active || this._count > MAX_COUNT) {
         this._count = 0
         this._active = preset.active
-      }
-
-      if(this._count <= MAX_COUNT) {
-        return [ true, content ]
       }
 
       const player = preset.player?.find(item => item.key === preset.active)
