@@ -4,11 +4,13 @@ import util from 'util'
 import execcmd from 'child_process'
 import path from 'path'
 import fs from 'fs'
+import WxVoice from 'wx-voice'
 import ffmpeg from 'ffmpeg-static'
 import { config } from 'src/config'
 
 
 const ffmpegPath = ffmpeg.path
+const voice = new WxVoice('./amr', ffmpegPath)
 function mp3ToAmr(filepath, outputDir = './amr') {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
@@ -31,6 +33,26 @@ function mp3ToAmr(filepath, outputDir = './amr') {
   })
 }
 
+function mp3ToSilk(filepath, outputDir = './amr') {
+  return new Promise((resolve, reject) => {
+    const basename = path.basename(filepath)
+    const etc = basename.split('.').pop()
+    const filename = basename.replace('.' + etc , '')
+    if (etc != 'mp3') {
+      reject('please input a mp3 file ~')
+      return
+    }
+
+    voice.encode(filepath, `${filename}.silk`, {format: 'silk'}, (path) => {
+      if (path) {
+        resolve(path)
+      } else {
+        reject('mp3 convert to silk Error !!!')
+      }
+    })
+  })
+}
+
 async function saveFile(buffer: Buffer): Promise<string> {
   const cid = genCid()
   return new Promise((resolve, reject) => {
@@ -42,7 +64,8 @@ async function saveFile(buffer: Buffer): Promise<string> {
       }
     })
   }).then(path => {
-    return mp3ToAmr(path)
+    // return mp3ToAmr(path)
+    return mp3ToSilk(path)
   })
 }
 

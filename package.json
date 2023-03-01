@@ -61,6 +61,7 @@
     "puppeteer-interceptor": "^2.2.0",
     "urlencode": "^1.1.0",
     "winston": "^3.8.2",
-    "ws": "^8.8.0"
+    "ws": "^8.8.0",
+    "wx-voice": "^0.2.1"
   }
 }
