@@ -1,18 +1,6 @@
 #!/bin/bash
 
-
-
-# if [ -n "$PID" ]; then
-#   export DISPLAY=:99
-# else
-#   Xvfb :99 -ac & export DISPLAY=:99
-# fi
-
-{
-  Xvfb :99 -ac && export DISPLAY=:99 &&
-} || {
-  export DISPLAY=:99
-}
+Xvfb :99 -ac & export DISPLAY=:99 || export DISPLAY=:99
 
 if [ $ENABLED_X11VNC == 'yes' ]; then
   x11vnc -display :99 -forever -bg -o /var/log/x11vnc.log -rfbport 5900
