@@ -45,7 +45,12 @@ function mp3ToSilk(filepath, outputDir = './amr') {
 
     voice.encode(filepath, `${filename}.silk`, {format: 'silk'}, (path) => {
       if (path) {
-        resolve(path)
+        // resolve(path)
+        fs.readFile(path, (error, data) => {
+          if (error) {
+            reject(error)
+          } else resolve('base64://' + data.toString('base64'))
+        })
       } else {
         reject('mp3 convert to silk Error !!!')
       }
