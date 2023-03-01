@@ -25,7 +25,6 @@ class PlayerCommand extends BaseCommand {
             'Used:\n开启 [名称]\n例子: 开启 喵小爱\n',
             ...buildHelpMessage()
           ].join('\n'), false)
-        config.tts = true
         break
       default:
         sender.reply(this.helpDoc, true)
