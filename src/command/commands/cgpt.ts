@@ -10,8 +10,6 @@ class CgptCommand extends BaseCommand {
   usage = [
     `tts:on      ${this.sp(12)}开启语音`,
     `tts:off     ${this.sp(12)}关闭语音`
-    // `catgirl:on  ${this.sp(10)}开启猫娘`,
-    // `catgirl:off ${this.sp(10)}关闭猫娘`
     + '\n----'
     + '\n!reset  - 重置会话'
     + '\n/draw [prompt] - ai作画\n'
@@ -36,14 +34,6 @@ class CgptCommand extends BaseCommand {
         sender.reply('已关闭语音模式 ~', false)
         config.tts = false
         break
-      // case 'catgirl:on':
-      //   sender.reply('已开启猫娘模式 ~', false)
-      //   config.api.preface.enable = true
-      //   break
-      // case 'catgirl:off':
-      //   sender.reply('已关闭猫娘模式 ~', false)
-      //   config.api.preface.enable = false
-      //   break
       default:
         sender.reply(this.helpDoc, true)
         break
