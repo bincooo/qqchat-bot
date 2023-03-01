@@ -66,7 +66,7 @@ export class PlayerFilter extends BaseMessageFilter {
           // training
           if (typeof player.training === 'string') {
             if (player.training) {
-              await reply(message)
+              await reply(player.training)
             }
           } else {
             for(let index = 0; index < player.training?.length; index++) {
