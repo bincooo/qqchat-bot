@@ -13,8 +13,6 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 RUN npm i
-RUN node_modules/wx-voice/bin.js compile
-
 #ENTRYPOINT ["tail","-f","/dev/null"]
 ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]
 # Xvfb :99 -ac & export DISPLAY=:99

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PID=`ps -ef|grep Xvfb|grep -v grep|awk '{print $2}'`
+echo "Xvfb pid =$PID"
 if [ -n "$PID" ]; then
   export DISPLAY=:99
 else
@@ -12,4 +13,5 @@ if [ $ENABLED_X11VNC == 'yes' ]; then
 fi
 
 cd /app
+node_modules/wx-voice/bin.js compile
 npm run dev -y
