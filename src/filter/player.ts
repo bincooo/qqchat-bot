@@ -22,7 +22,7 @@ import { Sender } from 'src/model/sender'
 //     .toLowerCase()
 //     .substr(0, 10)
 // }
-
+const MAX_COUNT = 10
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
@@ -50,9 +50,13 @@ export class PlayerFilter extends BaseMessageFilter {
 
     if (!!preset.active) {
       this._count ++
-      if (this._active !== preset.active || this._count > 10) {
+      if (this._active !== preset.active || this._count > MAX_COUNT) {
         this._count = 0
         this._active = preset.active
+      }
+
+      if(this._count <= MAX_COUNT) {
+        return [ true, content ]
       }
 
       const player = preset.player?.find(item => item.key === preset.active)
