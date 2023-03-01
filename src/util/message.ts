@@ -15,12 +15,12 @@ import delay from 'delay'
 /**
  * 消息 tokens优化
  */
-export async function filterTokens (content: string) {
+export async function filterTokens (content: string, sender?: Sender) {
   if (config.debug) {
     console.log('request message ======', content)
   }
   const filters = messageHandler.filter(item => item.type === 0)
-  return (await _filterTokens(content, filters)).trim()
+  return (await _filterTokens(content, filters, sender)).trim()
 }
 
 async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender, done?: boolean) {

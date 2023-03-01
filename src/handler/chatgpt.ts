@@ -120,7 +120,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       globalLoading(sender)
-      const message = await filterTokens(sender.textMessage)
+      const message = await filterTokens(sender.textMessage, sender)
       if (!message) {
         return false
       }
