@@ -15,7 +15,7 @@ function genUid(): string {
 }
 
 declare type Email = {
-  uuid: Map<number, string>,
+  uuid?: Map<number, string>,
   email: string,
   password: string
 }
@@ -53,6 +53,9 @@ class EmailPool {
     const account = this._emails[this._currentIndex]
     this._opts.email = account.email
     this._opts.password = account.password
+    if (!account.uuid) {
+      account.uuid = new Map<number, string>()
+    }
     if (!account.uuid.has(uid)) {
       account.uuid.set(uid, genUid())
     }
@@ -65,6 +68,9 @@ class EmailPool {
 
   resetCurrOpts(uid: number): string {
     const account = this._emails[this._currentIndex]
+    if (!account.uuid) {
+      account.uuid = new Map<number, string>()
+    }
     if (account.uuid.has(uid)) {
       account.uuid.delete(uid)
     }
@@ -98,7 +104,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
         heartbeatMs: pingMs,
         executablePath: browserPath
       },
-      [{ email, password, uuid: [] }, ...slaves ])
+      [{ email, password }, ...slaves ])
     this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
     await this._api.initSession()
     console.log('chatgpt - execute initChatGPT method success.')
