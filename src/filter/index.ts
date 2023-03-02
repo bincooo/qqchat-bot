@@ -1,12 +1,12 @@
 import { SymbolFilter } from './symbol'
-import { TagsHelpFilter } from './tags-help'
+import { NovelAiFilter } from './novel-ai'
 import { PlayerFilter } from './player'
 import { MdFilter } from './markdown'
 import { CodeFilter } from './code'
 
 const messageFilters = [
   new SymbolFilter(),
-  new TagsHelpFilter(),
+  new NovelAiFilter(),
   new PlayerFilter(),
   new MdFilter(),
   new CodeFilter()

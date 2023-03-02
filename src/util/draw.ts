@@ -34,7 +34,7 @@ export function draw(opts: {
   const {
     data,
     session_hash,
-    fn_index = 101,
+    fn_index = 195,
     try4K = false,
     callback
   } = opts

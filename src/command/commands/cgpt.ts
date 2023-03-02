@@ -8,17 +8,15 @@ import messageHandlers from './../../handler'
 class CgptCommand extends BaseCommand {
   label = 'cgpt'
   usage = [
-    `tts:on      ${this.sp(12)}开启语音`,
-    `tts:off     ${this.sp(12)}关闭语音`
+    `tts:on/off      ${this.sp(12)}开/关语音模式`,
     + '\n----'
     + '\n!reset  - 重置会话'
-    + '\n/draw [prompt] - ai作画\n'
-    + '\n[prompt]+文字 - 让Ai根据文字生成tag'
+    + '\n/draw [tag] - ai作画\n'
+    + '\n[tag]+文字 - 让Ai根据文字生成tag'
     + '\nhttp://h.icu-web.tk:8082/tag\n可通过该站点定制ai绘画标签'
     + '\n----'
     + '\n[code]+文字 - 代码片段优化(代码片段转图片)'
-    + '\n[md]+文字 - 以markdown格式转图片'
-    + '\n[md:latex]+文字 - 以markdown格式转图片(数学公式增强)'
+    + '\n[md(:latex)]+文字 - [md]以md格式转图片,[md:latex]以md格式转图片(数学公式增强)'
   ]
 
   requiredAdministrator = false

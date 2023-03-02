@@ -10,10 +10,8 @@ class ServerCommand extends BaseCommand {
   usage = [
     `reboot   ${this.sp(7)}重启机器人`,
     `status   ${this.sp(9)}服务器状态`,
-    `draw:on  ${this.sp(6)}开启画质增强`,
-    `draw:off ${this.sp(6)}关闭画质增强`,
-    `debug:on ${this.sp(6)}开启调试模式`,
-    `debug:off ${this.sp(6)}关闭调试模式`
+    `draw:on/off  ${this.sp(6)}开/关画质增强`,
+    `debug:on/off ${this.sp(6)}开/关调试模式`
   ]
 
   requiredAdministrator = true

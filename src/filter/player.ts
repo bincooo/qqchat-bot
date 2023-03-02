@@ -63,6 +63,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const player =  preset.player?.find(item => item.key === preset.active)
       if (!!player) {
         const result: QueueReply = async (reply) => {
+          await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           // training
           if (typeof player.training === 'string') {
             if (player.training) {

@@ -9,7 +9,7 @@ import { config } from 'src/config'
 
 
 
-const pref = '/draw'
+const DRAW: string = '/draw'
 const hint = [
   "正在努力作画, 稍等哦~",
   "在画了在画了, 别急呢~",
@@ -20,11 +20,11 @@ const hint = [
 ]
 
 
-function genUid(): string {
+function genUid(len?: number = 11): string {
   return randomBytes(16)
     .toString('hex')
     .toLowerCase()
-    .substr(0, 10)
+    .substr(0, len)
 }
 
 export class NovelAiHandler extends BaseMessageHandler {
@@ -35,12 +35,12 @@ export class NovelAiHandler extends BaseMessageHandler {
   }
 
   handle = async (sender: Sender) => {
-    if ((sender?.textMessage||'').startsWith(pref)) {
+    if ((sender?.textMessage||'').startsWith(DRAW)) {
       const idx = parseInt(Math.random() * hint.length, 10)
       sender.reply(hint[idx], true)
 
       const data = initParams(
-        (await filterTokens(sender?.textMessage.substr(pref.length)))
+        (await filterTokens(sender?.textMessage.substr(DRAW.length)))
       )
 
       retry(
@@ -82,98 +82,96 @@ export const initParams = function(prompt: string): Array<any> {
   // 提示词相关性(CFG Scale)
   const cfg_scale = 6.5,
     [ width, height ] = [ 512, 832 ]
-  const params = [
-    prompt,
-    "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{{{bare flesh}}}}}",
-    "None",
-    "None",
-    28,
-    "Euler a",
-    false,
-    false,
-    1,
-    1,
-    cfg_scale,
-    -1,
-    -1,
-    0,
-    0,
-    0,
-    false,
-    height,
-    width,
-    true,
-    0.7,
-    0,
-    0,
-    "None",
-    0.9,
-    5,
-    "0.0001",
-    false,
-    "None",
-    "",
-    0.1,
-    false,
-    false,
-    false,
-    false,
-    "",
-    "Seed",
-    "",
-    "Nothing",
-    "",
-    true,
-    false,
-    false,
-    null
-  ]
-
-  return [...params, str({
-    "prompt": params[0],
-    "all_prompts": [
-      params[0]
-    ],
-    "negative_prompt": params[1],
-    "all_negative_prompts": [
-      params[1]
-    ],
-    "seed": 1637418386,
-    "all_seeds": [
-      1637418386
-    ],
-    "subseed": 233106276,
-    "all_subseeds": [
-      233106276
-    ],
-    "subseed_strength": 0,
-    "width": width,
-    "height": height,
-    "sampler_name": "Euler a",
-    "cfg_scale": cfg_scale,
-    "steps": 28,
-    "batch_size": 1,
-    "restore_faces": false,
-    "face_restoration_model": null,
-    "sd_model_hash": "0b16241c",
-    "seed_resize_from_w": 0,
-    "seed_resize_from_h": 0,
-    "denoising_strength": 0.7,
-    "extra_generation_params": {
-      "First pass size": "0x0"
-    },
-    "index_of_first_image": 0,
-    "infotexts": [
-      `${params[0]}\nNegative prompt: ${params[1]}\nSteps: 28, Sampler: Euler a, CFG scale: ${cfg_scale}, Seed: 1637418386, Size: ${width}x${height}, Model hash: 0b16241c, Denoising strength: 0.7, Clip skip: 2, ENSD: 31337, First pass size: 0x0`
-    ],
-    "styles": [
-      "None",
-      "None"
-    ],
-    "job_timestamp": dat(),
-    "clip_skip": 2,
-    "is_using_inpainting_conditioning": false
-  })]
+  return [
+        `task(${genUid()})`,
+        prompt,
+        "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{{{bare flesh}}}}}",
+        [],
+        20,
+        "Euler a",
+        false,
+        false,
+        1,
+        1,
+        cfg_scale,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        false,
+        height,
+        width,
+        false,
+        0.7,
+        2,
+        "Latent",
+        0,
+        0,
+        0,
+        [],
+        "None",
+        false,
+        false,
+        "LoRA",
+        "None",
+        1,
+        1,
+        "LoRA",
+        "None",
+        1,
+        1,
+        "LoRA",
+        "None",
+        1,
+        1,
+        "LoRA",
+        "None",
+        1,
+        1,
+        "LoRA",
+        "None",
+        1,
+        1,
+        "Refresh models",
+        null,
+        false,
+        "none",
+        "None",
+        1,
+        null,
+        false,
+        "Scale to Fit (Inner Fit)",
+        false,
+        false,
+        64,
+        64,
+        64,
+        0,
+        1,
+        false,
+        false,
+        false,
+        "positive",
+        "comma",
+        0,
+        false,
+        false,
+        "",
+        "Seed",
+        "",
+        "Nothing",
+        "",
+        "Nothing",
+        "",
+        true,
+        false,
+        false,
+        false,
+        0,
+        null,
+        50
+    ]
 }
 
 
