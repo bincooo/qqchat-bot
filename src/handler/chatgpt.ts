@@ -15,7 +15,7 @@ function genUid(): string {
 }
 
 declare type Email = {
-  uuid?: string,
+  uuid: Map<number, string>,
   email: string,
   password: string
 }
@@ -40,37 +40,42 @@ class EmailPool {
     console.log('email pool:', emails)
   }
 
-  next() {
+  next(uid: number) {
     const size = this._emails.length
     this._currentIndex ++
     if (this._currentIndex >= size) {
       this._currentIndex = 0
     }
+    return this.getId(uid)
+  }
+
+  getId(uid: number): string {
     const account = this._emails[this._currentIndex]
     this._opts.email = account.email
     this._opts.password = account.password
-    if (!account.uuid) {
-      account.uuid = genUid()
+    if (!account.uuid.has(uid)) {
+      account.uuid.set(uid, genUid())
     }
-    return account.uuid
+    return account.uuid.get(uid)
   }
 
   getOpts(): any {
     return this._opts
   }
 
-  resetCurrOpts(): string {
+  resetCurrOpts(uid: number): string {
     const account = this._emails[this._currentIndex]
-    account.uuid = genUid()
-    return account.uuid
+    if (account.uuid.has(uid)) {
+      account.uuid.delete(uid)
+    }
+    account.uuid.set(uid, genUid())
+    return account.uuid.get(uid)
   }
 }
 
 export class ChatGPTHandler extends BaseMessageHandler {
   protected _api: ChatGPTAPIBrowser
 
-  protected _uuid: string = genUid()
-  
   protected _iswait: boolean = false
 
   protected _emailPool: EmailPool
@@ -93,7 +98,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
         heartbeatMs: pingMs,
         executablePath: browserPath
       },
-      [{ email, password, uuid: this._uuid }, ...slaves ])
+      [{ email, password, uuid: [] }, ...slaves ])
     this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
     await this._api.initSession()
     console.log('chatgpt - execute initChatGPT method success.')
@@ -108,7 +113,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     try {
 
       if (sender.textMessage?.trim() === '!reset') {
-        this._uuid = this._emailPool.resetCurrOpts()
+        this._emailPool.resetCurrOpts(sender.id)
         sender.reply('当前会话已重置 ~')
         return false
       }
@@ -137,7 +142,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
           }
           await onMessage(res, sender)
         }
-      }, this._uuid)
+      }, this._emailPool.getId(sender.id))
     } catch (err) {
       await this.messageErrorHandler(sender, err)
     }
@@ -169,7 +174,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     } else if (err.statusCode === 429) {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 稍后再来吧 ...' + append, true)
       // 429 1hours 限制, 换号处理
-      this._uuid = this._emailPool.next()
+      this._emailPool.next(sender.id)
       const opts = this._emailPool.getOpts()
       this._api.setAccount(opts.email, opts.password)
       this._iswait = true

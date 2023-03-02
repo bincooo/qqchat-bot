@@ -22,9 +22,12 @@ export class Sender {
 
   public nickname: string
 
+  public isGroup: boolean = false
+
   constructor (e: MessageEvent) {
     this._eventObject = e
     this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
+    this.isGroup = (!!e.group)
     if (!e.atme && !!config.botNickname) {
       this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
     }
@@ -37,6 +40,12 @@ export class Sender {
 
   getEventObject(): MessageEvent {
     return this._eventObject
+  }
+
+  get id(): number {
+    return this.isGroup ? 
+      this._eventObject.group_id??this._eventObject.group.group_id :
+      this.userId
   }
 
   async reply(content: Sendable, quote?: boolean): any {
