@@ -117,7 +117,7 @@ export class PlayerFilter extends BaseMessageFilter {
         if (obj) {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {
-            key: obj.key
+            key: obj.key,
             count: MAX_COUNT
           }
           return [ false, "" ]
