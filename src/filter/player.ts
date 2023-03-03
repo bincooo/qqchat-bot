@@ -48,6 +48,9 @@ export class PlayerFilter extends BaseMessageFilter {
       if (player) {
         const obj = preset.player?.find(item => item.key === player.trim())
         if (obj) {
+          if (preset.active !== obj.key) {
+            this._count = MAX_COUNT
+          }
           preset.active = obj.key
           sender.reply("已开启【" + preset.active + "】，那我们开始聊天吧 ~")
           return [ false, "" ]
