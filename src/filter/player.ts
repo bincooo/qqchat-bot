@@ -81,17 +81,19 @@ export class PlayerFilter extends BaseMessageFilter {
       const player =  preset.player?.find(item => item.key === preset.active)
       if (!!player) {
         preset.maintenance = false
-        const curr = dat()
-        let timer: NodeJS.Timer = null
-        timer = setInterval(() => {
-          if (curr + 5000 < dat()) {
-            sender.reply("[loading preset: \"" + preset.active + "\"]\n记忆有些混乱捏, 渐渐陷入了回忆 ...")
-            globalLoading(sender)
-            clearInterval(timer)
-            timer = null
-          }
-        }, 300)
+        
         const result: QueueReply = async (reply) => {
+          const curr = dat()
+          let timer: NodeJS.Timer = null
+          timer = setInterval(() => {
+            if (curr + 5000 < dat()) {
+              sender.reply("[loading preset: \"" + preset.active + "\"]\n记忆有些混乱捏, 渐渐陷入了回忆 ...")
+              globalLoading(sender)
+              clearInterval(timer)
+              timer = null
+            }
+          }, 300)
+
           await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           // training
           if (typeof player.training === 'string') {
@@ -105,6 +107,11 @@ export class PlayerFilter extends BaseMessageFilter {
                 await reply(message)
               }
             }
+          }
+
+          if (timer) {
+            clearInterval(timer)
+            timer = null
           }
 
           return content
