@@ -3,13 +3,13 @@ import { NovelAiFilter } from './novel-ai'
 import { PlayerFilter } from './player'
 import { MdFilter } from './markdown'
 import { CodeFilter } from './code'
-import { PlayerMaintenancelFilter } from './player-maintenance'
+import { PlayerMaintenanceFilter } from './player-maintenance'
 
 const messageFilters = [
   new SymbolFilter(),
   new NovelAiFilter(),
   new PlayerFilter(),
-  new PlayerMaintenancelFilter(),
+  new PlayerMaintenanceFilter(),
   new MdFilter(),
   new CodeFilter()
 ]
