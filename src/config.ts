@@ -43,5 +43,6 @@ export const config = {
 }
 
 export const preset: any = {
-  active: ""
+  active: "",
+  maintenance: false
 }

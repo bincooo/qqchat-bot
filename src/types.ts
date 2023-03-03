@@ -34,7 +34,7 @@ export abstract class BaseMessageHandler {
 
 // return [ boolean, (string | QueueReply)]
 // boolean: 是否继续拦截 true 是 false 否
-export type MessageFilter = (content: string, sender?: Sender) => (boolean | string | QueueReply)[] | Promise<(boolean | string | QueueReply)[]>
+export type MessageFilter = (content: string, sender?: Sender, done?: boolean) => (boolean | string | QueueReply)[] | Promise<(boolean | string | QueueReply)[]>
 
 export abstract class BaseMessageFilter {
   /**

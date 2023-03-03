@@ -52,6 +52,17 @@ export class PlayerFilter extends BaseMessageFilter {
       this._count ++
 
       if(this._active === preset.active && this._count <= MAX_COUNT) {
+        if (preset.maintenance === true) {
+          preset.maintenance = false
+          const player = preset.player.filter(item => item.key === preset.active)[0]
+          if (!!player) {
+            const result: QueueReply = async (reply) => {
+              await reply(player.maintenance.training)
+              return content
+            }
+            return [ false, result ]
+          }
+        }
         return [ true, content ]
       }
 
@@ -62,6 +73,7 @@ export class PlayerFilter extends BaseMessageFilter {
 
       const player =  preset.player?.find(item => item.key === preset.active)
       if (!!player) {
+        preset.maintenance = false
         const result: QueueReply = async (reply) => {
           await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           // training
