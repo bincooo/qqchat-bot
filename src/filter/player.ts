@@ -82,10 +82,13 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!!player) {
         preset.maintenance = false
         const curr = dat()
-        const timer = setInterval(() => {
+        let timer: NodeJS.Timer = null
+        timer = setInterval(() => {
           if (curr + 5000 < dat()) {
-            sender.reply("记忆有些混乱捏, 渐渐陷入了回忆 ...")
+            sender.reply("[loading preset: \"" + preset.active + "\"]\n记忆有些混乱捏, 渐渐陷入了回忆 ...")
             globalLoading(sender)
+            clearInterval(timer)
+            timer = null
           }
         }, 300)
         const result: QueueReply = async (reply) => {
