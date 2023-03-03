@@ -67,7 +67,11 @@ export class PlayerFilter extends BaseMessageFilter {
           const player = preset.player.filter(item => item.key === preset.active)[0]
           if (!!player) {
             const result: QueueReply = async (reply) => {
-              await reply(player.maintenance.training)
+              const res = await reply(player.maintenance.training)
+              if (config.debug) {
+                console.log('preset.maintenance ====>>>', player.maintenance.training)
+                console.log('preset.maintenance ====<<<', res)
+              }
               return content
             }
             return [ false, result ]
@@ -101,13 +105,21 @@ export class PlayerFilter extends BaseMessageFilter {
           // training
           if (typeof player.training === 'string') {
             if (player.training) {
-              await reply(player.training)
+              const res = await reply(player.training)
+              if (config.debug) {
+                console.log('player.training ====>>>', player.training)
+                console.log('player.training ====<<<', res)
+              }
             }
           } else {
             for(let index = 0; index < player.training?.length; index++) {
               const message = player.training[index]
               if (message) {
-                await reply(message)
+                const res = await reply(message)
+                if (config.debug) {
+                  console.log('player.training ====>>>', message)
+                  console.log('player.training ====<<<', res)
+                }
               }
             }
           }
