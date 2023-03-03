@@ -1,4 +1,6 @@
 import { segment, Sendable } from 'oicq'
+import { Sender } from 'src/model/sender'
+
 
 function dat(): number {
   return new Date()
@@ -68,6 +70,10 @@ class GlobalStateManager {
       if (timer) {
         clearInterval(timer)
       }
+    }
+
+    if (!state.loading) {
+      state.loading = []
     }
 
     clear(state.timer)
