@@ -5,6 +5,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { config, preset } from 'src/config'
 // import { draw, sendGet } from 'src/util/draw'
 import { Sender } from 'src/model/sender'
+import { globalLoading } from 'src/util/message'
 // import retry from 'src/util/retry'
 // import Jimp from 'jimp'
 // import path from 'path'
@@ -22,6 +23,12 @@ import { Sender } from 'src/model/sender'
 //     .toLowerCase()
 //     .substr(0, 10)
 // }
+
+function dat() {
+  return new Date()
+    .getTime()
+}
+
 const MAX_COUNT = 10
 export class PlayerFilter extends BaseMessageFilter {
 
@@ -74,6 +81,13 @@ export class PlayerFilter extends BaseMessageFilter {
       const player =  preset.player?.find(item => item.key === preset.active)
       if (!!player) {
         preset.maintenance = false
+        const curr = dat()
+        const timer = setInterval(() => {
+          if (curr + 5000 < dat()) {
+            sender.reply("记忆有些混乱捏, 渐渐陷入了回忆 ...")
+            globalLoading(sender)
+          }
+        }, 300)
         const result: QueueReply = async (reply) => {
           await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           // training

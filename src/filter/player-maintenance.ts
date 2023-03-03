@@ -10,7 +10,7 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
     this.type = 1
   }
 
-  handle = async (content: string, , sender?: Sender, done?: boolean) => {
+  handle = async (content: string, sender?: Sender, done?: boolean) => {
     if (!!preset.active) {
       const player = preset.player.filter(item => item.key === preset.active)[0]
       if (!!player && !!player.maintenance) {
