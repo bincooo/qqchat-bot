@@ -3,7 +3,8 @@ import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import logger from 'src/util/log'
-import { filterTokens, onMessage, globalLoading, globalRecall } from 'src/util/message'
+import { filterTokens, onMessage } from 'src/util/message'
+import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
 
 const MAX_DEB_COUNT = 10
@@ -136,7 +137,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
 
       this._iswait = true
-      globalLoading(sender)
+      stateManager.sendLoading(sender, { init: true, isEnd: false })
       await this._api.queueSendMessage(message, {
         onProgress: async (res) => {
           if (res.error) {
@@ -158,8 +159,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
-    console.log('[chatgpt.ts] 158 messageErrorHandler', err)
-    globalLoading(sender, { init: true, isEnd: true })
+    // console.log('[chatgpt.ts] 158 messageErrorHandler', err)
+    stateManager.sendLoading(sender, { init: true, isEnd: true })
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
         .getHours()

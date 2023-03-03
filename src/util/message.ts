@@ -9,6 +9,7 @@ import { QueueReply } from 'cgpt'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
 import { japaneseUnicodeParser } from 'src/util/lang'
+import stateManager from 'src/util/state'
 import delay from 'delay'
 
 
@@ -56,98 +57,6 @@ function dat(): number {
 
 // --------------------------
 let globalParser: null | parser.MessageParser
-let globalStatManager: null | StatManager
-
-
-export function globalLoading(sender: Sender, other?: {
-  init: boolean
-  isEnd: boolean
-}) {
-  initStatManager()
-  const _other = other??{ init: true, isEnd: false }
-  globalStatManager.sendLoading(sender, _other)
-}
-
-export async function globalRecall() {
-  initStatManager()
-  await globalStatManager.recall()
-}
-
-
-class StatManager {
-
-  protected _GIF: Sendable = segment.image('./loading.gif')
-  protected _messageContiner: Array<string> = []
-  protected _isEnd: boolean = true
-  protected _previousTimestamp: number = 0
-  protected _timer: NodeJS.Timer | null = null
-  protected _globalTimer: NodeJS.Timer
-
-  constructor() {
-    this._globalTimer = setInterval(() => {
-      if (this._isEnd) {
-        this.recall()
-      }
-    }, 1000)
-  }
-
-  clear() {
-    if (this._timer) {
-      clearInterval(this._timer)
-      this._timer = null
-    }
-  }
-
-  sendLoading(
-    sender: Sender,
-    other?: {
-      init: boolean
-      isEnd: boolean
-    }
-  ) {
-    if (other?.init) {
-      this.setIsEnd(other.isEnd)
-    }
-
-    this.clear()
-    this._timer = setInterval(async () => {
-      if (this._isEnd) {
-        this.clear()
-        await this.recall()
-        return
-      }
-      if (this._previousTimestamp + 2500 < dat()) {
-        const result = await sender.reply(this._GIF)
-        await this.recall()
-        this._messageContiner.push(result.message_id)
-        this.clear()
-      }
-    }, 500)
-  }
-
-  async recall() {
-    let messageId
-    do {
-      messageId = this._messageContiner.shift()
-      if(messageId) {
-        const result = await getClient()?.deleteMsg(messageId)
-        // if (!result) {
-        //   await delay(500)
-        //   await getClient()?.deleteMsg(messageId)
-        // }
-      }
-    } while(!!messageId)
-  }
-
-  setIsEnd(isEnd: boolean) {
-    this._isEnd = isEnd
-    if (isEnd) {
-      this._previousTimestamp = dat() + 60 * 1000
-      return
-    }
-    this._previousTimestamp = dat()
-  }
-}
 
 
 function initParser() {
@@ -176,14 +85,8 @@ function initParser() {
   globalParser = new parser.MessageParser({ condition })
 }
 
-function initStatManager() {
-  if (globalStatManager) return
-  globalStatManager = new StatManager()
-}
-
 export const onMessage = async (data: any, sender: Sender) => {
   initParser()
-  initStatManager()
 
   if (data.response) {
     const filters = messageHandler.filter(item => item.type === 1)
@@ -192,7 +95,7 @@ export const onMessage = async (data: any, sender: Sender) => {
     const isDone = () => (data.response === '[DONE]')
     
     if (!!message || isDone()) {
-      globalStatManager.setIsEnd(isDone())
+      stateManager.setIsEnd(sender, isDone())
       message = await _filterTokens(message??'', filters, sender, isDone())
       if (config.debug) {
         console.log('response message ====== [' + isDone() + ']', data, message)
@@ -213,20 +116,20 @@ export const onMessage = async (data: any, sender: Sender) => {
           if (config.tts) {
             const path = await speak({ text: message, ...parserJapen(message) })
             await sender.reply(segment.record(path), true)
-            await globalStatManager.recall()
+            await stateManager.recallLoading(sender.id)
           }
           else {
             await sender.reply(message, true)
-            await globalStatManager.recall()
+            await stateManager.recallLoading(sender.id)
           }
         } else {
           if (config.tts) {
             const path = await speak({ text: message, ...parserJapen(message) })
             await sender.reply(segment.record(path), true)
-            globalStatManager.sendLoading(sender)
+            stateManager.sendLoading(sender)
           } else {
             await sender.reply(message, true)
-            globalStatManager.sendLoading(sender)
+            stateManager.sendLoading(sender)
           }
         }
       }
