@@ -112,8 +112,9 @@ export const onMessage = async (data: any, sender: Sender) => {
       }
       
       if (!!message) {
+        const state = stateManager.getState(sender.id)
         if (isDone()) {
-          if (config.tts) {
+          if (state.tts) {
             const path = await speak({ text: message, ...parserJapen(message) })
             await sender.reply(segment.record(path), true)
             await stateManager.recallLoading(sender.id)
@@ -123,7 +124,7 @@ export const onMessage = async (data: any, sender: Sender) => {
             await stateManager.recallLoading(sender.id)
           }
         } else {
-          if (config.tts) {
+          if (state.tts) {
             const path = await speak({ text: message, ...parserJapen(message) })
             await sender.reply(segment.record(path), true)
             stateManager.sendLoading(sender)

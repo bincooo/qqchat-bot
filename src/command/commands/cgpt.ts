@@ -4,11 +4,12 @@ import { BaseMessageHandler } from 'src/types'
 import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
+import stateManager from 'src/util/state'
 
 class CgptCommand extends BaseCommand {
   label = 'cgpt'
   usage = [
-    `tts:on/off      ${this.sp(12)}开/关语音模式`,
+    `tts:on/off      ${this.sp(12)}开/关语音模式`
     + '\n----'
     + '\n!reset  - 重置会话'
     + '\n/draw [tag] - ai作画\n'
@@ -23,14 +24,15 @@ class CgptCommand extends BaseCommand {
   description = 'web chatgpt 配置'
 
   async execute (sender: Sender, params: string[]) {
+    const state = stateManager.getState(sender.id)
     switch (params[0]) {
       case 'tts:on':
         sender.reply('已开启语音模式 ~', false)
-        config.tts = true
+        state.tts = true
         break
       case 'tts:off':
         sender.reply('已关闭语音模式 ~', false)
-        config.tts = false
+        state.tts = false
         break
       default:
         sender.reply(this.helpDoc, true)
