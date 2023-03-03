@@ -1,3 +1,4 @@
+import { segment, Sendable } from 'oicq'
 
 function dat(): number {
   return new Date()
