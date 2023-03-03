@@ -4,6 +4,7 @@ import { PlayerFilter } from './player'
 import { MdFilter } from './markdown'
 import { CodeFilter } from './code'
 import { PlayerMaintenanceFilter } from './player-maintenance'
+import { DefaultFilter } from './default'
 
 const messageFilters = [
   new SymbolFilter(),
@@ -11,7 +12,8 @@ const messageFilters = [
   new PlayerFilter(),
   new PlayerMaintenanceFilter(),
   new MdFilter(),
-  new CodeFilter()
+  new CodeFilter(),
+  new DefaultFilter()
 ]
 
 export default messageFilters
