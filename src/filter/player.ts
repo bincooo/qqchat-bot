@@ -5,7 +5,6 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { config, preset } from 'src/config'
 // import { draw, sendGet } from 'src/util/draw'
 import { Sender } from 'src/model/sender'
-import { globalLoading } from 'src/util/message'
 import stateManager from 'src/util/state'
 // import retry from 'src/util/retry'
 // import Jimp from 'jimp'
@@ -64,8 +63,8 @@ export class PlayerFilter extends BaseMessageFilter {
           let timer: NodeJS.Timer = null
           timer = setInterval(() => {
             if (curr + 10000 < dat()) {
-              sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n记忆有些混乱捏, 渐渐陷入了回忆 ...")
-              globalLoading(sender)
+              sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n——————\n\n记忆有些混乱捏,渐渐陷入了回忆...")
+              stateManager.sendLoading(sender, { init: true, isEnd: false })
               clearInterval(timer)
               timer = null
             }
