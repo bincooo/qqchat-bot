@@ -32,7 +32,6 @@ class GlobalStateManager {
   setIsEnd(sender: Sender, isEnd: boolean) {
     const state = this.getState(sender.id)
     state.isEnd = isEnd
-    state.previousTs = 
     if (isEnd) {
       state.previousTs = dat() + 60 * 1000
       return
