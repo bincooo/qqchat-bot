@@ -42,13 +42,13 @@ export class PlayerFilter extends BaseMessageFilter {
 
   handle = async (content: string, sender?: Sender) => {
     const state: any = stateManager.getState(sender.id)
-    const result0 = this.presetEnabled(content, sender)
+    const result0 = this.presetEnabled(content, sender, state)
     if (result0) return result0
 
     if (!!state.preset?.key) {
       state.preset.count++
 
-      const result1 = this.handlePresetMaintenance(content)
+      const result1 = this.handlePresetMaintenance(content, state)
       if (result1) return result1
 
       if (state.preset.count > MAX_COUNT) {
@@ -108,7 +108,7 @@ export class PlayerFilter extends BaseMessageFilter {
     return [ true, content ]
   }
 
-  presetEnabled(content: string, sender?: Sender): (boolean | QueueReply)[] {
+  presetEnabled(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
     if (content?.trim().startsWith("开启 ")) {
       const player = content.trim()
         .split(" ")[1]
@@ -127,7 +127,7 @@ export class PlayerFilter extends BaseMessageFilter {
     return null
   }
 
-  handlePresetMaintenance(content: string): (boolean | QueueReply)[] {
+  handlePresetMaintenance(content: string, state: any): (boolean | QueueReply)[] {
     if(state.preset.count <= MAX_COUNT) {
       if (!state.preset.maintenance) return [ true, content ]
 
