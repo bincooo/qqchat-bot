@@ -67,9 +67,10 @@ class GlobalStateManager {
       this.setIsEnd(sender, other.isEnd)
     }
 
-    const clear = (timer: NodeJS.Timer) => {
-      if (timer) {
-        clearInterval(timer)
+    const clearTimer = () => {
+      if (state.timer) {
+        clearInterval(state.timer)
+        state.timer = null
       }
     }
 
@@ -77,18 +78,18 @@ class GlobalStateManager {
       state.loading = []
     }
 
-    clear(state.timer)
+    clearTimer()
     state.timer = setInterval(async () => {
       if (state.isEnd) {
-        clear(state.timer)
+        clearTimer()
         await this.recallLoading(sender.id)
         return
       }
-      if (state.previousTs + 2500 < dat()) {
+      if (state.previousTs + 3000 < dat()) {
+        clearTimer()
         const result = await sender.reply(this._gif)
         await this.recallLoading(sender.id)
         state.loading.push(result.message_id)
-        clear(state.timer)
       }
     }, 500)
   }
