@@ -6,6 +6,7 @@ import { config, preset } from 'src/config'
 // import { draw, sendGet } from 'src/util/draw'
 import { Sender } from 'src/model/sender'
 import { globalLoading } from 'src/util/message'
+import stateManager from 'src/util/state'
 // import retry from 'src/util/retry'
 // import Jimp from 'jimp'
 // import path from 'path'
@@ -33,8 +34,6 @@ const MAX_COUNT = 10
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
-  protected _active: string = ""
-  protected _count: number = MAX_COUNT
 
   constructor() {
     super()
@@ -42,48 +41,21 @@ export class PlayerFilter extends BaseMessageFilter {
   }
 
   handle = async (content: string, sender?: Sender) => {
-    if (content?.trim().startsWith("开启 ")) {
-      const player = content.trim()
-        .split(" ")[1]
-      if (player) {
-        const obj = preset.player?.find(item => item.key === player.trim())
-        if (obj) {
-          this._count = MAX_COUNT
-          preset.active = obj.key
-          sender.reply("已开启【" + preset.active + "】，那我们开始聊天吧 ~")
-          return [ false, "" ]
-        }
-      }
-    }
+    const state: any = stateManager.getState(sender.id)
+    const result0 = this.presetEnabled(content, sender)
+    if (result0) return result0
 
-    if (!!preset.active) {
-      this._count ++
+    if (!!state.preset?.key) {
+      state.preset.count++
 
-      if(this._active === preset.active && this._count <= MAX_COUNT) {
-        if (preset.maintenance === true) {
-          preset.maintenance = false
-          const player = preset.player.filter(item => item.key === preset.active)[0]
-          if (!!player) {
-            const result: QueueReply = async (reply) => {
-              const res = await reply(player.maintenance.training)
-              if (config.debug) {
-                console.log('preset.maintenance ====>>>', player.maintenance.training)
-                console.log('preset.maintenance ====<<<', res)
-              }
-              return content
-            }
-            return [ false, result ]
-          }
-        }
-        return [ true, content ]
+      const result1 = this.handlePresetMaintenance(content)
+      if (result1) return result1
+
+      if (state.preset.count > MAX_COUNT) {
+        state.preset.count = 0
       }
 
-      if (this._active !== preset.active || this._count > MAX_COUNT) {
-        this._count = 0
-        this._active = preset.active
-      }
-
-      const player =  preset.player?.find(item => item.key === preset.active)
+      const player =  preset.player?.find(item => item.key === state.preset.key)
       if (!!player) {
         preset.maintenance = false
         
@@ -92,7 +64,7 @@ export class PlayerFilter extends BaseMessageFilter {
           let timer: NodeJS.Timer = null
           timer = setInterval(() => {
             if (curr + 5000 < dat()) {
-              sender.reply("[loading preset: \"" + preset.active + "\"]\n记忆有些混乱捏, 渐渐陷入了回忆 ...")
+              sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n记忆有些混乱捏, 渐渐陷入了回忆 ...")
               globalLoading(sender)
               clearInterval(timer)
               timer = null
@@ -134,6 +106,46 @@ export class PlayerFilter extends BaseMessageFilter {
     }
 
     return [ true, content ]
+  }
+
+  presetEnabled(content: string, sender?: Sender): (boolean | QueueReply)[] {
+    if (content?.trim().startsWith("开启 ")) {
+      const player = content.trim()
+        .split(" ")[1]
+      if (player) {
+        const obj = preset.player?.find(item => item.key === player.trim())
+        if (obj) {
+          sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
+          state.preset = {
+            key: obj.key
+            count: MAX_COUNT
+          }
+          return [ false, "" ]
+        }
+      }
+    }
+    return null
+  }
+
+  handlePresetMaintenance(content: string): (boolean | QueueReply)[] {
+    if(state.preset.count <= MAX_COUNT) {
+      if (!state.preset.maintenance) return [ true, content ]
+
+      state.preset.maintenance = false
+      const player = preset.player.filter(item => item.key === state.preset.key)[0]
+      if (!!player) {
+        const result: QueueReply = async (reply) => {
+          const res = await reply(player.maintenance.training)
+          if (config.debug) {
+            console.log('preset.maintenance ====>>>', player.maintenance.training)
+            console.log('preset.maintenance ====<<<', res)
+          }
+          return content
+        }
+        return [ false, result ]
+      }
+    }
+    return null
   }
 
   // handle = async (content: string, sender?: Sender) => {
