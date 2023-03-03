@@ -1,5 +1,6 @@
 import { segment, Sendable } from 'oicq'
 import { Sender } from 'src/model/sender'
+import { getClient } from 'src/core/oicq'
 
 
 function dat(): number {
