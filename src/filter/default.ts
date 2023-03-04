@@ -24,7 +24,7 @@ export class DefaultFilter extends BaseMessageFilter {
 function dat() {
   const ts = new Date()
     .getTime()
-  const date = new Date(ts + 1000 * 60 * 60 * 8)
+  const date = new Date(ts + 1000 * 60 * 60 * 7)
   const y = date.getFullYear()
   const m = date.getMonth()+1
   const d = date.getDate()
