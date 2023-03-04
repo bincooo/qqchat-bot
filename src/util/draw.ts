@@ -340,8 +340,8 @@ async function initPicwishCn() {
 
 export async function tryBetter(imgUrl: string): Promise<string> {
   await initPicwishCn()
-  const { data: b64 } = (await sendGet(imgUrl))
-    .toString('base64')
+  const { data: b64 } = (await sendGet(imgUrl)).toString('base64')
+  console.log('b64', b64)
   const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
   if (result && result.state === 1) {
     const { data } = await sendGet(result.image)
