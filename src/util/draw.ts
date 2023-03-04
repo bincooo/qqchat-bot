@@ -29,7 +29,7 @@ const _globalThis: {
   }
 }
 
-
+// api 要是再变，劳资不玩了
 async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
   if (!_globalThis.mccnPro.page) {
     const [ browser, page ] = await getBrowser()
@@ -77,7 +77,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
       waitUntil: 'networkidle0'
     })
 
-    await _globalThis.mccnPro.page.lick("#txt2img_generate")
+    await _globalThis.mccnPro.page.click("#txt2img_generate")
   })
 }
 
