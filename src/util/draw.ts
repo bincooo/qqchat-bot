@@ -9,23 +9,84 @@ import type { Browser, Page } from 'puppeteer'
 import { intercept, patterns } from 'puppeteer-interceptor'
 import prettier from 'prettier'
 
-
 const _globalThis: {
+  mccnPro?: {
+    fn_index: number
+    cookie: string
+    expires: number
+    page?: Page
+  }
   spider: {
     picwishCn?: Page
   }
 } = {
   spider: {
+  },
+  mccnPro: {
+    fn_index: -1,
+    cookie: null,
+    expires: 0
   }
 }
 
+
+function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
+  if (!_globalThis.mccnPro.page) {
+    const [ browser, page ] = await getBrowser()
+    _globalThis.mccnPro.page = page ? page : (await browser.newPage())
+  }
+
+  return new Promise<{ fn_index: number, cookie: string }>((resolve, reject) => {
+    if (_globalThis.mccnPro.expires > dat()) {
+      resolve({
+        cookie: _globalThis.mccnPro.cookie,
+        fn_index: _globalThis.mccnPro.fn_index
+      })
+      return
+    }
+
+    const curr = dat()
+    let timer = null
+    timer = setInterval(() => {
+      if (curr + 10000 < dat()) {
+        clearInterval(timer)
+        reject(new Error('initMccnPro Error: timeout !!!'))
+      }
+    }, 300)
+
+    intercept(_globalThis.mccnPro.page, patterns.XHR('http://mccn.pro:7860/run/predict/'), {
+      onResponseReceived: event => {
+        const data = (event.request.postData.match(/"data":\["task\([0-9a-zA-Z]+\)"+/g)??[])[0]
+        if (data) {
+          console.log(`${event.request.url} // intercepted, going to modify`)
+          const fn_index = (event.request.postData.match(/"fn_index":([0-9]+)/i)??[])[1]
+          _globalThis.mccnPro.fn_index = fn_index
+          _globalThis.mccnPro.cookie = event.request.headers.Cookie
+          _globalThis.mccnPro.expires = dat() + (1000 * 60 * 58)
+          clearInterval(timer)
+          resolve({
+            fn_index,
+            cookie: event.request.headers.Cookie
+          })
+        }
+        return event.response
+      }
+    })
+
+    await _globalThis.mccnPro.page.goto('http://mccn.pro:7860', {
+      waitUntil: 'networkidle0'
+    })
+
+    await _globalThis.mccnPro.page.lick("#txt2img_generate")
+  })
+}
 
 /**
  * NovalAI
  */
 export function draw(opts: {
   session_hash: string
-  fn_index?: number
+  // fn_index?: number
   data: Array<any>
   try4K?: boolean
   callback?: () => void
@@ -34,70 +95,72 @@ export function draw(opts: {
   const {
     data,
     session_hash,
-    fn_index = 313,
+    // fn_index = 667,
     try4K = false,
     callback
   } = opts
+  // console.log('params:', { data,session_hash, fn_index, try4K, callback })
 
   return new Promise<string>((resolve, reject) => {
-    sendPost('http://mccn.pro:7860/run/predict', 
-      JSON.stringify({
-        data,
-        session_hash,
-        fn_index
-      }),
-      {
-        'Content-Type': 'application/json',
-        'Proxy-Connection': 'keep-alive',
-        'Origin': 'http://mccn.pro:7860',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
-      })
-    .then((res) => {
-      try {
-        let path = JSON.parse(res).data[0][0]?.name
-        if (!path) {
-          console.log("NovalAI:Error", res)
-          reject(new Error("NovalAI:Error [not path]:: " + res))
-          return
-        }
-        path = ('http://mccn.pro:7860/file=' + path)
-        if (try4K) {
-          if (callback) {
-            callback()
+    initMccnPro().then(({ fn_index, cookie }) => {
+      sendPost('http://mccn.pro:7860/run/predict',
+        JSON.stringify({
+          data,
+          session_hash,
+          fn_index
+        }),
+        {
+          'Cookie': cookie,
+          'Content-Type': 'application/json',
+          'Proxy-Connection': 'keep-alive',
+          'Origin': 'http://mccn.pro:7860',
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
+        })
+      .then(({ data: res }) => {
+        try {
+          let path = ((JSON.parse(res).data??[])[0]??[])[0]?.name
+          if (!path) {
+            reject(new Error("NovalAI:Error [not path]:: " + res))
+            return
           }
+          path = ('http://mccn.pro:7860/file=' + path)
+          if (try4K) {
+            if (callback) {
+              callback()
+            }
 
-          // _4K(path)
-          //   .then(url => {
-          //     if (url) {
-          //       sendGet(url).then(buffer => {
-          //         resolve('base64://' + buffer.toString('base64'))
-          //       })
-          //     } else {
-          //       resolve(path)
-          //     }
-          //   })
-          //   .catch(err => {
-          //     resolve(path)
-          //   })
+            // _4K(path)
+            //   .then(url => {
+            //     if (url) {
+            //       sendGet(url).then(buffer => {
+            //         resolve('base64://' + buffer.toString('base64'))
+            //       })
+            //     } else {
+            //       resolve(path)
+            //     }
+            //   })
+            //   .catch(err => {
+            //     resolve(path)
+            //   })
 
-          retry(() => tryBetter(path), 3, 800)
-            .then(b64 => {
-              if (b64) {
-                resolve('base64://' + b64)
-              } else resolve(path)
-            })
-            .catch((err) => {
-              console.log(err)
-              resolve(path)
-            })
-          return
+            retry(() => tryBetter(path), 3, 800)
+              .then(b64 => {
+                if (b64) {
+                  resolve('base64://' + b64)
+                } else resolve(path)
+              })
+              .catch((err) => {
+                console.log(err)
+                resolve(path)
+              })
+            return
+          }
+          resolve(path)
+        } catch(err) {
+           reject(err)
         }
-        resolve(path)
-      } catch(err) {
-         reject(err)
-      }
-    })
-    .catch(err => reject(err))
+      }).catch(err => reject(err))
+    }).catch(err => reject(err))
   })
 }
 
@@ -156,7 +219,7 @@ export function sendPost(url: string, data: string | FormData, headers?: Map<str
 
       res.on('end', () => {
         const data = Buffer.concat(chunks, size)
-        resolve(Buffer.isBuffer(data) ? data : data.toString())
+        resolve({ data: Buffer.isBuffer(data) ? data : data.toString(), headers: res.headers })
       })
     }).on('error', (err) => {
       reject(err)
@@ -183,7 +246,7 @@ export function sendGet(url: string): Promise<any> {
 
       res.on('end', () => {
         const data = Buffer.concat(chunks, size)
-        resolve(Buffer.isBuffer(data) ? data : data.toString())
+        resolve({ data: Buffer.isBuffer(data) ? data : data.toString(), headers: res.headers })
       })
     }).on('error', (err) => {
       reject(err)
@@ -271,12 +334,12 @@ async function initPicwishCn() {
 
 export async function tryBetter(imgUrl: string): Promise<string> {
   await initPicwishCn()
-  const b64 = (await sendGet(imgUrl))
+  const { data: b64 } = (await sendGet(imgUrl))
     .toString('base64')
   const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
   if (result && result.state === 1) {
-    return (await sendGet(result.image))
-      .toString('base64')
+    const { data } = await sendGet(result.image)
+    return data?.toString('base64')
   }
   throw new Error('try better error !!!!')
   // result.image
@@ -329,7 +392,7 @@ export async function shortURL(url: string) {
       'X-Forwarded-For': ip,
       'Origin': 'https://www.985.so',
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
-    }).then(val => {
+    }).then(({ data: val }) => {
       try {
         const res = JSON.parse(val)
         if (res.status === 1) {
@@ -365,7 +428,7 @@ export function _4K(imgUrl: string): Promise<string> {
               'Origin': 'http://transcode.imperial-vision.com:8080',
               'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
             }
-          ).then(val => {
+          ).then(({ data: val }) => {
             try {
               const res = JSON.parse(val)
               if (res.code === 0 && res.msg === 'request success') {
@@ -401,7 +464,7 @@ export function _4K(imgUrl: string): Promise<string> {
           'Origin': 'http://transcode.imperial-vision.com:8080',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
         })
-      .then(val => {
+      .then(({ data: val }) => {
         try {
           const res = JSON.parse(val)
           if (res.code === 0 && res.msg === 'request success') {
@@ -419,7 +482,7 @@ export function _4K(imgUrl: string): Promise<string> {
     }
 
     sendGet(imgUrl)
-      .then(buffer => {
+      .then(({ data: buffer }) => {
         doIt(buffer.toString('base64'))
       })
   })
