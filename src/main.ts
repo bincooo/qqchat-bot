@@ -56,6 +56,6 @@ async function main () {
 main().catch(logger.error)
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.log(reason， promise)
+  console.log(reason, promise)
   logger.error(reason)
 })
