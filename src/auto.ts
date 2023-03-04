@@ -52,7 +52,7 @@ export async function run (): Promise<{}> {
       message: '选择API源:',
       type: 'list',
       choices: [
-        { name: '官方API', value: 'officialAPI' }
+        { name: 'webAPI', value: 'officialAPI' }
       ]
     }
   ])).apiType

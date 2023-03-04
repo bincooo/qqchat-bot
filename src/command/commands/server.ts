@@ -3,7 +3,8 @@ import { BaseMessageHandler } from 'src/types'
 import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
-import { config } from '../../config'
+import { config, preset } from '../../config'
+import { existsConfig, loadConfig } from 'src/util/config'
 
 class ServerCommand extends BaseCommand {
   label = 'server'
@@ -11,7 +12,8 @@ class ServerCommand extends BaseCommand {
     `reboot   ${this.sp(7)}重启机器人`,
     `status   ${this.sp(9)}服务器状态`,
     `draw:on/off  ${this.sp(6)}开/关画质增强`,
-    `debug:on/off ${this.sp(6)}开/关调试模式`
+    `debug:on/off ${this.sp(6)}开/关调试模式`,
+    'load:preset  加载预设'
   ]
 
   requiredAdministrator = true
@@ -48,6 +50,14 @@ class ServerCommand extends BaseCommand {
       case 'debug:off':
         config.debug = false
         sender.reply('已关闭调试模式~')
+        break
+      case 'load:preset':
+        const presetPath = process.cwd() + '/preset.json'
+        if (existsConfig(presetPath)) {
+          Object.assign(preset, await loadConfig(presetPath))
+          sender.reply('加载预设完成~')
+        }
+        else sender.reply('加载预设失败~')
         break
       default:
         sender.reply(this.helpDoc, true)
