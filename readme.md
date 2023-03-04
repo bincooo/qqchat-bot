@@ -50,7 +50,7 @@ docker-compose down
 docker compose down
 
 // *** 查看日志 ***
-// 微信扫码登录阶段可用这个查看
+// QQ登录阶段可用这个查看
 docker logs -f [container_name or container_id]
 ```
 
@@ -98,4 +98,5 @@ docker logs -f [container_name or container_id]
 
 - https://github.com/takayama-lily/oicq
 - https://github.com/transitive-bullshit/chatgpt-api
+- https://github.com/easydu2002/chat_gpt_oicq
 - https://chat.openai.com/

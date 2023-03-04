@@ -26,11 +26,11 @@ async function main() {
   }
   console.log('isJapan', isJapan(), count)
 
-  // const path = await speak({
-  //   text,
-  //   vname: isJapan() ? 'ja-JP-AoiNeural' : null
-  // }, 'audio-24khz-96kbitrate-mono-mp3')
-  // console.log('转化成功: ' + path)
+  const path = await speak({
+    text,
+    vname: isJapan() ? 'ja-JP-AoiNeural' : null
+  }, 'audio-24khz-96kbitrate-mono-mp3')
+  console.log('转化成功: ' + path)
 }
 
 main()
