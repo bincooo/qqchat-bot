@@ -5,6 +5,7 @@ import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
 import { config, preset } from '../../config'
 import { existsConfig, loadConfig } from 'src/util/config'
+import path from 'path'
 
 class ServerCommand extends BaseCommand {
   label = 'server'
@@ -52,8 +53,11 @@ class ServerCommand extends BaseCommand {
         sender.reply('已关闭调试模式~')
         break
       case 'load:preset':
-        const presetPath = process.cwd() + '/preset.json'
+        const presetPath = path.join(process.cwd(), '../../../preset.json')
         if (existsConfig(presetPath)) {
+          if (config.debug) {
+            console.log('load:preset ===>>>>', presetPath)
+          }
           Object.assign(preset, await loadConfig(presetPath))
           sender.reply('加载预设完成~')
         }
