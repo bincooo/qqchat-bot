@@ -13,6 +13,7 @@
       "maintenance": {
         "condition": [
           "无法回答",
+          "不能回答",
           "程序",
           "AI",
           "Ai",
