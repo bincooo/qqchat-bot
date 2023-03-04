@@ -73,11 +73,11 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
       }
     })
 
-    await page.goto('http://mccn.pro:7860', {
+    await _globalThis.mccnPro.page.goto('http://mccn.pro:7860', {
       waitUntil: 'networkidle0'
     })
 
-    await page.evaluate(() => {
+    await _globalThis.mccnPro.page.evaluate(() => {
       const btm = document.querySelector("body > gradio-app")
         .shadowRoot
         .querySelector("#txt2img_generate")
