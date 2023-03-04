@@ -48,7 +48,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
     const curr = dat()
     let timer = null
     timer = setInterval(() => {
-      if (curr + 10000 < dat()) {
+      if (curr + 30000 < dat()) {
         clearInterval(timer)
         reject(new Error('initMccnPro Error: timeout !!!'))
       }
