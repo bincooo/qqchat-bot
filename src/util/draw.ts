@@ -30,13 +30,13 @@ const _globalThis: {
 }
 
 
-function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
+async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
   if (!_globalThis.mccnPro.page) {
     const [ browser, page ] = await getBrowser()
     _globalThis.mccnPro.page = page ? page : (await browser.newPage())
   }
 
-  return new Promise<{ fn_index: number, cookie: string }>((resolve, reject) => {
+  return new Promise<{ fn_index: number, cookie: string }>(async (resolve, reject) => {
     if (_globalThis.mccnPro.expires > dat()) {
       resolve({
         cookie: _globalThis.mccnPro.cookie,
