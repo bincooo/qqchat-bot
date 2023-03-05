@@ -191,8 +191,6 @@ export async function mccnProReboot() {
     console.log('btm', btm)
     btm.click()
   })
-
-  resolve('ok')
 }
 
 
