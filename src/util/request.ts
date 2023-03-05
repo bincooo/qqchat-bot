@@ -10,6 +10,7 @@ import type { Browser, Page } from 'puppeteer'
 import { intercept, patterns } from 'puppeteer-interceptor'
 import prettier from 'prettier'
 import { config } from 'src/config'
+import delay from 'delay'
 
 const _globalThis: {
   mccnPro?: {
@@ -173,7 +174,7 @@ export async function mccnProReboot() {
     console.log('btm', btm)
     btm.click()
   })
-
+  await delay(5000)
   await _globalThis.mccnPro.page?.evaluate(() => {
     const btm = document.querySelector("body > gradio-app")
       .shadowRoot
@@ -334,8 +335,9 @@ export async function tryBetter(imgUrl: string): Promise<string> {
   await initPicwishCn()
   const { data } = (await sendGet(imgUrl))
   const b64 = data.toString('base64')
-  console.log('b64', data)
+  // console.log('b64', data)
   const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
+  console.log('better===>>>', result)
   if (result && result.state === 1) {
     const { data: d } = await sendGet(result.image)
     return d?.toString('base64')
