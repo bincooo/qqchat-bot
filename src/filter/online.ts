@@ -27,7 +27,7 @@ export class OnlineFilter extends BaseMessageFilter {
           [
             "Web search results:\n",
             result.map((item, index) => `[${index+1}] "${item.body}"\nURL: ${item.href}`).join('\n\n'),
-            "\n\nInstructions: Using the provided web search results, write a comprehensive reply to the given query. Make sure to cite results using [[number](URL)] notation after the reference. If the provided search results refer to multiple subjects with the same name, write separate answers for each subject.",
+            "\n\nInstructions: Using the provided web search results, write a comprehensive reply to the given query.  If the provided search results refer to multiple subjects with the same name, write separate answers for each subject.",
             `Query: ${resultMessage}`,
             "Reply in 中文"
           ].join('\n')
