@@ -15,7 +15,7 @@ export class OnlineFilter extends BaseMessageFilter {
     if (content.startsWith(FINAL_STR)) {
       resultMessage = content.substr(FINAL_STR.length)
       try {
-        const result = onlineSearch(resultMessage)
+        const result = await onlineSearch(resultMessage)
         if (config.debug) {
           console.log('online search results: ', result)
         }
