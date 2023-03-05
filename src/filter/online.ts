@@ -1,6 +1,8 @@
 import { onlineSearch } from 'src/util/request'
 import { BaseMessageFilter } from 'src/types'
 import { config } from 'src/config'
+import { Sender } from 'src/model/sender'
+import stateManager from 'src/util/state'
 
 const FINAL_STR = "[online]"
 export class OnlineFilter extends BaseMessageFilter {
@@ -10,11 +12,12 @@ export class OnlineFilter extends BaseMessageFilter {
     this.type = 0
   }
 
-  handle = async (content: string) => {
+  handle = async (content: string, sender?: Sender) => {
     let resultMessage = ''
     if (content.startsWith(FINAL_STR)) {
       resultMessage = content.substr(FINAL_STR.length)
       try {
+        stateManager.sendLoading(sender, { init: true, isEnd: false })
         const result = await onlineSearch(resultMessage)
         if (config.debug) {
           console.log('online search results: ', result)

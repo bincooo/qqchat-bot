@@ -2,12 +2,14 @@ import http from 'http'
 import https from 'https'
 import FormData from 'form-data'
 import _url from 'url'
+import ProxyAgent from 'https-proxy-agent'
 import urlencode from 'urlencode'
 import getBrowser from './browser'
 import retry from './retry'
 import type { Browser, Page } from 'puppeteer'
 import { intercept, patterns } from 'puppeteer-interceptor'
 import prettier from 'prettier'
+import { config } from 'src/config'
 
 const _globalThis: {
   mccnPro?: {
@@ -241,12 +243,12 @@ export function sendPost(url: string, data: string | FormData, headers?: Map<str
   })
 }
 
-export function sendGet(url: string): Promise<any> {
+export function sendGet(url: string, options?: any): Promise<any> {
   const proxy = (url.startsWith('http:')) ? http : https
   return new Promise<any>((resolve, reject) => {
     const chunks = []
     let size = 0
-    proxy.get(url, (res) => {
+    proxy.get(url, options, (res) => {
       res.on('data', (chunk) => {
         chunks.push(chunk)
         size += chunk.length
@@ -423,7 +425,11 @@ export async function onlineSearch(content: string): Promise<Array> {
     region: 'wt-wt'
   }
   try {
-    const { data } = await sendGet("https://ddg-webapp-aagd.vercel.app/search?" + encoded(params))
+    const { data } = await sendGet("https://ddg-webapp-aagd.vercel.app/search?" + encoded(params), {
+      // localAddress: '127.0.0.1',
+      // localPort: 7890
+      agent: new ProxyAgent(config.docker ? "master.io:7890" : "http://127.0.0.1:7890")
+    })
     return JSON.parse(data)
   } catch(err) {
     console.log('online search error: ', err)
