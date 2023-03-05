@@ -3,7 +3,7 @@ import { BaseMessageFilter } from 'src/types'
 import { config } from 'src/config'
 
 const FINAL_STR = "[online]"
-export class DefaultFilter extends BaseMessageFilter {
+export class OnlineFilter extends BaseMessageFilter {
 
   constructor() {
     super()
