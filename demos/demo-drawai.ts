@@ -1,4 +1,4 @@
-import { draw, reset, _4K } from '../src/util/request'
+import { mccnProDraw, mccnProReboot, _4K, sendGet } from '../src/util/request'
 import { initParams } from '../src/handler/novel-ai'
 import retry from '../src/util/retry'
 import Jimp from 'jimp'
@@ -18,28 +18,31 @@ async function main() {
   const data = initParams('petite, 1girl, solo, pink hair, very long hair, school uniform')
   const session_hash = '0dfva4ltz7i24'
   // console.log(data)
-  // const path = await draw({
+  // const path = await mccnProDraw({
   //   data, session_hash
   // })
 
+  const url = "https://picwishsz.oss-cn-shenzhen.aliyuncs.com/tasks/output/scale/3f058068-015a-48f7-b29f-c0629775d163.jpg?Expires=1678049227&OSSAccessKeyId=LTAI5tGjJnh66c1txANiRBQN&Signature=4d57YLVfkULlGC8w9aPibZHGSrU%3D"
+  const { data: d } = await sendGet(url)
+  console.log("12323232", d.toString('base64'))
 
 
-  retry(
-    () => draw({ data, session_hash, fn_index: 195, try4K: false }),
-    3,
-    500
-  )
-  .then(path => {
-    console.log('NovelAI genarate to path:', path)
-    // process.exit(1)
-  })
-  .catch(err => {
-    console.log('NovelAI Error:', err)
-    // process.exit(1)
-  })
+  // retry(
+  //   () => mccnProDraw({ data, session_hash, fn_index: 195, try4K: false }),
+  //   3,
+  //   500
+  // )
+  // .then(path => {
+  //   console.log('NovelAI genarate to path:', path)
+  //   // process.exit(1)
+  // })
+  // .catch(err => {
+  //   console.log('NovelAI Error:', err)
+  //   // process.exit(1)
+  // })
 
   // const path = await retry(
-  //   () => draw({ data, session_hash, try4K: true }),
+  //   () => mccnProDraw({ data, session_hash, try4K: true }),
   //   3,
   //   500
   // )
@@ -114,7 +117,7 @@ async function main() {
   //   })
 
   // console.log('NovelAI genarate to path:', path)
-  // await reset(session_hash)
+  // await mccnProReboot(session_hash)
 }
 
 main()

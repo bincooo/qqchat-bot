@@ -237,7 +237,9 @@ export function sendGet(url: string, options?: any): Promise<any> {
   return new Promise<any>((resolve, reject) => {
     const chunks = []
     let size = 0
-    proxy.get(url, options, (res) => {
+    const args = [url]
+    if (options) args.push(options)
+    args.push((res) => {
       res.on('data', (chunk) => {
         chunks.push(chunk)
         size += chunk.length
@@ -247,7 +249,8 @@ export function sendGet(url: string, options?: any): Promise<any> {
         const data = Buffer.concat(chunks, size)
         resolve({ data: Buffer.isBuffer(data) ? data : data.toString(), headers: res.headers })
       })
-    }).on('error', (err) => {
+    })
+    proxy.get(...args).on('error', (err) => {
       reject(err)
     })
     .end()
@@ -337,7 +340,7 @@ export async function tryBetter(imgUrl: string): Promise<string> {
   const b64 = data.toString('base64')
   // console.log('b64', data)
   const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
-  console.log('better===>>>', result)
+  // console.log('better===>>>', result)
   if (result && result.state === 1) {
     const { data: d } = await sendGet(result.image)
     return d?.toString('base64')
