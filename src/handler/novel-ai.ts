@@ -42,25 +42,25 @@ export class NovelAiHandler extends BaseMessageHandler {
       const data = initParams(
         (await filterTokens(sender?.textMessage.substr(DRAW.length), sender))
       )
+      try {
+        const path  = await retry(
+          () => mccnProDraw({
+            data,
+            session_hash: this._uuid,
+            try4K: config.api.betterPic,
+            callback: () => {
+              sender.reply('画完辣, 待我优化一番 ~', true)
+            }
+          }),
+          3,
+          500
+        )
 
-      retry(
-        () => mccnProDraw({
-          data,
-          session_hash: this._uuid,
-          try4K: config.api.betterPic,
-          callback: () => {
-            sender.reply('画完辣, 待我优化一番 ~', true)
-          }
-        }),
-        3,
-        500
-      ).then(path => {
         sender.reply(segment.image(path), true)
-      })
-      .catch(err => {
+      } catch(err) {
         sender.reply('——————————————\nError: 4001\n作画失败了, CPU都淦冒烟啦 ~', true)
         await this.reset()
-      })
+      }
       return false
     }
 
@@ -68,8 +68,12 @@ export class NovelAiHandler extends BaseMessageHandler {
   }
 
   async reset() {
-    this._uuid = genUid()
-    await mccnProReboot()
+    try {
+      this._uuid = genUid()
+      await mccnProReboot()
+    } catch(err) {
+      console.error(err)
+    }
   }
 
 }
