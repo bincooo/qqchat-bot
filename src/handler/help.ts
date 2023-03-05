@@ -1,5 +1,6 @@
 import { MessageEvent, MessageHandler } from 'src/types'
 import { getClient } from 'src/core/oicq'
+import { config } from 'src/config'
 
 
 export const helpHandler: MessageHandler = function (sender) {
