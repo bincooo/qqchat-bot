@@ -3,7 +3,7 @@ import { QueueReply } from 'cgpt'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 // import { initParams } from 'src/handler/novel-ai'
 import { config, preset } from 'src/config'
-// import { draw, sendGet } from 'src/util/draw'
+// import { mccnProDraw, sendGet } from 'src/util/request'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
 // import retry from 'src/util/retry'
@@ -167,7 +167,7 @@ export class PlayerFilter extends BaseMessageFilter {
   //       console.log('"cat girl" test >> prompt: [' + split.join(',') + '] m1: ' + m1 + ', m2: ' + m2)
 
   //       retry(
-  //         () => draw({
+  //         () => mccnProDraw({
   //           data,
   //           session_hash: this._uuid,
   //           try4K: false

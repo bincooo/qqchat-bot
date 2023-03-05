@@ -1,6 +1,6 @@
 // import marked from 'marked'
 import getBrowser from '../src/util/browser'
-import { shortURL } from '../src/util/draw'
+import { shortURL } from '../src/util/request'
 import { genTemplate } from '../src/filter/markdown'
 import { randomBytes } from 'crypto'
 import fs from 'fs'

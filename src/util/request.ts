@@ -90,7 +90,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
 /**
  * NovalAI
  */
-export function draw(opts: {
+export function mccnProDraw(opts: {
   session_hash: string
   // fn_index?: number
   data: Array<any>
@@ -173,7 +173,7 @@ export function draw(opts: {
   })
 }
 
-export async function reboot() {
+export async function mccnProReboot() {
   await _globalThis.mccnPro.page?.evaluate(() => {
     const btm = document.querySelector("body > gradio-app")
       .shadowRoot
@@ -412,6 +412,23 @@ export async function shortURL(url: string) {
       }
     }).catch(err => reject(err))
   })
+}
+
+
+export async function onlineSearch(content: string): Promise<Array> {
+  const params = {
+    q: content,
+    max_results: 3,
+    time: 'y',
+    region: 'wt-wt'
+  }
+  try {
+    const { data } = await sendGet("https://ddg-webapp-aagd.vercel.app/search?" + encoded(params))
+    return JSON.parse(data)
+  } catch(err) {
+    console.log('online search error: ', err)
+    throw err
+  }
 }
 
 

@@ -1,4 +1,4 @@
-import { draw, reset, _4K } from '../src/util/draw'
+import { draw, reset, _4K } from '../src/util/request'
 import { initParams } from '../src/handler/novel-ai'
 import retry from '../src/util/retry'
 import Jimp from 'jimp'

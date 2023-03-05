@@ -54,18 +54,9 @@ class ServerCommand extends BaseCommand {
         break
       case 'load:preset':
         const presetPath = path.join(process.cwd(), 'preset.json')
-        if (config.debug) {
-          console.log('load:preset ===>>>>', presetPath)
-        }
         if (existsConfig(presetPath)) {
           const presetConfig = await loadConfig(presetPath)
-          if (config.debug) {
-            console.log("presetConfig ====<<<", presetConfig)
-          }
           Object.assign(preset, presetConfig)
-          if (config.debug) {
-            console.log("preset ====<<<", preset)
-          }
           sender.reply('加载预设完成~')
         }
         else sender.reply('加载预设失败~')

@@ -18,6 +18,7 @@ class CgptCommand extends BaseCommand {
     + '\n----'
     + '\n[code]+文字 - 代码片段优化(代码片段转图片)'
     + '\n[md(:latex)]+文字 - [md]以md格式转图片,[md:latex]以md格式转图片(数学公式增强)'
+    + '\n[online]+文字 - chatgpt联网查询'
   ]
 
   requiredAdministrator = false

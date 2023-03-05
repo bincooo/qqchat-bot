@@ -1,6 +1,6 @@
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
-import { draw, reboot } from 'src/util/draw'
+import { mccnProDraw, mccnProReboot } from 'src/util/request'
 import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
 import retry from 'src/util/retry'
@@ -44,7 +44,7 @@ export class NovelAiHandler extends BaseMessageHandler {
       )
 
       retry(
-        () => draw({
+        () => mccnProDraw({
           data,
           session_hash: this._uuid,
           try4K: config.api.betterPic,
@@ -69,7 +69,7 @@ export class NovelAiHandler extends BaseMessageHandler {
 
   async reset() {
     this._uuid = genUid()
-    await reboot()
+    await mccnProReboot()
   }
 
 }
