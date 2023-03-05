@@ -40,7 +40,7 @@ export class NovelAiHandler extends BaseMessageHandler {
       sender.reply(hint[idx], true)
 
       const data = initParams(
-        (await filterTokens(sender?.textMessage.substr(DRAW.length), sender))
+        (await filterTokens(sender?.textMessage, sender))
       )
       try {
         const path  = await retry(
