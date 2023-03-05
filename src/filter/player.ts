@@ -133,6 +133,9 @@ export class PlayerFilter extends BaseMessageFilter {
       state.preset.maintenance = false
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
+        if (state.preset.key === '默认') {
+          state.preset.key = ''
+        }
         const result: QueueReply = async (reply) => {
           const res = await reply(player.maintenance.training)
           if (config.debug) {
