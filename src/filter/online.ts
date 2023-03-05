@@ -22,11 +22,14 @@ export class OnlineFilter extends BaseMessageFilter {
         if (config.debug) {
           console.log('online search results: ', result)
         }
+        if (result?.length <= 0) {
+          return [ false, resultMessage ]
+        }
         return [
           false,
           [
             "Web search results:\n",
-            result.map((item, index) => `[${index+1}] "${item.body}"\nURL: ${item.href}`).join('\n\n'),
+            result.map((item, index) => `[${index+1}] "${item.body}"`).join('\n\n'),
             "\n\nInstructions: Using the provided web search results, write a comprehensive reply to the given query.  If the provided search results refer to multiple subjects with the same name, write separate answers for each subject.",
             `Query: ${resultMessage}`,
             "Reply in 中文"
