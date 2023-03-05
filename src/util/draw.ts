@@ -161,7 +161,10 @@ export function draw(opts: {
               })
             return
           }
-          resolve(path)
+
+          sendGet(path).then(({ data }) => {
+            resolve('base64://' + data.toString('base64'))
+          }).catch(err => reject(err))
         } catch(err) {
            reject(err)
         }
@@ -170,25 +173,24 @@ export function draw(opts: {
   })
 }
 
-export function reset(hash: string) {
-  return new Promise<string>((resolve, reject) => {
-    sendPost('http://mccn.pro:7860/run/predict', 
-      JSON.stringify({
-        data: [],
-        fn_index: 270,
-        session_hash: hash
-      }),
-      {
-        'Content-Type': 'application/json',
-        'Proxy-Connection': 'keep-alive',
-        'Origin': 'http://mccn.pro:7860',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
-      })
-    .then((res) => {
-      resolve('ok')
-    })
-    .catch(err => reject(err))
+export async function reboot() {
+  await _globalThis.mccnPro.page?.evaluate(() => {
+    const btm = document.querySelector("body > gradio-app")
+      .shadowRoot
+      .querySelector("#tabs > div.flex.border-b-2.flex-wrap.dark\\:border-gray-700 > button.bg-white.px-4.pb-2.pt-1\\.5.rounded-t-lg.border-gray-200.-mb-\\[2px\\].border-2.border-b-0")
+    console.log('btm', btm)
+    btm.click()
   })
+
+  await _globalThis.mccnPro.page?.evaluate(() => {
+    const btm = document.querySelector("body > gradio-app")
+      .shadowRoot
+      .querySelector("#settings_restart_gradio")
+    console.log('btm', btm)
+    btm.click()
+  })
+
+  resolve('ok')
 }
 
 

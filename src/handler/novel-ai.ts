@@ -1,6 +1,6 @@
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
-import { draw, reset } from 'src/util/draw'
+import { draw, reboot } from 'src/util/draw'
 import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
 import retry from 'src/util/retry'
@@ -59,7 +59,7 @@ export class NovelAiHandler extends BaseMessageHandler {
       })
       .catch(err => {
         sender.reply('——————————————\nError: 4001\n作画失败了, CPU都淦冒烟啦 ~', true)
-        this.reset()
+        await this.reset()
       })
       return false
     }
@@ -67,9 +67,9 @@ export class NovelAiHandler extends BaseMessageHandler {
     return true
   }
 
-  reset() {
-    reset(this._uuid)
+  async reset() {
     this._uuid = genUid()
+    await reboot()
   }
 
 }
@@ -80,7 +80,7 @@ export const initParams = function(prompt: string): Array<any> {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   // 提示词相关性(CFG Scale)
-  const cfg_scale = 6.5,
+  const cfg_scale = 6,
     [ width, height ] = [ 512, 832 ]
   return [
         `task(${genUid(15)})`,
