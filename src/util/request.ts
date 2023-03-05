@@ -132,41 +132,31 @@ export function mccnProDraw(opts: {
             return
           }
           path = ('http://mccn.pro:7860/file=' + path)
+          const toB64 = () => {
+            sendGet(path).then(({ data }) => {
+              resolve('base64://' + data.toString('base64'))
+            }).catch(err => reject(err))
+          }
+
           if (try4K) {
             if (callback) {
               callback()
             }
 
-            // _4K(path)
-            //   .then(url => {
-            //     if (url) {
-            //       sendGet(url).then(buffer => {
-            //         resolve('base64://' + buffer.toString('base64'))
-            //       })
-            //     } else {
-            //       resolve(path)
-            //     }
-            //   })
-            //   .catch(err => {
-            //     resolve(path)
-            //   })
-
             retry(() => tryBetter(path), 3, 800)
               .then(b64 => {
                 if (b64) {
                   resolve('base64://' + b64)
-                } else resolve(path)
+                } else toB64()
               })
               .catch((err) => {
                 console.log(err)
-                resolve(path)
+                toB64()
               })
             return
           }
 
-          sendGet(path).then(({ data }) => {
-            resolve('base64://' + data.toString('base64'))
-          }).catch(err => reject(err))
+          toB64()
         } catch(err) {
            reject(err)
         }
@@ -344,7 +334,7 @@ export async function tryBetter(imgUrl: string): Promise<string> {
   await initPicwishCn()
   const { data } = (await sendGet(imgUrl))
   const b64 = data.toString('base64')
-  // console.log('b64', b64)
+  console.log('b64', data)
   const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
   if (result && result.state === 1) {
     const { data: d } = await sendGet(result.image)
