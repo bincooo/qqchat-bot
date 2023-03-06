@@ -5,6 +5,7 @@ import { BaseMessageHandler, MessageEvent, MessageHandler } from 'src/types'
 import logger from 'src/util/log'
 import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
+import delay from 'delay'
 import chalk from 'chalk'
 import fs from 'fs'
 
@@ -83,6 +84,7 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
       }
     }
 
+    await delay(3000)
     pingListener()
     // 一小时心跳一次
     setInterval(pingListener, 1000 * 60 * 60)

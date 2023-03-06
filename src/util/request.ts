@@ -421,7 +421,7 @@ export async function onlineSearch(content: string): Promise<Array> {
     const { data } = await sendGet("https://ddg-webapp-aagd.vercel.app/search?" + encoded(params), {
       // localAddress: '127.0.0.1',
       // localPort: 7890
-      agent: new ProxyAgent(config.docker ? "http://master.io:7890" : "http://127.0.0.1:7890")
+      agent: new ProxyAgent(config.proxyServer)
     })
     return JSON.parse(data)
   } catch(err) {

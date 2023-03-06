@@ -111,27 +111,22 @@ export const onMessage = async (data: any, sender: Sender) => {
         }
       }
       
-      if (!!message) {
+      if (!!message?.trim()) {
         const state = stateManager.getState(sender.id)
         if (isDone()) {
           if (state.tts) {
-            const path = await speak({ text: message, ...parserJapen(message) })
-            await sender.reply(segment.record(path), true)
-            await stateManager.recallLoading(sender.id)
+            const path = await speak({ text: message.trim(), ...parserJapen(message) })
+            await sender.reply(segment.record(path))
           }
-          else {
-            await sender.reply(message, true)
-            await stateManager.recallLoading(sender.id)
-          }
+          await sender.reply(message, true)
+          await stateManager.recallLoading(sender.id)
         } else {
           if (state.tts) {
-            const path = await speak({ text: message, ...parserJapen(message) })
-            await sender.reply(segment.record(path), true)
-            stateManager.sendLoading(sender)
-          } else {
-            await sender.reply(message, true)
-            stateManager.sendLoading(sender)
+            const path = await speak({ text: message.trim(), ...parserJapen(message) })
+            await sender.reply(segment.record(path))
           }
+          await sender.reply(message, true)
+          stateManager.sendLoading(sender)
         }
       }
     }
