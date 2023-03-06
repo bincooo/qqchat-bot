@@ -7,7 +7,7 @@ import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
 
-const MESSAGE_TIMEOUT_MS = 1000 * 60
+const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
 
 function genUid(): string {
   return 'uid-' + randomBytes(16)
