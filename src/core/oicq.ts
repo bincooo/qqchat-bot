@@ -72,9 +72,10 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
 
     const pingListener = async () => {
       const gMap = await client.getGroupList()
+      console.log('group list:', Object.values(gMap).map(info => info.group_name).join(', '))
       for(let key in gMap) {
         try {
-          const { message_id } = await client.sendGroupMsg(key, "  ")
+          const { message_id } = await client.sendGroupMsg(gMap[key].group_id, "  ")
           await client.deleteMsg(message_id)
         } catch(err) {
           console.log('pingListener Error!!', err)
