@@ -12,10 +12,13 @@ export class DefaultFilter extends BaseMessageFilter {
 
   handle = async (content: string) => {
     if (!!preset.default) {
-      const result = preset.default
+      let result = preset.default
         .replace('[!!date!!]', dat())
-        .replace('[!!content!!]', content)
-      return [ true, result ]
+      if (result.contiain('[!!content!!]')) {
+        result = result.replace('[!!content!!]', content)
+        return [ true, result ]
+      }
+      return [ true, result + content ]
     }
     return [ true, content ]
   }

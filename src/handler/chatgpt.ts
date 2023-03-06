@@ -7,7 +7,7 @@ import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
 
-const MAX_DEB_COUNT = 10
+const MESSAGE_TIMEOUT_MS = 1000 * 60
 
 function genUid(): string {
   return 'uid-' + randomBytes(16)
@@ -87,8 +87,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   protected _emailPool: EmailPool
 
-  protected _count: number = MAX_DEB_COUNT
-
   async load () {
     if (!config.api.enable) return
     await this.initChatGPT()
@@ -96,7 +94,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async initChatGPT () {
     if (!config.api.enable) return
-    const { email, password, proxyServer, pingMs, slaves, browserPath } = config.api
+    const { email, password, pingMs, slaves } = config.api
+    const { proxyServer, browserPath } = config
     this._emailPool = new EmailPool(
       {
         email,
@@ -116,6 +115,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   handle = async (sender: Sender) => {
+    if (config.debug) this._api.setDebug(config.debug)
     if (!config.api.enable) return true
     try {
 
@@ -139,13 +139,11 @@ export class ChatGPTHandler extends BaseMessageHandler {
       this._iswait = true
       stateManager.sendLoading(sender, { init: true, isEnd: false })
       await this._api.queueSendMessage(message, {
+        timeoutMs: MESSAGE_TIMEOUT_MS,
         onProgress: async (res) => {
           if (res.error) {
             await this.messageErrorHandler(sender, res.error)
             return
-          }
-          if (res.response == '[DONE]') {
-            this._count ++
           }
           await onMessage(res, sender)
         }

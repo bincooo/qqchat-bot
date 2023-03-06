@@ -69,6 +69,22 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
       timer = null
     }
     const ret = await client.sendPrivateMsg(config.adminQQ, '已上线~')
+
+    const pingListener = async () => {
+      const gMap = await client.getGroupList()
+      for(let key in gMap) {
+        try {
+          const { message_id } = await client.sendGroupMsg(key, "  ")
+          await client.deleteMsg(message_id)
+        } catch(err) {
+          console.log('pingListener Error!!', err)
+        }
+      }
+    }
+
+    pingListener()
+    // 一小时心跳一次
+    setInterval(pingListener, 1000 * 60 * 60)
   })
 
   let dat: number  = 0
