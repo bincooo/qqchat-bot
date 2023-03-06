@@ -140,7 +140,7 @@ function doLogin (client: Client) {
     }
   })
 
-  if (!timer && !config.docker) {
+  if (!timer && config.docker) {
     console.log(chalk.green('请在15秒内完成登录 ...'))
     timer = setInterval(() => loginHelper(client), 15 * 1000)
   }
