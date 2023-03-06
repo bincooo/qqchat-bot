@@ -114,19 +114,20 @@ export const onMessage = async (data: any, sender: Sender) => {
       if (!!message?.trim()) {
         const state = stateManager.getState(sender.id)
         if (isDone()) {
-          if (state.tts) {
-            const path = await speak({ text: message.trim(), ...parserJapen(message) })
-            await sender.reply(segment.record(path))
-          }
           await sender.reply(message, true)
           await stateManager.recallLoading(sender.id)
         } else {
-          if (state.tts) {
-            const path = await speak({ text: message.trim(), ...parserJapen(message) })
-            await sender.reply(segment.record(path))
-          }
           await sender.reply(message, true)
           stateManager.sendLoading(sender)
+        }
+
+        if (state.tts) {
+          try {
+            const path = await speak({ text: message.trim(), ...parserJapen(message) })
+            await sender.reply(segment.record(path))
+          } catch(err) {
+            sender.reply(`语音发生错误\n${err}`)
+          }
         }
       }
     }
