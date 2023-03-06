@@ -40,7 +40,8 @@ export const config = {
 
   // browserPath: '',
   proxyServer: 'http://master.io:7890',
-  groupPingMs: 0
+  groupPingMs: 1000 * 60 * 60,
+  groupList: [ 362515018, 473923892 ]
 }
 
 export const preset: any = {

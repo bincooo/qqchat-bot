@@ -1,0 +1,34 @@
+{
+  "debug": false,
+  "docker": true,
+  "adminQQ": "xxx",
+  "botQQ": "xxx",
+  "botPassword": "xxx",
+  "botNickname": "猫小爱",
+  "oicq": {
+    "platform": 3
+  },
+  "officialAPI": {
+    "enable": false,
+    "key": "123",
+    "model": "text-davinci-003",
+    "identity": [],
+    "maxTokens": 256,
+    "maxTrackCount": 1,
+    "temperature": 0.9,
+    "stop": [
+      "Humen",
+      "AI"
+    ]
+  },
+  "api": {
+    "enable": true,
+    "email": "xxx",
+    "password": "xxx",
+    "slaves": [
+    ]
+  },
+  "proxyServer": "http://master.io:7890",
+  "groupPingMs": 3600000,
+  "groupList": [ 362515018, 473923892 ]
+}

@@ -72,11 +72,9 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
     const ret = await client.sendPrivateMsg(config.adminQQ, '已上线~')
 
     const pingListener = async () => {
-      const gMap = await client.getGroupList()
-      console.log('group list:', Object.values(gMap).map(info => info.group_name).join(', '))
-      for(let key in gMap) {
+      for(let groupId in config.groupList??[]) {
         try {
-          const { message_id } = await client.sendGroupMsg(gMap[key].group_id, "  ")
+          const { message_id } = await client.sendGroupMsg(groupId, "  ")
           await client.deleteMsg(message_id)
         } catch(err) {
           console.log('pingListener Error!!', err)
@@ -87,7 +85,7 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
     await delay(3000)
     pingListener()
     // 一小时心跳一次
-    setInterval(pingListener, 1000 * 60 * 60)
+    setInterval(pingListener, config.groupPingMs)
   })
 
   let dat: number  = 0
