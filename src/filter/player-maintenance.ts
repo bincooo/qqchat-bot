@@ -18,6 +18,7 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
           .find(item => content.indexOf(item) >= 0)
         if (condition) {
           state.preset.maintenance = !!condition
+          state.preset.maintenanceCondition = condition
         }
       }
     }

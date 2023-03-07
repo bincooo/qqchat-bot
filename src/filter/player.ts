@@ -93,6 +93,10 @@ export class PlayerFilter extends BaseMessageFilter {
             }
           }
 
+          if (state.preset.key === '默认') {
+            state.preset.key = ''
+          }
+
           if (timer) {
             clearInterval(timer)
             timer = null
@@ -126,15 +130,15 @@ export class PlayerFilter extends BaseMessageFilter {
     return null
   }
 
-  handlePresetMaintenance(content: string, state: any): (boolean | QueueReply)[] {
+  handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
     if(state.preset.count <= MAX_COUNT) {
       if (!state.preset.maintenance) return [ true, content ]
 
       state.preset.maintenance = false
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
-        if (state.preset.key === '默认') {
-          state.preset.key = ''
+        if (player.maintenance.warning) {
+          sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
         }
         const result: QueueReply = async (reply) => {
           const res = await reply(player.maintenance.training)
