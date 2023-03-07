@@ -9,9 +9,9 @@ services:
     environment:
       - ENABLED_X11VNC=yes
     volumes:
-      - ./data:/app/data
       - ./src:/app/src
-      - ./demos:/app/demos
+      - ./data:/app/data
       - ./preset.json:/app/preset.json
+      - ./config.json:/app/config.json
     extra_hosts:
-      - "master.io:10.0.20.17"
+      - "master.io:192.168.0.5"
