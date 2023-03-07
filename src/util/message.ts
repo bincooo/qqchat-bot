@@ -106,7 +106,7 @@ export const onMessage = async (data: any, sender: Sender) => {
         // 0.2 的权重，超过这个阈值就判定它是日文
         const is = (japaneseUnicodeParser.filter(tex).length * .2 < count)
         return {
-          vname: is ? 'ja-JP-AoiNeural' : LANG_CONST[config.lang],
+          vname: is ? 'ja-JP-AoiNeural' : state.lang??'zh-CN-XiaoshuangNeural',
           rate: is ? -5 : 0
         }
       }
