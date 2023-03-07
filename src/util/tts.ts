@@ -44,7 +44,6 @@ function mp3ToSilk(filepath, outputDir = './amr') {
       reject('please input a mp3 file ~')
       return
     }
-    console.log('ffmpegPath', ffmpeg)
     if (!voice) voice = new WxVoice('./amr', ffmpegPath)
     voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
       if (path) {
