@@ -167,6 +167,7 @@ export function mccnProDraw(opts: {
 }
 
 export async function mccnProReboot() {
+  _globalThis.mccnPro.expires = 0
   await _globalThis.mccnPro.page?.evaluate(() => {
     const btm = document.querySelector("body > gradio-app")
       .shadowRoot
