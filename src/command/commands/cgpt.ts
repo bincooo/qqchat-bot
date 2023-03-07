@@ -1,4 +1,4 @@
-import { config } from 'src/config'
+import { config, lang } from 'src/config'
 import { initOicq } from 'src/core/oicq'
 import { BaseMessageHandler } from 'src/types'
 import { Sender } from '../../model/sender'
@@ -37,7 +37,7 @@ class CgptCommand extends BaseCommand {
         break
       case 'tts:lang':
         const key = params[1]??'none'
-        const value = config.lang[key]
+        const value = lang[key]
         if (!value) {
           sender.reply('语音类型不存在 ~\n' + this.langDoc(), false)
           break
