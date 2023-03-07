@@ -9,7 +9,7 @@ import stateManager from 'src/util/state'
 class CgptCommand extends BaseCommand {
   label = 'cgpt'
   usage = [
-    `tts:on/off      ${this.sp(12)}开/关语音模式`
+    `tts:on/off/lang     ${this.sp(12)}开/关语音模式`
     + '\n----'
     + '\n!reset  - 重置会话'
     + '\n/draw [tag] - ai作画\n'
@@ -35,6 +35,17 @@ class CgptCommand extends BaseCommand {
         sender.reply('已关闭语音模式 ~', false)
         state.tts = false
         break
+      case 'tts:lang':
+        const key = params[1]??'none'
+        const value = config.lang[key]
+        if (!value) {
+          sender.reply('语音类型不存在 ~\n' + this.langDoc(), false)
+          break
+        }
+        const split = value.split(':')
+        sender.reply('已切换' + split[0] + '语音 ~', false)
+        state.lang = split[1]
+        break
       default:
         sender.reply(this.helpDoc, true)
         break
@@ -43,6 +54,12 @@ class CgptCommand extends BaseCommand {
 
   override showHelp(): boolean {
     return !!config.api.enable
+  }
+
+  langDoc() {
+    return Object.keys(config.lang)
+      .map(key => `${key} - ${config.lang[key]}`)
+      .join('\n')
   }
 }
 

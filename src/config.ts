@@ -49,3 +49,12 @@ export const preset: any = {
   active: "",
   maintenance: false
 }
+
+
+export const lang: any = {
+  jp: '日语:ja-JP-AoiNeural',
+  cn: '普通话:zh-CN-XiaoshuangNeural',
+  dbCn: '东北话:zh-CN-liaoning-XiaobeiNeural',
+  gdCn: '广东话:yue-CN-XiaoMinNeural',
+  en: '英语:en-GB-MaisieNeural',
+}
