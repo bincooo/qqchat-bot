@@ -102,12 +102,12 @@ export const onMessage = async (data: any, sender: Sender) => {
       }
 
       const parserJapen = (state: any, tex: string) => {
-        // const count = japaneseUnicodeParser.count(tex)
+        const count = japaneseUnicodeParser.count(tex)
         // 0.2 的权重，超过这个阈值就判定它是日文
-        // const is = (japaneseUnicodeParser.filter(tex).length * .2 < count)
+        const is = (japaneseUnicodeParser.filter(tex).length * .2 < count)
         return {
-          vname: /*is ? 'ja-JP-AoiNeural' :*/ state.lang??'zh-CN-XiaoshuangNeural',
-          rate: /*is ? -5 :*/ 0
+          vname: is ? 'ja-JP-AoiNeural' : state.lang??'zh-CN-XiaoshuangNeural',
+          rate: is ? -5 : 0
         }
       }
       
