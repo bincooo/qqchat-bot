@@ -52,6 +52,9 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
     platform: config.oicq?.platform ?? 1
   })
   client.on('message', async e => {
+    if (e.group) {
+      config.groupList[e.group_id??e.group.group_id] = e
+    }
     // 私信或at回复
     if (e.message_type === 'private' || e.atme) {
       if (e.nickname !== 'Q群管家') {
@@ -72,9 +75,14 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
     const ret = await client.sendPrivateMsg(config.adminQQ, '已上线~')
 
     const pingListener = async () => {
-      for(let groupId in config.groupList??[]) {
+      for(let key in config.groupList??{}) {
         try {
-          const { message_id } = await client.sendGroupMsg(groupId, "Hi")
+          const e: MessageEvent = config.groupList[key]
+          if (config.debug) {
+            console.log('ping group: ' + (e.group_name??e.group.group_name))
+          }
+          const { message_id } = await e?.reply('Hi~')
+          await delay(500)
           await client.deleteMsg(message_id)
         } catch(err) {
           console.log('pingListener Error!!', err)
@@ -82,7 +90,6 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
       }
     }
 
-    await delay(3000)
     pingListener()
     // 一小时心跳一次
     setInterval(pingListener, config.groupPingMs)

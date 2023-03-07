@@ -30,5 +30,6 @@
   },
   "proxyServer": "http://master.io:7890",
   "groupPingMs": 3600000,
-  "groupList": [ 362515018, 473923892 ]
+  "groupList": {
+  }
 }
