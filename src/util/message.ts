@@ -101,7 +101,7 @@ export const onMessage = async (data: any, sender: Sender) => {
         console.log('response message ====== [' + isDone() + ']', data, message)
       }
 
-      const parserJapen = (tex: string) => {
+      const parserJapen = (state: any, tex: string) => {
         const count = japaneseUnicodeParser.count(tex)
         // 0.2 的权重，超过这个阈值就判定它是日文
         const is = (japaneseUnicodeParser.filter(tex).length * .2 < count)
@@ -123,7 +123,7 @@ export const onMessage = async (data: any, sender: Sender) => {
 
         if (state.tts) {
           try {
-            const path = await speak({ text: message.trim(), ...parserJapen(message) })
+            const path = await speak({ text: message.trim(), ...parserJapen(state, message) })
             await sender.reply(segment.record(path))
           } catch(err) {
             sender.reply(`语音发生错误\n${err}`)
