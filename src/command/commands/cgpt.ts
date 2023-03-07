@@ -57,8 +57,8 @@ class CgptCommand extends BaseCommand {
   }
 
   langDoc() {
-    return Object.keys(config.lang)
-      .map(key => `${key} - ${config.lang[key]}`)
+    return Object.keys(lang)
+      .map(key => `${key} - ${lang[key]}`)
       .join('\n')
   }
 }
