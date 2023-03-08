@@ -113,10 +113,10 @@ export class PlayerFilter extends BaseMessageFilter {
 
   presetEnabled(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
     if (content?.trim().startsWith("开启 ")) {
-      const player = content.trim()
+      const message = content.trim()
         .split(" ")[1]
-      if (player) {
-        const obj = preset.player?.find(item => item.key === player.trim())
+      if (message) {
+        const obj = state.preset.player?.find(item => item.key === message.trim())
         if (obj) {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {
@@ -135,7 +135,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!state.preset.maintenance) return [ true, content ]
 
       state.preset.maintenance = false
-      const player = preset.player.filter(item => item.key === state.preset.key)[0]
+      const player = state.preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
         if (player.maintenance.warning) {
           sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
