@@ -1,12 +1,12 @@
 {
   "debug": false,
-  "docker": true,
+  "docker": false,
   "adminQQ": "xxx",
-  "botQQ": "xxx",
-  "botPassword": "xxx",
+  "botQQ": "2408455144",
+  "botPassword": "zbc12632",
   "botNickname": "猫小爱",
   "oicq": {
-    "platform": 3
+    "platform": 2
   },
   "officialAPI": {
     "enable": false,
@@ -22,7 +22,7 @@
     ]
   },
   "api": {
-    "enable": true,
+    "enable": false,
     "email": "xxx",
     "password": "xxx",
     "slaves": [

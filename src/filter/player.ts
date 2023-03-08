@@ -47,7 +47,7 @@ export class PlayerFilter extends BaseMessageFilter {
     if (!!state.preset?.key) {
       state.preset.count++
 
-      const result1 = this.handlePresetMaintenance(content, state)
+      const result1 = this.handlePresetMaintenance(content, sender, state)
       if (result1) return result1
 
       if (state.preset.count > MAX_COUNT) {
