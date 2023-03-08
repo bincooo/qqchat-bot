@@ -126,7 +126,8 @@ export const onMessage = async (data: any, sender: Sender) => {
             const path = await speak({ text: message.trim(), ...parserJapen(state, message) })
             await sender.reply(segment.record(path))
           } catch(err) {
-            sender.reply(`语音发生错误\n${err}`)
+            console.log("语音发生错误", err)
+            sender.reply(`语音发生错误\n${err.toString()}`)
           }
         }
       }
