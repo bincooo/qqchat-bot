@@ -116,7 +116,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const message = content.trim()
         .split(" ")[1]
       if (message) {
-        const obj = state.preset.player?.find(item => item.key === message.trim())
+        const obj = preset.player?.find(item => item.key === message.trim())
         if (obj) {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {
@@ -135,7 +135,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!state.preset.maintenance) return [ true, content ]
 
       state.preset.maintenance = false
-      const player = state.preset.player.filter(item => item.key === state.preset.key)[0]
+      const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
         if (player.maintenance.warning) {
           sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
