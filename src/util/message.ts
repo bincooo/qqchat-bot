@@ -127,7 +127,7 @@ export const onMessage = async (data: any, sender: Sender) => {
             await sender.reply(segment.record(path))
           } catch(err) {
             console.log("语音发生错误", err)
-            sender.reply(`语音发生错误\n${err.toString()}`)
+            sender.reply(`语音发生错误\n${err.message??err}`)
           }
         }
       }
