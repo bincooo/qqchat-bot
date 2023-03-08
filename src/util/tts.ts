@@ -66,8 +66,8 @@ async function saveFile(buffer: Buffer): Promise<string> {
       }
     })
   }).then(path => {
-    // return mp3ToAmr(path)
-    return mp3ToSilk(path)
+    return mp3ToAmr(path)
+    // return mp3ToSilk(path)
   })
 }
 
