@@ -38,14 +38,18 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
   const setting: MiraiApiHttpSetting = yaml.load(fs.readFileSync(yamlConfig, 'utf8'))
   const mirai = new Mirai(setting)
   await mirai.link(config.botQQ)
+  const isAtme = function(chain: (any)[]) {
+    if (chain.filter(item => 
+      (item.type === 'At' && item.target === config.botQQ) || 
+      (item.type === 'Plain' && item.text.indexOf('@' + config.botNickname??'undef') >= 0))
+    .length > 0)
+      return true
+    else return false
+  }
   mirai.on('message', e => {
-    console.log('on message: ', (e.isAt&&e.isAt(config.botQQ)))
-    if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.type === 'GroupMessage' && e.isAt(config.botQQ))) {
+    console.log('on message: ', isAtme(e.messageChain))
+    if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.type === 'GroupMessage' && isAtme(e.messageChain))) {
       if (e.sender?.memberName !== 'Q群管家') {
-        handleMessage(e as MiraiBasicEvent)
-      }
-    } else if(e.type === 'GroupMessage' && !!config.botNickname) {
-      if (e.messageChain.filter(item => item.type === 'Plain' && item.text.indexOf('@' + config.botNickname) >= 0).length > 0) {
         handleMessage(e as MiraiBasicEvent)
       }
     }
