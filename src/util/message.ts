@@ -11,6 +11,7 @@ import * as parser from './parser'
 import { japaneseUnicodeParser } from 'src/util/lang'
 import stateManager from 'src/util/state'
 import delay from 'delay'
+import fs from 'fs'
 
 
 /**
@@ -113,22 +114,32 @@ export const onMessage = async (data: any, sender: Sender) => {
       
       if (!!message?.trim()) {
         const state = stateManager.getState(sender.id)
+
+        if (state.tts) {
+          try {
+            const path = await speak({ text: message.trim(), ...parserJapen(state, message) })
+            switch (config.type) {
+              case "mirai":
+                const b64 = fs.readFileSync(path)
+                  .toString('base64')
+                await sender.reply([{ type: 'Voice', base64: b64 }], true)
+                break
+              default:
+                await sender.reply(segment.record(path))
+                break
+            }
+          } catch(err) {
+            console.log("语音发生错误", err)
+            sender.reply(`语音发生错误\n${err.message??err}`)
+          }
+        }
+
         if (isDone()) {
           await sender.reply(message, true)
           await stateManager.recallLoading(sender.id)
         } else {
           await sender.reply(message, true)
           stateManager.sendLoading(sender)
-        }
-
-        if (state.tts) {
-          try {
-            const path = await speak({ text: message.trim(), ...parserJapen(state, message) })
-            await sender.reply(segment.record(path))
-          } catch(err) {
-            console.log("语音发生错误", err)
-            sender.reply(`语音发生错误\n${err.message??err}`)
-          }
         }
       }
     }

@@ -135,7 +135,7 @@ export function mccnProDraw(opts: {
           path = ('http://mccn.pro:7860/file=' + path)
           const toB64 = () => {
             sendGet(path).then(({ data }) => {
-              resolve('base64://' + data.toString('base64'))
+              resolve(data.toString('base64'))
             }).catch(err => reject(err))
           }
 
@@ -147,7 +147,7 @@ export function mccnProDraw(opts: {
             retry(() => tryBetter(path), 3, 800)
               .then(b64 => {
                 if (b64) {
-                  resolve('base64://' + b64)
+                  resolve(b64)
                 } else toB64()
               })
               .catch((err) => {

@@ -1,6 +1,7 @@
 import { BaseMessageHandler } from 'src/types'
 import logger from './util/log'
 import { initOicq } from './core/oicq'
+import { initMirai } from './core/mirai'
 import MessageHandlers from './handler'
 import { existsConfig, loadConfig, writeConfig } from './util/config'
 import { config, preset } from './config'
@@ -43,13 +44,26 @@ async function main () {
       })
       .then(async () => await loadHandlerConfig())
       .then(async () => {
-        await initOicq(MessageHandlers)
+        await initChat()
       })
       .catch(err => { throw err })
   } else {
     Object.assign(config, await loadConfig())
     await loadHandlerConfig()
-    await initOicq(MessageHandlers)
+    await initChat()
+  }
+}
+
+async function initChat() {
+  switch(config.type) {
+    case "oicq":
+      await initOicq(MessageHandlers)
+    break
+    case "mirai":
+      await initMirai(MessageHandlers)
+    break
+    default:
+      throw new Error('please select a valid `qq` chat type !')
   }
 }
 

@@ -1,6 +1,8 @@
+import fs from 'fs'
 import { segment, Sendable } from 'oicq'
 import { Sender } from 'src/model/sender'
-import { getClient } from 'src/core/oicq'
+import getClient from 'src/core'
+import { config } from 'src/config'
 
 
 function dat(): number {
@@ -11,6 +13,7 @@ function dat(): number {
 class GlobalStateManager {
 
   protected _gif: Sendable = segment.image('./loading.gif')
+  protected _gifB64: string = fs.readFileSync('./loading.gif').toString('base64')
   protected _globalTimer: NodeJS.Timer
 
   constructor() {
@@ -44,14 +47,21 @@ class GlobalStateManager {
   }
 
   async recallLoading(uid: number | string) {
-    let messageId
+    let identity
     const state = this.getState(uid)
     do {
-      messageId = state.loading?.shift()
-      if(messageId) {
-        const result = await getClient()?.deleteMsg(messageId)
+      identity = state.loading?.shift()
+      if(identity) {
+        switch(config.type) {
+          case "mirai":
+            await getClient()?.api.recall(identity)
+            break
+          default:
+            await getClient()?.deleteMsg(identity)
+            break
+        }
       }
-    } while(!!messageId)
+    } while(!!identity)
   }
 
   sendLoading(
@@ -87,9 +97,25 @@ class GlobalStateManager {
       }
       if (state.previousTs + 3000 < dat()) {
         clearTimer()
-        const result = await sender.reply(this._gif)
-        await this.recallLoading(sender.id)
-        state.loading.push(result.message_id)
+        let result
+        switch(config.type) {
+          case "mirai":
+            result = await sender.reply([{
+              type: 'Image',
+              base64: this._gifB64
+            }])
+            await this.recallLoading(sender.id)
+            state.loading.push({
+              messageId: result.messageId,
+              target: sender.id
+            })
+            break
+          default:
+            result = await sender.reply(this._gif)
+            await this.recallLoading(sender.id)
+            state.loading.push(result.message_id)
+            break
+        }
       }
     }, 500)
   }

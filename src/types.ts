@@ -9,7 +9,33 @@ export interface envConfig {
   token: string
 }
 
-export type MessageEvent = PrivateMessageEvent | GroupMessageEvent | DiscussMessageEvent | GuildMessage
+export type MessageEvent = PrivateMessageEvent 
+  | GroupMessageEvent 
+  | DiscussMessageEvent 
+  | GuildMessage
+  | MiraiBasicEvent
+
+
+export type MiraiBasicEvent = {
+  type: string
+  messageChain: (any)[]
+  sender: {
+    id: number
+    memberName: string
+    specialTitle: string
+    permission: string
+    joinTimestamp: number
+    lastSpeakTimestamp: number
+    muteTimeRemaining: number
+    group: any
+  }
+  plain: string
+  isAt: ((qq?: number) => boolean)
+  group: ((...groupIds: number[]) => Boolean)
+  friend: ((...qqs: number[]) => Boolean)
+  reply: ((msgChain: string | (any)[], quote?: boolean) => Promise<any>)
+}
+
 
 /**
  * 返回值取决于是否继续下一个拦截， true：继续，false： 中断

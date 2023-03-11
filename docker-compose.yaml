@@ -14,4 +14,4 @@ services:
       - ./preset.json:/app/preset.json
       - ./config.json:/app/config.json
     extra_hosts:
-      - "master.io:192.168.0.5"
+      - "master.io:192.168.0.236"

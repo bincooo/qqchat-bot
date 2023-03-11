@@ -43,7 +43,7 @@ export class NovelAiHandler extends BaseMessageHandler {
         (await filterTokens(sender?.textMessage, sender))
       )
       try {
-        const path  = await retry(
+        const b64 = await retry(
           () => mccnProDraw({
             data,
             session_hash: this._uuid,
@@ -55,8 +55,14 @@ export class NovelAiHandler extends BaseMessageHandler {
           3,
           500
         )
-
-        sender.reply(segment.image(path), true)
+        switch (config.type) {
+          case "mirai":
+            sender.reply([{ type: 'Image', base64: b64 }], true)
+            break
+          default:
+            sender.reply(segment.image('base64://' + b64), true)
+            break
+        }
       } catch(err) {
         sender.reply('——————————————\nError: 4001\n作画失败了, CPU都淦冒烟啦 ~', true)
         await this.reset()

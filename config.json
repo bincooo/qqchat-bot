@@ -1,12 +1,16 @@
 {
   "debug": false,
   "docker": false,
-  "adminQQ": "xxx",
-  "botQQ": "2408455144",
-  "botPassword": "zbc12632",
+  "adminQQ": "xxxx",
+  "botQQ": "xxx",
+  "botPassword": "",
   "botNickname": "猫小爱",
+  "type": "mirai",
   "oicq": {
-    "platform": 2
+    "platform": 3
+  },
+  "mirai": {
+    "yaml": "mirai-setting.yml"
   },
   "officialAPI": {
     "enable": false,
@@ -22,7 +26,7 @@
     ]
   },
   "api": {
-    "enable": false,
+    "enable": true,
     "email": "xxx",
     "password": "xxx",
     "slaves": [

@@ -1,9 +1,8 @@
 import { config } from 'src/config'
-import { MessageEvent } from 'src/types'
+import { MessageEvent, MiraiBasicEvent } from 'src/types'
 import { GuildMessage } from 'oicq-guild/lib/message'
 import { Sendable } from 'oicq'
-
-import { getClient } from 'src/core/oicq'
+import getClient from 'src/core'
 
 /**
  * 消息对象的封装
@@ -24,7 +23,25 @@ export class Sender {
 
   public isGroup: boolean = false
 
+  public isMirai: boolean = false
+
   constructor (e: MessageEvent) {
+    this.isMirai = !!e.mirai
+    // mirai
+    if (config.type === 'mirai') {
+      this._eventObject = e
+      this.textMessage = e.messageChain.filter(item => item.type === 'Plain').map(item => item.text).join().trim()
+      this.isGroup = (e.type === 'GroupMessage')
+      if (!(e.isAt && e.isAt()) && !!config.botNickname) {
+        this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
+      }
+      this.userId = e.sender.id
+      this.nickname = e.sender.memberName
+      this.isAdmin = this.userId === Number(config.adminQQ)
+      return
+    }
+
+    // oicq
     this._eventObject = e
     this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
     this.isGroup = (!!e.group)
@@ -43,16 +60,28 @@ export class Sender {
   }
 
   get id(): number {
-    return this.isGroup ? 
-      this._eventObject.group_id??this._eventObject.group.group_id :
-      this.userId
+    switch (config.type) {
+      case "mirai":
+        return this.isGroup ?
+          this._eventObject.group.id :
+          this.userId
+      default:
+        return this.isGroup ? 
+          this._eventObject.group_id??this._eventObject.group.group_id :
+          this.userId
+    }
   }
 
-  async reply(content: Sendable, quote?: boolean): any {
+  async reply(content: (Sendable | (any)[]), quote?: boolean): any {
     return await this._eventObject.reply(content, quote)
   }
 
-  async recallMsg(id: string): any {
-    return await getClient()?.deleteMsg(id)
+  async recallMsg(identity: any): any {
+    switch(config.type) {
+      case "mirai":
+        return await getClient()?.api.recall(identity)
+      default:
+        return await getClient()?.deleteMsg(identity)
+    }
   }
 }

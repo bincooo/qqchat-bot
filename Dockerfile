@@ -13,7 +13,7 @@ ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 #  && apt-get install -y make gcc g++ \
 #  && rm -rf /var/lib/apt/lists/*
 
-#RUN npm i
+RUN npm i
 #ENTRYPOINT ["tail","-f","/dev/null"]
 ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]
 # Xvfb :99 -ac & export DISPLAY=:99
