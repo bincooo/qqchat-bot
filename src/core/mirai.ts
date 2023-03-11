@@ -51,6 +51,7 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
     // console.log('mirai: ', e)
   })
   client = mirai
+  mirai.api.sendFriendMessage('已上线~', config.adminQQ)
   mirai.listen()
 }
 
