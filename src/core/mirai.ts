@@ -39,6 +39,7 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
   const mirai = new Mirai(setting)
   await mirai.link(config.botQQ)
   mirai.on('message', e => {
+    console.log('on message: ', e)
     if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.isAt && e.isAt())) {
       if (e.sender?.memberName !== 'Q群管家') {
         handleMessage(e as MiraiBasicEvent)
