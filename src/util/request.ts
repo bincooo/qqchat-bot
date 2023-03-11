@@ -66,7 +66,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
           console.log(`${event.request.url} // intercepted, going to modify`)
           const fn_index = (event.request.postData.match(/"fn_index":([0-9]+)/i)??[])[1]
           _globalThis.mccnPro.fn_index = fn_index
-          _globalThis.mccnPro.cookie = event.request.headers.Cookie
+          _globalThis.mccnPro.cookie = event.request.headers?.Cookie??"1234567890"
           _globalThis.mccnPro.expires = dat() + (1000 * 60 * 58)
           clearInterval(timer)
           resolve({
@@ -124,7 +124,7 @@ export function mccnProDraw(opts: {
           'Cookie': cookie,
           'Content-Type': 'application/json',
           'Proxy-Connection': 'keep-alive',
-          'Origin': 'http://mccn.pro:7860',
+          // 'Origin': 'http://mccn.pro:7860',
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
         })
       .then(({ data: res }) => {
