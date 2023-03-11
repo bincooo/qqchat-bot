@@ -12,6 +12,8 @@ import prettier from 'prettier'
 import { config } from 'src/config'
 import delay from 'delay'
 
+
+const BASE_NOVEL_AI_PATH = "http://zhouxiao.myqnapcloud.cn:7857"
 const _globalThis: {
   mccnPro?: {
     fn_index: number
@@ -57,7 +59,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
       }
     }, 300)
 
-    intercept(_globalThis.mccnPro.page, patterns.XHR('http://mccn.pro:7860/run/predict/'), {
+    intercept(_globalThis.mccnPro.page, patterns.XHR(BASE_NOVEL_AI_PATH + '/run/predict/'), {
       onResponseReceived: event => {
         const data = (event.request.postData.match(/"data":\["task\([0-9a-zA-Z]+\)"+/g)??[])[0]
         if (data) {
@@ -76,7 +78,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
       }
     })
 
-    await _globalThis.mccnPro.page.goto('http://mccn.pro:7860', {
+    await _globalThis.mccnPro.page.goto(BASE_NOVEL_AI_PATH, {
       waitUntil: 'networkidle0'
     })
 
@@ -112,7 +114,7 @@ export function mccnProDraw(opts: {
 
   return new Promise<string>((resolve, reject) => {
     initMccnPro().then(({ fn_index, cookie }) => {
-      sendPost('http://mccn.pro:7860/run/predict',
+      sendPost(BASE_NOVEL_AI_PATH + '/run/predict',
         JSON.stringify({
           data,
           session_hash,
@@ -132,7 +134,7 @@ export function mccnProDraw(opts: {
             reject(new Error("NovalAI:Error [not path]:: " + res))
             return
           }
-          path = ('http://mccn.pro:7860/file=' + path)
+          path = (BASE_NOVEL_AI_PATH + '/file=' + path)
           const toB64 = () => {
             sendGet(path).then(({ data }) => {
               resolve(data.toString('base64'))
