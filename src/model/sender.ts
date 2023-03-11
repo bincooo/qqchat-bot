@@ -21,7 +21,7 @@ export class Sender {
 
   public nickname: string
 
-  public isGroup: boolean = false
+  public group?: any
 
   public isMirai: boolean = false
 
@@ -31,7 +31,7 @@ export class Sender {
     if (config.type === 'mirai') {
       this._eventObject = e
       this.textMessage = e.messageChain.filter(item => item.type === 'Plain').map(item => item.text).join().trim()
-      this.isGroup = (e.type === 'GroupMessage')
+      this.group = (e.type === 'GroupMessage' ? e.sender.group : undefined)
       if (!(e.isAt && e.isAt()) && !!config.botNickname) {
         this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
       }
@@ -44,7 +44,7 @@ export class Sender {
     // oicq
     this._eventObject = e
     this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
-    this.isGroup = (!!e.group)
+    this.group = e.group
     if (!e.atme && !!config.botNickname) {
       this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
     }
@@ -63,17 +63,12 @@ export class Sender {
     let result = undefined
     switch (config.type) {
       case "mirai":
-        result = this.isGroup ?
-          this._eventObject.group.id :
-          this.userId
+        result = this.group ? this.group.id : this.userId
         break
       default:
-        result = this.isGroup ? 
-          this._eventObject.group_id??this._eventObject.group.group_id :
-          this.userId
+        result = this.group ? this.group.group_id : this.userId
         break
     }
-    console.log('sender get id', result)
     return result
   }
 
