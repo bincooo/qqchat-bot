@@ -54,7 +54,6 @@ class GlobalStateManager {
       if(identity) {
         switch(config.type) {
           case "mirai":
-            console.log('result2: ', identity)
             await getClient()?.api.recall(identity)
             break
           default:
@@ -105,8 +104,6 @@ class GlobalStateManager {
               type: 'Image',
               base64: this._gifB64
             }])
-            console.log('result1: ', {messageId: result.messageId,
-              target: sender.id})
             await this.recallLoading(sender.id)
             state.loading.push({
               messageId: result.messageId,
