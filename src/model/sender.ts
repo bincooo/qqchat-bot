@@ -60,17 +60,21 @@ export class Sender {
   }
 
   get id(): number {
+    let result = undefined
     switch (config.type) {
       case "mirai":
-        console.log('sender get id', this._eventObject)
-        return this.isGroup ?
+        result = this.isGroup ?
           this._eventObject.group.id :
           this.userId
+        break
       default:
-        return this.isGroup ? 
+        result = this.isGroup ? 
           this._eventObject.group_id??this._eventObject.group.group_id :
           this.userId
+        break
     }
+    console.log('sender get id', result)
+    return result
   }
 
   async reply(content: (Sendable | (any)[]), quote?: boolean): any {
