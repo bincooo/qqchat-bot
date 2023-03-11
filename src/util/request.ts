@@ -13,7 +13,7 @@ import { config } from 'src/config'
 import delay from 'delay'
 
 
-const BASE_NOVEL_AI_PATH = "http://zhouxiao.myqnapcloud.cn:7857"
+const BASE_NOVEL_AI_PATH = "https://www.icu-web.tk:8082/novel-ai"
 const _globalThis: {
   mccnPro?: {
     fn_index: number
