@@ -2,7 +2,7 @@ adapters:
   - ws
 debug: false
 enableVerify: true
-verifyKey: bincooo
+verifyKey: chatgpt_for_qqchat_bot
 singleMode: false
 cacheSize: 4096
 persistenceFactory: 'built-in'
