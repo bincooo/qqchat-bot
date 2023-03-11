@@ -1,0 +1,19 @@
+adapters: 
+  - ws
+  - http
+debug: false
+enableVerify: true
+verifyKey: bincooo
+singleMode: false
+cacheSize: 4096
+persistenceFactory: 'built-in'
+adapterSettings:
+  ws:
+    port: 8080
+    host: 0.0.0.0
+    reservedSyncId: -1
+  http:
+    port: 8080
+    host: 0.0.0.0
+    cors: [ * ]
+    unreadQueueMaxSize: 100

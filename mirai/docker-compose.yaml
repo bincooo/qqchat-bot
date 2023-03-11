@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  test:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - ./bots:/app/bots
