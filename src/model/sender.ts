@@ -62,6 +62,7 @@ export class Sender {
   get id(): number {
     switch (config.type) {
       case "mirai":
+        console.log('sender get id', this._eventObject)
         return this.isGroup ?
           this._eventObject.group.id :
           this.userId
