@@ -70,7 +70,7 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
 
 ## 配置说明
 
-```tex
+```json
 // config.json
 
 {
@@ -134,7 +134,7 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
 
 
 
-```tex
+```json
 // preset.json
 {
   // 角色预设
