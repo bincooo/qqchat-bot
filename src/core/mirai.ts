@@ -47,7 +47,7 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
     else return false
   }
   mirai.on('message', e => {
-    console.log('on message: ', isAtme(e.messageChain))
+    // console.log('on message: ', isAtme(e.messageChain))
     if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.type === 'GroupMessage' && isAtme(e.messageChain))) {
       if (e.sender?.memberName !== 'Q群管家') {
         handleMessage(e as MiraiBasicEvent)
