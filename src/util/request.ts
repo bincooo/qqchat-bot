@@ -282,7 +282,7 @@ async function initPicwishCn() {
     }
   }
 
-  intercept(_globalThis.spider.picwishCn, patterns.Script('*/astro/picwish/hoisted.*.js'), {
+  intercept(_globalThis.spider.picwishCn, patterns.Script('*/hoisted.*.js'), {
     onResponseReceived: event => {
       console.log(`${event.request.url} // intercepted, going to modify`)
       let he:string
@@ -303,7 +303,7 @@ async function initPicwishCn() {
     }
   })
 
-  intercept(_globalThis.spider.picwishCn, patterns.Script('*/astro/picwish/chunks/EnhancePreview.*.js'), {
+  intercept(_globalThis.spider.picwishCn, patterns.Script('*/EnhancePreview.*.js'), {
     onResponseReceived: event => {
       console.log(`${event.request.url} // intercepted, going to modify`)
       let Ba:string
