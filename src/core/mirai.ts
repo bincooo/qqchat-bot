@@ -39,10 +39,10 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
   const mirai = new Mirai(setting)
   await mirai.link(config.botQQ)
   const isAtme = function(chain: (any)[]) {
-    if (chain.filter(item => 
-      (item.type === 'At' && item.target === config.botQQ) || 
+    if (chain.filter(item => (
+      (item.type === 'At' && item.target == config.botQQ) || 
       (item.type === 'Plain' && item.text.indexOf('@' + config.botNickname??'undef') >= 0))
-    .length > 0)
+    ).length > 0)
       return true
     else return false
   }
