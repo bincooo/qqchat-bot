@@ -39,8 +39,8 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
   const mirai = new Mirai(setting)
   await mirai.link(config.botQQ)
   mirai.on('message', e => {
-    console.log('on message: ', e)
-    if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.isAt && e.isAt())) {
+    console.log('on message: ', (e.isAt&&e.isAt()))
+    if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.type === 'GroupMessage' && e.isAt())) {
       if (e.sender?.memberName !== 'Q群管家') {
         handleMessage(e as MiraiBasicEvent)
       }
@@ -49,7 +49,6 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
         handleMessage(e as MiraiBasicEvent)
       }
     }
-    // console.log('mirai: ', e)
   })
   client = mirai
   mirai.api.sendFriendMessage('已上线~', config.adminQQ)
