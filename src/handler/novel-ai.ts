@@ -92,9 +92,12 @@ export class NovelAiHandler extends BaseMessageHandler {
 }
 
 const FINAL_NGV_PROMPT = "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{{{bare flesh}}}}}"
-const [ CFG_SCALE, WIDTH, HEIGHT ] = [ 6, 512, 832 ]
+const [ CFG_SCALE, WIDTH, HEIGHT ] = [ 7, 512, 832 ]
 
 export const initParams2 = function(prompt: string): any {
+  if (prompt.endsWith(',')) {
+    prompt = prompt.substr(0, prompt.length - 1)
+  }
   return {
     "enable_hr": false,
     "denoising_strength": 0,
@@ -106,15 +109,15 @@ export const initParams2 = function(prompt: string): any {
     "hr_resize_x": 0,
     "hr_resize_y": 0,
     "styles": [ ],
-    "seed": 2649675976,
-    "subseed": 3498073440,
-    "subseed_strength": 0,
-    "seed_resize_from_h": 0,
-    "seed_resize_from_w": 0,
+    "seed": -1,
+    "subseed": -1,
+    "subseed_strength": -1,
+    "seed_resize_from_h": -1,
+    "seed_resize_from_w": -1,
     "sampler_name": "Euler a",
     "batch_size": 1,
     "n_iter": 1,
-    "steps": 28,
+    "steps": 30,
     "cfg_scale": CFG_SCALE,
     "width": WIDTH,
     "height": HEIGHT,
@@ -141,8 +144,6 @@ export const initParams = function(prompt: string): Array<any> {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   // 提示词相关性(CFG Scale)
-  const cfg_scale = 6,
-    [ width, height ] = [ 512, 832 ]
   return [
         `task(${genUid(15)})`,
         prompt,
