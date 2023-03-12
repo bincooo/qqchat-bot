@@ -1,6 +1,6 @@
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
-import { mccnProDraw, mccnProReboot } from 'src/util/request'
+import { drawing, mccnProDraw, mccnProReboot } from 'src/util/request'
 import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
 import retry from 'src/util/retry'
@@ -39,19 +39,26 @@ export class NovelAiHandler extends BaseMessageHandler {
       const idx = parseInt(Math.random() * hint.length, 10)
       sender.reply(hint[idx], true)
 
-      const data = initParams(
+      const data = initParams2(
         (await filterTokens(sender?.textMessage, sender))
       )
       try {
         const b64 = await retry(
-          () => mccnProDraw({
+          () => drawing({
             data,
-            session_hash: this._uuid,
             try4K: config.api.betterPic,
             callback: () => {
               sender.reply('画完辣, 待我优化一番 ~', true)
             }
           }),
+          // () => mccnProDraw({
+          //   data,
+          //   session_hash: this._uuid,
+          //   try4K: config.api.betterPic,
+          //   callback: () => {
+          //     sender.reply('画完辣, 待我优化一番 ~', true)
+          //   }
+          // }),
           3,
           500
         )
@@ -84,6 +91,50 @@ export class NovelAiHandler extends BaseMessageHandler {
 
 }
 
+const FINAL_NGV_PROMPT = "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{{{bare flesh}}}}}"
+const [ CFG_SCALE, WIDTH, HEIGHT ] = [ 6, 512, 832 ]
+
+export const initParams2 = function(prompt: string): any {
+  return {
+    "enable_hr": false,
+    "denoising_strength": 0,
+    "firstphase_width": 0,
+    "firstphase_height": 0,
+    "hr_scale": 2,
+    "hr_upscaler": null,
+    "hr_second_pass_steps": 0,
+    "hr_resize_x": 0,
+    "hr_resize_y": 0,
+    "styles": [ ],
+    "seed": 2649675976,
+    "subseed": 3498073440,
+    "subseed_strength": 0,
+    "seed_resize_from_h": 0,
+    "seed_resize_from_w": 0,
+    "sampler_name": "Euler a",
+    "batch_size": 1,
+    "n_iter": 1,
+    "steps": 28,
+    "cfg_scale": CFG_SCALE,
+    "width": WIDTH,
+    "height": HEIGHT,
+    "restore_faces": false,
+    "tiling": false,
+    "prompt": prompt,
+    "negative_prompt": FINAL_NGV_PROMPT,
+    "eta": 0.667,
+    "s_churn": 0,
+    "s_tmax": 0,
+    "s_tmin": 0,
+    "s_noise": 1,
+    "override_settings": {},
+    "override_settings_restore_afterwards": true,
+    "script_args": [],
+    "sampler_index": "Euler a",
+    "script_name": null
+  }
+}
+
 // 提示词参考: https://www.yuque.com/longyuye/lmgcwy
 export const initParams = function(prompt: string): Array<any> {
   if (prompt.endsWith(',')) {
@@ -95,7 +146,7 @@ export const initParams = function(prompt: string): Array<any> {
   return [
         `task(${genUid(15)})`,
         prompt,
-        "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{{{bare flesh}}}}}",
+        FINAL_NGV_PROMPT,
         [],
         20,
         "Euler a",
@@ -103,15 +154,15 @@ export const initParams = function(prompt: string): Array<any> {
         false,
         1,
         1,
-        cfg_scale,
+        CFG_SCALE,
         -1,
         -1,
         0,
         0,
         0,
         false,
-        height,
-        width,
+        HEIGHT,
+        WIDTH,
         false,
         0.7,
         2,

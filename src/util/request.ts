@@ -92,6 +92,56 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
   })
 }
 
+
+export function drawing(opts: {
+  data: any
+  try4K?: boolean
+  callback?: () => void
+}): Promise<string> {
+
+  const {
+    data,
+    try4K = false,
+    callback
+  } = opts
+
+  return new Promise<string>((resolve, reject) => {
+    sendPost(BASE_NOVEL_AI_PATH + '/sdapi/v1/txt2img', str(data), {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    })
+    .then(({ data: res }) => {
+      try {
+        const result = (JSON.parse(res)?.images??[])[0]
+        if (try4K) {
+          if (callback) {
+            callback()
+          }
+
+          retry(() => tryBetter(result), 3, 800)
+            .then(b64 => {
+              if (b64) {
+                resolve(b64)
+              } else resolve(result)
+            })
+            .catch((err) => {
+              console.log(err)
+              resolve(result)
+            })
+          return
+        }
+        resolve(result)
+      } catch(err: Error) {
+        reject(err)
+      }
+    })
+    .catch((err: Error) => {
+      reject(err)
+    })
+  })
+}
+
+
 /**
  * NovalAI
  */
@@ -337,12 +387,18 @@ async function initPicwishCn() {
 // 比web chatgpt先初始化
 // initPicwishCn()
 
-export async function tryBetter(imgUrl: string): Promise<string> {
+export async function tryBetter(url: string): Promise<string> {
   await initPicwishCn()
-  const { data } = (await sendGet(imgUrl))
-  const b64 = data.toString('base64')
+
+  const ToB64 = async () => {
+    if (url.startsWith('http:') || url.startsWith('https:')) {
+      const { data } = (await sendGet(url))
+      return data.toString('base64')
+    } else return url
+  }
+
   // console.log('b64', data)
-  const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, b64, `image${dat()}.png`)
+  const { result } = await _globalThis.spider.picwishCn.evaluate(browserTryBetter, (await ToB64()), `image${dat()}.png`)
   // console.log('better===>>>', result)
   if (result && result.state === 1) {
     const { data: d } = await sendGet(result.image)
