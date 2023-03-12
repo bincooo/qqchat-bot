@@ -12,3 +12,5 @@ version-local
 build
 
 docker
+
+mirai/bots/
