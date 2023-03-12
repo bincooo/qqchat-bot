@@ -89,10 +89,11 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
         }
       }
     }
-
-    pingListener()
-    // 一小时心跳一次
-    setInterval(pingListener, config.groupPingMs)
+    if (config.groupPingMs > 0) {
+      pingListener()
+      // 一小时心跳一次
+      setInterval(pingListener, config.groupPingMs)
+    }
   })
 
   let dat: number  = 0

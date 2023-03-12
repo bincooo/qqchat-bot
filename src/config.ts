@@ -6,8 +6,12 @@ export const config = {
   botQQ: 0,
   botNickname: '猫小爱',
   botPassword: '',
+  type: "mirai",
   oicq: {
     platform: 5
+  },
+  mirai: {
+    yaml: "mirai-setting.yml"
   },
 
   // handler config...

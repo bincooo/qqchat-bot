@@ -77,8 +77,8 @@ function initParser() {
 
   const condition: Array<parser.Condition> = [
     codeCondit,
-    "100:。\n",
-    "100:。",
+    "120:。\n",
+    "120:。",
     "150:.\n",
     "150:\n\n"
   ]

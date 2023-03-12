@@ -3,11 +3,11 @@
   "docker": false,
   "adminQQ": "xxxx",
   "botQQ": "xxx",
-  "botPassword": "",
+  "botPassword": "xxx",
   "botNickname": "猫小爱",
-  "type": "mirai",
+  "type": "oicq",
   "oicq": {
-    "platform": 3
+    "platform": 4
   },
   "mirai": {
     "yaml": "mirai-setting.yml"
@@ -26,14 +26,14 @@
     ]
   },
   "api": {
-    "enable": true,
+    "enable": false,
     "email": "xxx",
     "password": "xxx",
     "slaves": [
     ]
   },
   "proxyServer": "http://master.io:7890",
-  "groupPingMs": 3600000,
+  "groupPingMs": 0,
   "groupList": {
   }
 }
