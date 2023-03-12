@@ -7,3 +7,4 @@ services:
       - 8080:8080
     volumes:
       - ./bots:/app/bots
+      - ./config/Console/AutoLogin.yml:/app/config/Console/AutoLogin.yml
