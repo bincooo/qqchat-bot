@@ -9,6 +9,7 @@ import { randomBytes } from 'crypto'
 import { clashSetting } from 'src/util/request'
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
+let notSignedCount = 0
 
 function genUid(): string {
   return 'uid-' + randomBytes(16)
@@ -207,13 +208,19 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async clash() {
     if (config.clash?.enable) {
-      let { http, list, index } config.clash
+      notSignedCount++
+      let { http, list, index } = config.clash
       if (!http) {
         throw new Error('please edit config.json: [ clash.http ] !')
       }
       if (!list || list.length <= 0) {
         throw new Error('please edit config.json: [ clash.list ] !')
       }
+
+      if (notSignedCount < 2) {
+        return
+      }
+
       if (!index || index >= list.length) {
         index = 0
         config.clash.index = 0
@@ -221,6 +228,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
       const name = list[index]
       console.log('clash will be change to name: [' + name + '].')
       await clashSetting(name)
+      notSignedCount = 0
+
     }
   }
 }
