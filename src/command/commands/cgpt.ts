@@ -46,7 +46,7 @@ class CgptCommand extends BaseCommand {
         const split = value.split(':')
         sender.reply('已切换' + split[0] + '语音 ~', false)
         state.lang = split[1]??'zh-CN-XiaoyiNeural'
-        state.sname = split[1]??'general'
+        state.sname = split[2]??'general'
         state.pitch = split[3]??'0'
         break
       default:
