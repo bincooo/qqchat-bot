@@ -44,6 +44,7 @@ async function main () {
           }
         }
         await writeConfig(config)
+        await display()
       })
       .then(async () => await loadHandlerConfig())
       .then(async () => {
@@ -52,22 +53,25 @@ async function main () {
       .catch(err => { throw err })
   } else {
     Object.assign(config, await loadConfig())
+    await display()
     await loadHandlerConfig()
     await initChat()
   }
 }
 
-async function initChat() {
+async function display() {
   if (config.docker) {
-    const executor = util.promisify(execcmd.exec)
-    executor('export DISPLAY=:99', (err, stdout, stderr) => {
-      if (err) {
-        console.log('error:' + stderr)
-      }
-    })
-    // process.env['DISPLAY'] = ':99'
+    // const executor = util.promisify(execcmd.exec)
+    // executor('export DISPLAY=:99', (err, stdout, stderr) => {
+    //   if (err) {
+    //     console.log('error:' + stderr)
+    //   }
+    // })
+    process.env['DISPLAY'] = ':99'
   }
+}
 
+async function initChat() {
   switch(config.type) {
     case "oicq":
       await initOicq(MessageHandlers)
