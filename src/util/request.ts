@@ -34,6 +34,19 @@ const _globalThis: {
   }
 }
 
+export function clashSetting(name: string): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    sendPut(config.clash.http, str({ name }), {
+      'Content-Type': 'application/json'
+    })
+    .then(_ => resolve(true))
+    .catch(err => {
+      console.log('Error: clash edit proxies fail !', err)
+      resolve(false)
+    })
+  })
+}
+
 // api 要是再变，劳资不玩了
 async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
   if (!_globalThis.mccnPro.page) {
@@ -237,8 +250,18 @@ export async function mccnProReboot() {
   })
 }
 
+export function sendPut(url: string, data: string | FormData, headers?: Map<string, any>): Promise<any> {
+  return sendRequest(url, data, headers, 'PUT')
+}
 
 export function sendPost(url: string, data: string | FormData, headers?: Map<string, any>): Promise<any> {
+  return sendRequest(url, data, headers, 'POST')
+}
+
+export function sendRequest(url: string, data: string | FormData, headers?: Map<string, any>, method?: string): Promise<any> {
+  if (method && !['POST', 'PUT'].includes(method)) {
+    throw new Error('http method is not allowed(' + method + ') !!')
+  }
   if (typeof(data) !== 'string') {
     headers = { ...data.getHeaders(), ...(headers??{}) }
   }

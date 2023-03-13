@@ -6,6 +6,7 @@ import logger from 'src/util/log'
 import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
+import { clashSetting } from 'src/util/request'
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
 
@@ -195,9 +196,31 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)
+    } else if (err.message.includes('Not signed in')) {
+      sender.reply(`发生错误\n${err} ${append}`)
+      this.clash()
 
     } else {
       sender.reply(`发生错误\n${err} ${append}`)
+    }
+  }
+
+  async clash() {
+    if (config.clash?.enable) {
+      let { http, list, index } config.clash
+      if (!http) {
+        throw new Error('please edit config.json: [ clash.http ] !')
+      }
+      if (!list || list.length <= 0) {
+        throw new Error('please edit config.json: [ clash.list ] !')
+      }
+      if (!index || index >= list.length) {
+        index = 0
+        config.clash.index = 0
+      }
+      const name = list[index]
+      console.log('clash will be change to name: [' + name + '].')
+      await clashSetting(name)
     }
   }
 }

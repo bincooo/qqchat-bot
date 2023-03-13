@@ -35,5 +35,10 @@
   "proxyServer": "http://master.io:7890",
   "groupPingMs": 0,
   "groupList": {
+  },
+  "clash": {
+    "enable": false,
+    "http": "xxx",
+    "list": [ "xxx" ]
   }
 }
