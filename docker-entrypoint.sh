@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Xvfb :99 -ac && export DISPLAY=:99 || export DISPLAY=:99
+exec `(Xvfb :99 -ac & export DISPLAY=:99) || export DISPLAY=:99`
 echo ''
 echo ' give me the star, thank ~'
 echo '+------------------------------------------------------+'
