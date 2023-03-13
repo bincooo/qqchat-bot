@@ -73,10 +73,17 @@ export class Sender {
   }
 
   async reply(content: (Sendable | (any)[]), quote?: boolean): any {
-    return await this._eventObject.reply(content, quote)
+    const result = await this._eventObject.reply(content, quote)
+    if (config.debug) {
+      console.log('sender reply result: ', result)
+    }
+    return result
   }
 
   async recallMsg(identity: any): any {
+    if (config.debug) {
+      console.log('sender recall message: ', identity)
+    }
     switch(config.type) {
       case "mirai":
         return await getClient()?.api.recall(identity)
