@@ -96,7 +96,6 @@ export const onMessage = async (data: any, sender: Sender) => {
     const isDone = () => (data.response === '[DONE]')
     
     if (!!message || isDone()) {
-      stateManager.setIsEnd(sender, isDone())
       message = await _filterTokens(message??'', filters, sender, isDone())
       if (config.debug) {
         console.log('response message ====== [' + isDone() + ']', data, message)
@@ -136,14 +135,21 @@ export const onMessage = async (data: any, sender: Sender) => {
           }
         }
 
-        if (isDone()) {
-          await sender.reply(message, true)
-          await stateManager.recallLoading(sender.id)
-        } else {
-          await sender.reply(message, true)
-          stateManager.sendLoading(sender)
+        try {
+          if (isDone()) {
+            await sender.reply(message, true)
+            await stateManager.recallLoading(sender.id)
+          } else {
+            await sender.reply(message, true)
+            stateManager.sendLoading(sender)
+          }
+        } catch(err) {
+          console.log("发送QQ消息发生错误", err)
         }
       }
+      
+      stateManager.setIsEnd(sender, isDone())
+
     }
   }
 }
