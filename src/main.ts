@@ -8,8 +8,6 @@ import { config, preset } from './config'
 import { run } from './auto'
 import { clashSetting } from './util/request'
 import chalk from 'chalk'
-import util from 'util'
-import execcmd from 'child_process'
 
 /**
  * 触发handler load钩子
@@ -44,7 +42,6 @@ async function main () {
           }
         }
         await writeConfig(config)
-        await display()
       })
       .then(async () => await loadHandlerConfig())
       .then(async () => {
@@ -53,21 +50,8 @@ async function main () {
       .catch(err => { throw err })
   } else {
     Object.assign(config, await loadConfig())
-    await display()
     await loadHandlerConfig()
     await initChat()
-  }
-}
-
-async function display() {
-  if (config.docker) {
-    const executor = util.promisify(execcmd.exec)
-    executor('export DISPLAY=:99', (err, stdout, stderr) => {
-      if (err) {
-        console.log('error:' + stderr)
-      } else console.log('export DISPLAY=:99')
-    })
-    // process.env['DISPLAY'] = ':99'
   }
 }
 
