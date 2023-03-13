@@ -45,7 +45,9 @@ class CgptCommand extends BaseCommand {
         }
         const split = value.split(':')
         sender.reply('已切换' + split[0] + '语音 ~', false)
-        state.lang = split[1]
+        state.lang = split[1]??'zh-CN-XiaoyiNeural'
+        state.sname = split[1]??'general'
+        state.pitch = split[3]??'0'
         break
       default:
         sender.reply(this.helpDoc, true)
@@ -59,7 +61,7 @@ class CgptCommand extends BaseCommand {
 
   langDoc() {
     return Object.keys(lang)
-      .map(key => `${key} - ${lang[key]}`)
+      .map(key => `${key} - ${lang[key].split(':')[0]}`)
       .join('\n')
   }
 }
