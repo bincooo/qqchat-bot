@@ -8,6 +8,8 @@ import { config, preset } from './config'
 import { run } from './auto'
 import { clashSetting } from './util/request'
 import chalk from 'chalk'
+import util from 'util'
+import execcmd from 'child_process'
 
 /**
  * 触发handler load钩子
@@ -57,7 +59,13 @@ async function main () {
 
 async function initChat() {
   if (config.docker) {
-    process.env['DISPLAY'] = ':99'
+    const executor = util.promisify(execcmd.exec)
+    executor('export DISPLAY=:99', (err, stdout, stderr) => {
+      if (err) {
+        console.log('error:' + stderr)
+      }
+    })
+    // process.env['DISPLAY'] = ':99'
   }
 
   switch(config.type) {
