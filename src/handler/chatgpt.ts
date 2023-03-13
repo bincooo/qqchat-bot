@@ -155,6 +155,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       await this.messageErrorHandler(sender, err)
     }
     
+    count429 = 0
     this._iswait = false
     return false
   }
