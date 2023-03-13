@@ -23,7 +23,6 @@ async function loadHandlerConfig () {
 async function main () {
   console.log(chalk.green('欢迎使用qqchat-bot: https://github.com/bincooo/qqchat-bot'))
   console.log(chalk.green('如果有用点个star吧 !!!'))
-  process.env['$DISPLAY'] = ':99'
 
   const exist = existsConfig()
   const presetPath = process.cwd() + '/preset.json'
@@ -57,6 +56,10 @@ async function main () {
 }
 
 async function initChat() {
+  if (config.docker) {
+    process.env['$DISPLAY'] = ':99'
+  }
+  
   switch(config.type) {
     case "oicq":
       await initOicq(MessageHandlers)
@@ -72,5 +75,8 @@ async function initChat() {
 main().catch(logger.error)
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error(reason)
+  logger.error('unhandledRejection <<<<', reason)
+  promise?.catch(err => {
+    logger.error('unhandledRejection >>>>', err)
+  })
 })
