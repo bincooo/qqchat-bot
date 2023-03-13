@@ -35,8 +35,8 @@ export class Sender {
       if (!(e.isAt && e.isAt()) && !!config.botNickname) {
         this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
       }
-      this.userId = e.sender.id
-      this.nickname = e.sender.memberName??e.sender.nickname
+      this.userId = e.sender?.id??e.member.id
+      this.nickname = e.sender?.memberName??e.sender?.nickname
       this.isAdmin = this.userId === Number(config.adminQQ)
       return
     }
