@@ -1,7 +1,7 @@
 import { MessageEvent, MessageHandler } from 'src/types'
 import { getClient } from 'src/core/oicq'
 import { config } from 'src/config'
-
+import getClient from 'src/core'
 
 export const helpHandler: MessageHandler = function (sender) {
   const e: MessageEvent = sender.getEventObject()
@@ -11,7 +11,7 @@ export const helpHandler: MessageHandler = function (sender) {
   switch (config.type) {
     case "mirai":
       if (e.type === 'MemberJoinEvent') {
-        mirai.api.memberInfo(e.member.id, e.member.group.id)
+        getClient()?.api.memberInfo(e.member.id, e.member.group.id)
           .then(info => e.reply(replyMessage(info.name)))
         return false
       }
