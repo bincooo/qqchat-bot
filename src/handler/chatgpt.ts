@@ -9,7 +9,8 @@ import { randomBytes } from 'crypto'
 import { clashSetting } from 'src/util/request'
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
-let notSignedCount = 0
+let countNotSigned = 0
+let count429 = 0
 
 function genUid(): string {
   return 'uid-' + randomBytes(16)
@@ -180,7 +181,10 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     } else if (err.statusCode === 429) {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 稍后再来吧 ...' + append, true)
-      // 429 1hours 限制, 换号处理
+      // 429 1hours 限制, 换号处理. 三次后触发
+      count429++
+      if (count429 < 3) return
+      count429 = 0
       this._emailPool.next(sender.id)
       const opts = this._emailPool.getOpts()
       this._api.setAccount(opts.email, opts.password)
@@ -208,7 +212,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async clash() {
     if (config.clash?.enable) {
-      notSignedCount++
+      countNotSigned++
       let { http, list, index } = config.clash
       if (!http) {
         throw new Error('please edit config.json: [ clash.http ] !')
@@ -217,7 +221,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
         throw new Error('please edit config.json: [ clash.list ] !')
       }
 
-      if (notSignedCount < 2) {
+      if (countNotSigned < 2) {
         return
       }
 
@@ -228,7 +232,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       const name = list[index]
       console.log('clash will be change to name: [' + name + '].')
       await clashSetting(name)
-      notSignedCount = 0
+      countNotSigned = 0
 
     }
   }

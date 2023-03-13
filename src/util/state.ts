@@ -71,7 +71,7 @@ class GlobalStateManager {
       isEnd: boolean
     }
   ) {
-    const state = this.getState(sender.id)
+    let state = this.getState(sender.id)
 
     if (other?.init) {
       this.setIsEnd(sender, other.isEnd)
@@ -90,6 +90,7 @@ class GlobalStateManager {
 
     clearTimer()
     state.timer = setInterval(async () => {
+      state = this.getState(sender.id)
       if (state.isEnd) {
         clearTimer()
         await this.recallLoading(sender.id)
@@ -97,6 +98,11 @@ class GlobalStateManager {
       }
       if (state.previousTs + 3000 < dat()) {
         clearTimer()
+        if (state.isEnd) {
+          this.setIsEnd(sender, true)
+          return
+        }
+
         let result
         switch(config.type) {
           case "mirai":
