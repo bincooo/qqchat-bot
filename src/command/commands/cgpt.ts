@@ -27,6 +27,7 @@ class CgptCommand extends BaseCommand {
   async execute (sender: Sender, params: string[]) {
     const state = stateManager.getState(sender.id)
     switch (params[0]) {
+      case 'tts':
       case 'tts:on':
         sender.reply('已开启语音模式 ~', false)
         state.tts = true

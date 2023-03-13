@@ -36,6 +36,7 @@ class ServerCommand extends BaseCommand {
       case 'status':
         sender.reply(JSON.stringify(process.memoryUsage()), true)
         break
+      case 'draw':
       case 'draw:on':
         config.api.betterPic = true
         sender.reply('已开启画质增强~')
@@ -44,6 +45,7 @@ class ServerCommand extends BaseCommand {
         config.api.betterPic = false
         sender.reply('已关闭画质增强~')
         break
+      case 'debug':
       case 'debug:on':
         config.debug = true
         sender.reply('已开启调试模式~')

@@ -73,9 +73,15 @@ export class Sender {
   }
 
   async reply(content: (Sendable | (any)[]), quote?: boolean): any {
-    const result = await this._eventObject.reply(content, quote)
+    let result = await this._eventObject.reply(content, quote)
     if (config.debug) {
       console.log('sender reply result: ', result)
+    }
+    let count = 3
+    while ((count > 0 && result.status == 500)) {
+      count--
+      console.log('reply result status[500], retry ' + (3 - count) + ' ...')
+      result = await this._eventObject.reply(content, quote)
     }
     return result
   }
