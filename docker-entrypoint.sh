@@ -11,9 +11,9 @@ echo '|              github: bincooo/qqchat-bot              |'
 echo '|                   please wait ...                    |'
 echo '+------------------------------------------------------+'
 echo ' '
-if [ $ENABLED_X11VNC == 'yes' ]; then
-  x11vnc -display :99 -forever -bg -o /var/log/x11vnc.log -rfbport 5900
-fi
+# if [ $ENABLED_X11VNC == 'yes' ]; then
+x11vnc -display :99 -forever -bg -o /var/log/x11vnc.log -rfbport 5900
+# fi
 
 cd /app
 node_modules/wx-voice/bin.js compile
