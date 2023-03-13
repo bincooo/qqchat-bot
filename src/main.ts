@@ -61,13 +61,13 @@ async function main () {
 
 async function display() {
   if (config.docker) {
-    // const executor = util.promisify(execcmd.exec)
-    // executor('export DISPLAY=:99', (err, stdout, stderr) => {
-    //   if (err) {
-    //     console.log('error:' + stderr)
-    //   }
-    // })
-    process.env['DISPLAY'] = ':99'
+    const executor = util.promisify(execcmd.exec)
+    executor('export DISPLAY=:99', (err, stdout, stderr) => {
+      if (err) {
+        console.log('error:' + stderr)
+      } else console.log('export DISPLAY=:99')
+    })
+    // process.env['DISPLAY'] = ':99'
   }
 }
 
