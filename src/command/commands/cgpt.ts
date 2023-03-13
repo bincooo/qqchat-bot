@@ -44,10 +44,13 @@ class CgptCommand extends BaseCommand {
           break
         }
         const split = value.split(':')
+        const emptyToUndef = (tex: string) => {
+          return (!!tex) ? tex : undefined
+        }
         sender.reply('已切换' + split[0] + '语音 ~', false)
-        state.lang = split[1]??'zh-CN-XiaoyiNeural'
-        state.sname = split[2]??'general'
-        state.pitch = split[3]??'0'
+        state.lang = emptyToUndef(split[1])??'zh-CN-XiaoyiNeural'
+        state.sname = emptyToUndef(split[2])??'general'
+        state.pitch = parseInt(emptyToUndef(split[3])??'0')
         break
       default:
         sender.reply(this.helpDoc, true)
