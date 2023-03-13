@@ -11,7 +11,7 @@ export const helpHandler: MessageHandler = function (sender) {
   switch (config.type) {
     case "mirai":
       if (e.type === 'MemberJoinEvent') {
-        getClient()?.api.memberInfo(e.member.id, e.member.group.id)
+        getClient()?.api.memberInfo(e.member.group.id, e.member.id)
           .then(info => e.reply(replyMessage(info.name)))
         return false
       }
