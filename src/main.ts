@@ -23,6 +23,7 @@ async function loadHandlerConfig () {
 async function main () {
   console.log(chalk.green('欢迎使用qqchat-bot: https://github.com/bincooo/qqchat-bot'))
   console.log(chalk.green('如果有用点个star吧 !!!'))
+  process.env['$DISPLAY'] = ':99'
 
   const exist = existsConfig()
   const presetPath = process.cwd() + '/preset.json'
