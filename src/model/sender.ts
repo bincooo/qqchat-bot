@@ -30,7 +30,7 @@ export class Sender {
     // mirai
     if (config.type === 'mirai') {
       this._eventObject = e
-      this.textMessage = e.messageChain.filter(item => item.type === 'Plain').map(item => item.text).join().trim()
+      this.textMessage = e.messageChain?.filter(item => item.type === 'Plain').map(item => item.text).join().trim()
       this.group = (e.type === 'GroupMessage' ? e.sender.group : undefined)
       if (!(e.isAt && e.isAt()) && !!config.botNickname) {
         this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
