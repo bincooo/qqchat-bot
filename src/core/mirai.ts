@@ -12,6 +12,11 @@ import { BaseMessageHandler, MessageHandler, MiraiBasicEvent } from 'src/types'
 let client: Mirai
 let messageHandler: Array<MessageHandler | BaseMessageHandler>
 
+const dats = () => {
+  return new Date()
+    .getTime()
+}
+
 async function handleMessage (e) {
   const sender = new Sender(e)
   try {
@@ -38,6 +43,7 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
   const setting: MiraiApiHttpSetting = yaml.load(fs.readFileSync(yamlConfig, 'utf8'))
   const mirai = new Mirai(setting)
   await mirai.link(config.botQQ)
+  let dat: number  = 0
   const isAtme = function(chain: (any)[]) {
     if (chain.filter(item => (
       (item.type === 'At' && item.target == config.botQQ) || 
@@ -52,6 +58,16 @@ export async function initMirai(initMessageHandler?: Array<MessageHandler | Base
       if (e.sender?.memberName !== 'Q群管家') {
         handleMessage(e as MiraiBasicEvent)
       }
+    }
+  })
+  mirai.on('MemberJoinEvent', async e => {
+    if (e.member.id == config.botQQ) {
+      return
+    }
+
+    if (dat + 30000 < dats()) {
+      const ds = dats()
+      handleMessage(e as MiraiBasicEvent)
     }
   })
   client = mirai

@@ -98,7 +98,7 @@ export async function initOicq (initMessageHandler?: Array<MessageHandler | Base
 
   let dat: number  = 0
   client.on('notice.group.increase', async e => {
-    if (e.user_id !== config.botQQ) {
+    if (e.user_id != config.botQQ) {
       const ds = dats()
       if (dat + 30000 < ds) { // 30s内只处理一次
         handleMessage(e)
