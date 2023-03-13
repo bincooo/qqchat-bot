@@ -56,6 +56,10 @@ async function main () {
 }
 
 async function initChat() {
+  if (config.docker) {
+    process.env['DISPLAY'] = ':99'
+  }
+
   switch(config.type) {
     case "oicq":
       await initOicq(MessageHandlers)
