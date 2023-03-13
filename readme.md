@@ -17,7 +17,7 @@
 - ✅ 支持上下文语境的对话。
 - ✅ 支持重置上下文语境，通过关键词(reset)重置对话上下文语境。
 - ✅ 支持在群聊@你的机器人 🤖，@机器人即可收到回复。
-- ✅ 支持通过关键词唤醒你的机器人，如当在群组中发送“@机器人 hello xxxx”时才会收到回复。
+- ✅ 支持clash自动切换，当ip被限制时可自动切换节点
 - ✅ 支持 Docker 运行。
 - ✅ 支持 角色扮演：具体突破ai的语境封锁请查看 https://github.com/f/awesome-chatgpt-prompts
 - ✅ 支持设置重试次数，当请求 ChatGPT 错误时，会自动重试。
@@ -55,6 +55,11 @@ docker compose down
 // QQ登录阶段可用这个查看
 docker logs -f [container_name or container_id]
 
+// 如果是 mirai 方式登录的QQ，则需要启动mirai http。修改文件如【本地运行】差不多
+// 启动 mirai docker 
+cd mirai
+docker compose up -d
+
 // 登录操作
 // 第一次登录会要求你扫码或滑动条ticket验证
 // 扫码方式直接扫码即可，滑动条方式如下操作：
@@ -70,7 +75,7 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
 
 ## 配置说明
 
-```json
+```
 // config.json
 
 {
@@ -86,9 +91,15 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
   "botPassword": "xxx",
   // 机器人昵称
   "botNickname": "猫小爱",
+  // 使用的QQ平台: [ oicq, mirai ]
+  "type": "oicq",
   "oicq": {
     // 登录协议：1:安卓手机(默认) 2:aPad 3:安卓手表 4:MacOS 5:iPad
     "platform": 3
+  },
+  "mirai": {
+    // mirai http配置
+    "yaml": "mirai-setting.yml"
   },
   // 废弃
   // 这个方式许久不维护了，我不知道还能用不 (懒
@@ -128,13 +139,22 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
   "groupPingMs": 3600000,
   // 如上
   "groupList": {
+  },
+  // clash 节点
+  "clash": {
+    // 是否开启
+    "enable": false,
+    // 请求链接: http://[host]:[post]/proxies/[clash group]
+    "http": "xxx",
+    // 节点名称 (轮询机制): [ "香港精品", "美国洛杉矶", ... ]
+    "list": [ "xxx" ]
   }
 }
 ```
 
 
 
-```json
+```
 // preset.json
 {
   // 角色预设
@@ -195,9 +215,51 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
 
 3. 在`config.json`中配置其它配置变量，也可以删除config.json后启动。没有config.json会出现选项让你进行配置，但docker方式不能删，只能手动修改
 
-4. 配置后执行以下命令：
+4. 如果使用的是mirai平台，则需要开启mirai http
 
-```javascript
+   ```bash
+   // 1. 进入 mirai 目录，将你的mirai session文件目录复制到bots
+   cd mirai
+   
+   // 2. 编辑AutoLogin.yml， 修改你需要登录的QQ信息
+       account: xxxx
+       password: 
+         # 密码种类, 可选 PLAIN 或 MD5
+         kind: PLAIN
+         # 密码内容, PLAIN 时为密码文本, MD5 时为 16 进制
+         value: xxxx
+       # 账号配置. 可用配置列表 (注意大小写):
+       # "protocol": "ANDROID_PHONE" / "ANDROID_PAD" / "ANDROID_WATCH" / "MACOS" / "IPAD"
+       # "device": "device.json"
+       # "enable": true
+       # "heartbeatStrategy": "STAT_HB" / "REGISTER" / "NONE"
+       configuration: 
+         protocol: MACOS
+         device: device.json
+         enable: true
+         heartbeatStrategy: STAT_HB
+   // 3. 编辑项目根目录下的 mirai-setting.yml，docker启动的一般不需要修改，否者host需要修改你对应主机ip
+   adapters:
+     - ws
+   debug: false
+   enableVerify: true
+   verifyKey: chatgpt_for_qqchat_bot
+   singleMode: false
+   cacheSize: 4096
+   persistenceFactory: 'built-in'
+   adapterSettings:
+     ws:
+       port: 8080
+       host: 'master.io' // 这里
+       reservedSyncId: -1
+     http:
+       port: 8080
+       host: 'master.io' // 这里
+       reservedSyncId: -1
+
+5. 配置后执行以下命令：
+
+```bash
   // install dependencies
   npm i
 
