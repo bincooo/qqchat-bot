@@ -78,9 +78,9 @@ export class Sender {
       console.log('sender reply result: ', result)
     }
     let count = 3
-    while ((count > 0 && result.status == 500)) {
+    while ((count > 0 && result.code == 500)) {
       count--
-      console.log('reply result status[500], retry ' + (3 - count) + ' ...')
+      console.log('reply result code[500], retry ' + (3 - count) + ' ...')
       result = await this._eventObject.reply(content, quote)
     }
     return result
