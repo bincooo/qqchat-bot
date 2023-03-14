@@ -148,7 +148,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
             await this.messageErrorHandler(sender, res.error)
             return
           }
-          count429 = 0
+          // count429 = 0
           await onMessage(res, sender)
         }
       }, this._emailPool.getId(sender.id))
@@ -183,8 +183,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
     } else if (err.statusCode === 429) {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 稍后再来吧 ...' + append, true)
       // 429 1hours 限制, 换号处理. 三次后触发
-      if (++count429 < 3) return
-      count429 = 0
+      // if (++count429 < 3) return
+      // count429 = 0
       this._emailPool.next(sender.id)
       const opts = this._emailPool.getOpts()
       this._api.setAccount(opts.email, opts.password)
