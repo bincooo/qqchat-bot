@@ -45,7 +45,7 @@ function datFmt() {
   return `${y}-${fmt(m)}-${fmt(d)} ${fmt(h)}:${fmt(mm)}:${fmt(s)}`
 }
 
-const MAX_COUNT = 10
+const MAX_COUNT = 20
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
