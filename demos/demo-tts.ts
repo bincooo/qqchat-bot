@@ -32,7 +32,6 @@ import fs from 'fs'
 
 async function main() {
 //   const text = `以下は、人気のある日本のアニメの中から、おすすめの10本です。
-
 // 1. 鬼滅の刃 (Demon Slayer: Kimetsu no Yaiba)
 // 2. 名探偵コナン (Detective Conan)
 // 3. ドラゴンボール (Dragon Ball)
@@ -43,7 +42,9 @@ async function main() {
 // 8. ナルト (Naruto)
 // 9. 銀魂 (Gintama)
 // 10. プリキュアシリーズ (Pretty Cure series)`
-  const text = '你好呀我的主人'
+  const text = `你可将此文本替换为所需的任何文本。你可在此文本框中编写或在此处粘贴你自己的文本。
+试用不同的语言和声音。改变语速和音调。你甚至可调整 SSML（语音合成标记语言），以控制文本不同部分的声音效果。单击上面的 SSML 试用一下！
+请尽情使用文本转语音功能！`
   const count = japaneseUnicodeParser.count(text)
   const isJapan = () => {
     const str = text
@@ -56,9 +57,10 @@ async function main() {
 
   const path = await speak({
     text,
-    vname: isJapan() ? 'ja-JP-AoiNeural' : null
-  }, 'audio-48khz-192kbitrate-mono-mp3')
+    vname: isJapan() ? 'ja-JP-AoiNeural' : undefined
+  }, 'audio-48khz-192kbitrate-mono-mp3', 'mp3')
   console.log('转化成功: ' + path)
 }
 
 main()
+.catch(err => console.log("Error: " + err))

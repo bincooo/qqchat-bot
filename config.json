@@ -1,6 +1,6 @@
 {
   "debug": false,
-  "docker": false,
+  "docker": true,
   "adminQQ": "xxxx",
   "botQQ": "xxx",
   "botPassword": "xxx",

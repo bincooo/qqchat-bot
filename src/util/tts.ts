@@ -18,10 +18,6 @@ function mp3ToAmr(filepath, outputDir = './amr') {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
-    if (etc != 'mp3') {
-      reject('please input a mp3 file ~')
-      return
-    }
     const cmdStr = `${ffmpegPath} -y -i ${filepath} -ac 1 -ar 8000 ${outputDir}/${filename}.amr`
     const executor = util.promisify(execcmd.exec)
     
@@ -31,6 +27,7 @@ function mp3ToAmr(filepath, outputDir = './amr') {
       } else {
         resolve(`${outputDir}/${filename}.amr`)
       }
+      fs.unlinkSync(filepath)
     })
   })
 }
@@ -40,10 +37,6 @@ function mp3ToSilk(filepath, outputDir = './amr') {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
-    if (etc != 'mp3') {
-      reject('please input a mp3 file ~')
-      return
-    }
     if (!voice) voice = new WxVoice('./amr', ffmpegPath)
     voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
       if (path) {
@@ -51,23 +44,39 @@ function mp3ToSilk(filepath, outputDir = './amr') {
       } else {
         reject('mp3 convert to silk Error !!!')
       }
+      fs.unlinkSync(filepath)
     })
   })
 }
 
-async function saveFile(buffer: Buffer): Promise<string> {
+async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<string> {
   const cid = genCid()
   return new Promise((resolve, reject) => {
-    fs.writeFile(`./amr/${cid}.mp3`, buffer, (err) => {
+    fs.writeFile(`./amr/${cid}.tmp`, buffer, (err) => {
       if (err) {
-        reject('generate voice fail[save mp3]: ' + err)
+        reject('generate voice fail: ' + err)
       } else {
-        resolve(`./amr/${cid}.mp3`)
+        resolve(`./amr/${cid}.tmp`)
       }
     })
   }).then(path => {
-    // return mp3ToAmr(path)
-    return mp3ToSilk(path)
+    const rename = (v1: string, v2: string): string => {
+      const result = v1.replace('.tmp', '.' + v2)
+      fs.renameSync(v1, result)
+      return result
+    }
+
+    switch(vt) {
+      case 'wav':
+      case 'mp3':
+      case 'pcm':
+        return rename(path, vt)
+      case 'mp3ToAmr':
+        return mp3ToAmr(rename(path, 'mp3'))
+      case 'mp3ToSilk':
+      default:
+        return mp3ToSilk(rename(path, 'mp3'))
+    }
   })
 }
 
@@ -102,14 +111,30 @@ function genCid() {
     .toLowerCase()
 }
 
+function IP() {
+  return (
+    Math.floor(Math.random() * (10 - 255) + 255) +
+    '.' +
+    Math.floor(Math.random() * (10 - 255) + 255) +
+    '.' +
+    Math.floor(Math.random() * (10 - 255) + 255) +
+    '.' +
+    Math.floor(Math.random() * (10 - 255) + 255)
+  )
+}
+
 async function conn(): Promise<WebSocket> {
+  const ip = IP()
   const cid = genCid()
+
   const ws = new WebSocket(BaseURL + cid,
     {
-      host: 'eastus.tts.speech.microsoft.com',
+      host: 'eastus.api.speech.microsoft.com',
       origin: 'https://azure.microsoft.com',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.66 Safari/537.36 Edg/103.0.1264.44',
+        // 'X-real-ip': ip,
+        'X-Forwarded-For': ip,
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.41',
       }
     })
   return new Promise((resolve, reject) => {
@@ -213,7 +238,7 @@ function buildSsml(config: Config) {
 
   if (!lexicon) {
     return `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
-      <voice name="${vname}">
+      <voice name="${vname}" styledegree="${degree}">
         <mstts:express-as style="${sname}">
           <prosody rate="${rate}%" pitch="${pitch}%">${text}</prosody>
         </mstts:express-as>
@@ -233,10 +258,12 @@ function buildSsml(config: Config) {
 }
 
 
+// https://speech.microsoft.com/portal/9be764e411c24d96b5b5c0f068d4437f/voicegallery
 // https://azure.microsoft.com/zh-cn/products/cognitive-services/text-to-speech/#features
 async function speak(
   conf: Config,
-  type: string = 'audio-48khz-192kbitrate-mono-mp3'
+  type: string = 'audio-48khz-192kbitrate-mono-mp3',
+  vt: string = 'mp3ToSilk'
 ) {
 
   if (!_ws || _ws.readyState !== WebSocket.OPEN) {
@@ -296,7 +323,7 @@ async function speak(
     })
   ])
 
-  return await saveFile(buf)
+  return await saveFile(buf, vt)
 }
 
 speak.close = () => {
