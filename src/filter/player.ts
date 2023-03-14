@@ -151,11 +151,16 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         if (player?.prefix) {
-          let replyMessage = player.prefix.includes('[!!content!!]') ? 
-            player.prefix.replace('[!!content!!]', player.prefix) :
+          let replyMessage = player.prefix.includes('[!!content!!]')
+            ? 
+            player.prefix.replace('[!!content!!]', content)
+            :
             player.prefix.concat(content)
-          replyMessage.replace('[!!date!!]', datFmt())
-          return [ true, replyMessage ]
+          if (config.debug) {
+            console.log('[' + state.preset.key + '] prefix: ' + replyMessage)
+          }
+          replyMessage = replyMessage.replace('[!!date!!]', datFmt())
+          return [ false, replyMessage ]
         }
         return [ true, content ]
       }
