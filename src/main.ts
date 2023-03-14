@@ -29,7 +29,6 @@ async function main () {
   if (existsConfig(presetPath)) {
     Object.assign(preset, await loadConfig(presetPath))
   }
-  
   if (!exist) {
     await run()
       .then(async (conf) => {

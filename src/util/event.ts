@@ -1,6 +1,10 @@
 import { EventEmitter } from 'events'
 
-const emit = new EventEmitter()
+class GlobalEmiter extends EventEmitter {
+
+}
+
+const emit = new GlobalEmiter()
 
 export function globalEventRegist(event: string, cb: (...args: any) => void) {
   emit.on(event, cb)
