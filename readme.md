@@ -71,6 +71,9 @@ docker exec [container_name or container_id] Enter (你复制的ticket)
 docker exec [container_name or container_id] Enter (你的手机短信码)
 
 // 到这就差不多了，开始你的聊天之旅吧。。。。
+// enum.... , 想要不重启docker container 也能同步preset.json 的话，需要授权:
+chmod 777 preset.json
+// 重启一次容器，以后就可以同步了
 ```
 
 ## 配置说明
