@@ -132,7 +132,16 @@ export class PlayerFilter extends BaseMessageFilter {
 
   handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
     if(state.preset.count <= MAX_COUNT) {
-      if (!state.preset.maintenance) return [ true, content ]
+      if (!state.preset.maintenance) {
+        const player = preset.player.filter(item => item.key === state.preset.key)[0]
+        if (player?.prefix) {
+          const replyMessage = player.prefix.includes('[!!content!!]') ? 
+            player.prefix.replace('[!!content!!]', player.prefix) :
+            player.prefix.concat(content)
+          return [ true, resultMessage ]
+        }
+        return [ true, content ]
+      }
 
       state.preset.maintenance = false
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
