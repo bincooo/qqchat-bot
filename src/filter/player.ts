@@ -29,6 +29,22 @@ function dat() {
     .getTime()
 }
 
+function datFmt() {
+  const ts = new Date()
+    .getTime()
+  const date = new Date(ts + 1000 * 60 * 60 * 7)
+  const y = date.getFullYear()
+  const m = date.getMonth()+1
+  const d = date.getDate()
+  const h = date.getHours()+1
+  const mm = date.getMinutes()
+  const s = date.getSeconds()
+  const fmt = (n: number) => {
+    return (n < 10 ? '0' + n : n)
+  }
+  return `${y}-${fmt(m)}-${fmt(d)} ${fmt(h)}:${fmt(mm)}:${fmt(s)}`
+}
+
 const MAX_COUNT = 10
 export class PlayerFilter extends BaseMessageFilter {
 
@@ -135,9 +151,10 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         if (player?.prefix) {
-          const replyMessage = player.prefix.includes('[!!content!!]') ? 
+          let replyMessage = player.prefix.includes('[!!content!!]') ? 
             player.prefix.replace('[!!content!!]', player.prefix) :
             player.prefix.concat(content)
+          replyMessage.replace('[!!date!!]', datFmt())
           return [ true, replyMessage ]
         }
         return [ true, content ]
