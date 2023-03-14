@@ -138,7 +138,7 @@ export class PlayerFilter extends BaseMessageFilter {
           const replyMessage = player.prefix.includes('[!!content!!]') ? 
             player.prefix.replace('[!!content!!]', player.prefix) :
             player.prefix.concat(content)
-          return [ true, resultMessage ]
+          return [ true, replyMessage ]
         }
         return [ true, content ]
       }
