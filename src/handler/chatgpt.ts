@@ -7,6 +7,7 @@ import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
 import { clashSetting } from 'src/util/request'
+import { cgptEmitResetSession } from 'src/util/event'
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
 let countNotSigned = 0
@@ -125,6 +126,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       if (sender.textMessage?.trim() === '!reset') {
         this._emailPool.resetCurrOpts(sender.id)
         sender.reply('当前会话已重置 ~')
+        cgptEmitResetSession()
         return false
       }
 
@@ -191,6 +193,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       this._iswait = true
       try {
         await this._api.resetSession()
+        cgptEmitResetSession()
       } catch(e: Error) {
         console.warn(
           `chatgpt error re-authenticating ${opts.email}`,

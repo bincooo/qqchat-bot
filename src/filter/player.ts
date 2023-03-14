@@ -6,6 +6,7 @@ import { config, preset } from 'src/config'
 // import { mccnProDraw, sendGet } from 'src/util/request'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
+import { cgptOnResetSession } from 'src/util/event'
 // import retry from 'src/util/retry'
 // import Jimp from 'jimp'
 // import path from 'path'
@@ -49,10 +50,14 @@ const MAX_COUNT = 20
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
+  protected _isReset: boolean = false
 
   constructor() {
     super()
     this.type = 0
+    cgptOnResetSession(() => {
+      this._isReset = true
+    })
   }
 
   handle = async (content: string, sender?: Sender) => {
@@ -66,6 +71,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const result1 = this.handlePresetMaintenance(content, sender, state)
       if (result1) return result1
 
+      this._isReset = false
       if (state.preset.count > MAX_COUNT) {
         state.preset.count = 0
       }
@@ -147,7 +153,7 @@ export class PlayerFilter extends BaseMessageFilter {
   }
 
   handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
-    if(state.preset.count <= MAX_COUNT) {
+    if(state.preset.count <= MAX_COUNT && !this._isReset) {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         if (player?.prefix) {

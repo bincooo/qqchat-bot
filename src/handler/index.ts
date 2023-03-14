@@ -11,7 +11,7 @@ const messageHandlers = [
   emptyHandler,
   commandHandler,
   new NovelAiHandler(),
-  new ChatGPTHandler(),
+  //new ChatGPTHandler(),
   new ChatGPTOfficialHandler()
 ]
 
