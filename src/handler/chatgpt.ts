@@ -10,7 +10,7 @@ import { clashSetting } from 'src/util/request'
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
 let countNotSigned = 0
-let count429 = 0
+// let count429 = 0
 
 function genUid(): string {
   return 'uid-' + randomBytes(16)

@@ -106,12 +106,15 @@ export const onMessage = async (data: any, sender: Sender) => {
         // 0.2 的权重，超过这个阈值就判定它是日文
         const is = (japaneseUnicodeParser.filter(tex).length * .2 < count)
         return {
-          vname: is ? 'ja-JP-AoiNeural' : state.lang,
+          vname: is ? 'ja-JP-AoiNeural' : state.lang??'zh-CN-XiaoyiNeural',
           rate: is ? -5 : 0,
           sname: state.sname,
           pitch: state.pitch
         }
       }
+
+      stateManager.setIsEnd(sender, isDone())
+      
       
       if (!!message?.trim()) {
         const state = stateManager.getState(sender.id)
@@ -148,8 +151,6 @@ export const onMessage = async (data: any, sender: Sender) => {
         }
       }
       
-      stateManager.setIsEnd(sender, isDone())
-
     }
   }
 }

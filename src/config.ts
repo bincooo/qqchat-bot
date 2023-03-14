@@ -58,7 +58,7 @@ export const preset: any = {
 
 
 export const lang: any = {
-  jp: '日语:ja-JP-MayuNeural::16',
+  jp: '日语:ja-JP-MayuNeural',
   ntJp: '日语童声:ja-JP-AoiNeural',
   cn: '邻居女生:zh-CN-XiaoyiNeural:cheerful',
   cnCn: '西南话:zh-CN-sichuan-YunxiNeural',

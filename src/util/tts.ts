@@ -203,7 +203,7 @@ declare type Config = {
 function buildSsml(config: Config) {
   const {
     text,
-    vname = 'zh-CN-XiaoshuangNeural',
+    vname = 'audio-48khz-192kbitrate-mono-mp3',
     sname = 'general',
     degree = 1.0,
     lexicon = '',
