@@ -15,8 +15,8 @@ const messageFilters = [
   new MdFilter(),
   new CodeFilter(),
   new PlayerFilter(),
-  new DANmodelFilter(),
   new PlayerMaintenanceFilter(),
+  new DANmodelFilter(),
   new DefaultFilter()
 ]
 
