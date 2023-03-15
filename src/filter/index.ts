@@ -5,6 +5,7 @@ import { MdFilter } from './markdown'
 import { OnlineFilter } from './online'
 import { CodeFilter } from './code'
 import { PlayerMaintenanceFilter } from './player-maintenance'
+import { DANmodelFilter } from './dan-model'
 import { DefaultFilter } from './default'
 
 const messageFilters = [
@@ -15,6 +16,7 @@ const messageFilters = [
   new CodeFilter(),
   new PlayerFilter(),
   new PlayerMaintenanceFilter(),
+  new DANmodelFilter(),
   new DefaultFilter()
 ]
 

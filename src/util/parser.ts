@@ -97,3 +97,53 @@ export class MessageParser {
     return null
   }
 }
+
+export function initHandler(): Array<parser.Condition> {
+  // 代码解析处理
+  const codeHdr = (text, index) => {
+    const block = '```'
+    const currIndex = text.lastIndexOf(block)
+    if (currIndex < 0 || currIndex < index) {
+      return 0 // continue
+    }
+    if (currIndex + block.length <= index) {
+      return -1 // break
+    }
+    return currIndex + block.length
+  }
+
+  // dan模式解析处理
+  const danModelHdr = (text, index) => {
+    const b = '(🔒Normal Output)'
+    const e = '\n\n'
+
+    // 检测dan模式
+    const currIndex = text.lastIndexOf(b)
+    // 没有检测到则进入下一个解析处理程序
+    if (currIndex < 0 || currIndex < index) {
+      return 0 // continue
+    }
+
+    // 已检测到了dan模式，但是也是上一个检测的结果
+    // 则不需要进入下一个解析处理程序
+    if (currIndex + b.length <= index) {
+      // 再次检查有没有dan模式的结束字符块
+      const endIdx = text.lastIndexOf(e)
+      if (currIndex < endIdx) {
+        return endIdx + e.length
+      }
+      return -1 // break
+    }
+
+    // 这是一个新的dan检测结果
+    return currIndex + b.length
+  }
+
+  return [
+    codeHdr,
+    "120:。\n",
+    "120:。",
+    "150:.\n",
+    "150:\n\n"
+  ]
+}

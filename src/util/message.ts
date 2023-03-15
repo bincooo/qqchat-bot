@@ -62,27 +62,7 @@ let globalParser: null | parser.MessageParser
 
 function initParser() {
   if (globalParser) return
-
-  const codeCondit = (text, index) => {
-    const block = '```'
-    const currIndex = text.lastIndexOf(block)
-    if (currIndex < 0 || currIndex < index) {
-      return 0 // continue
-    }
-    if (currIndex + block.length <= index) {
-      return -1 // break
-    }
-    return currIndex + block.length
-  }
-
-  const condition: Array<parser.Condition> = [
-    codeCondit,
-    "120:。\n",
-    "120:。",
-    "150:.\n",
-    "150:\n\n"
-  ]
-
+  const condition = parser.initHandler()
   globalParser = new parser.MessageParser({ condition })
 }
 

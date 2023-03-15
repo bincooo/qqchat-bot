@@ -42,6 +42,8 @@ class JapaneseUnicodeParser extends AbstractUnicodeParser {
 class SpeakUnicodeParser extends AbstractUnicodeParser {
   filter(str: string): string {
     return str.replaceAll('*', '')
+      .replaceAll('【', '')
+      .replaceAll('】', '')
   }
 }
 
