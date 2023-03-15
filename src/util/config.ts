@@ -4,7 +4,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { config } from 'src/config'
 import chalk from 'chalk'
 
-const configFile = process.cwd() + '/config.json'
+const configFile = process.cwd() + '/conf/config.json'
 
 export async function loadConfig (config?: string) {
   const str = (await readFile(config??configFile)).toString()
