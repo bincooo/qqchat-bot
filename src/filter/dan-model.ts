@@ -23,7 +23,7 @@ export class DANmodelFilter extends BaseMessageFilter {
 
         // 再检测是否有开发模式标记
         const end = '(🔓Developer Mode Output) '
-        const endIndex = content.indexOf()
+        const endIndex = content.indexOf(end)
         if (endIndex >= 0) {
           console.log('DAN ==== <<<< is devel 1', content.substr(endIndex + end.length).trim())
           this._isDAN = false
