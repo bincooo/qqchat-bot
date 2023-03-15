@@ -162,20 +162,21 @@ export class PlayerFilter extends BaseMessageFilter {
   }
 
   handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
+    const replyMessage = (player: any) => {
+      return (player.prefix.includes('[!!content!!]')
+        ?
+        player.prefix.replace('[!!content!!]', content)
+        :
+        player.prefix.concat(content))
+
+      .replace('[!!date!!]', datFmt())
+    }
+
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         if (player?.prefix) {
-          let replyMessage = player.prefix.includes('[!!content!!]')
-            ? 
-            player.prefix.replace('[!!content!!]', content)
-            :
-            player.prefix.concat(content)
-          if (config.debug) {
-            console.log('[' + state.preset.key + '] prefix: ' + replyMessage)
-          }
-          replyMessage = replyMessage.replace('[!!date!!]', datFmt())
-          return [ false, replyMessage ]
+          return [ false, replyMessage(player) ]
         }
         return [ true, content ]
       }
@@ -192,7 +193,8 @@ export class PlayerFilter extends BaseMessageFilter {
             console.log('preset.maintenance ====>>>', player.maintenance.training)
             console.log('preset.maintenance ====<<<', res)
           }
-          return content
+
+          return replyMessage(player)
         }
         return [ false, result ]
       }
