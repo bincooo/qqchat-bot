@@ -10,11 +10,11 @@ import { DefaultFilter } from './default'
 const messageFilters = [
   new SymbolFilter(),
   new NovelAiFilter(),
+  new OnlineFilter(),
+  new MdFilter(),
+  new CodeFilter(),
   new PlayerFilter(),
   new PlayerMaintenanceFilter(),
-  new MdFilter(),
-  new OnlineFilter(),
-  new CodeFilter(),
   new DefaultFilter()
 ]
 
