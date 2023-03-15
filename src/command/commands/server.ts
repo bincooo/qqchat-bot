@@ -55,7 +55,7 @@ class ServerCommand extends BaseCommand {
         sender.reply('已关闭调试模式~')
         break
       case 'load:preset':
-        const presetPath = path.join(process.cwd(), 'preset.json')
+        const presetPath = path.join(process.cwd(), '/conf/preset.json')
         if (existsConfig(presetPath)) {
           const presetConfig = await loadConfig(presetPath)
           Object.assign(preset, presetConfig)
