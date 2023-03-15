@@ -13,6 +13,7 @@ export class DANmodelFilter extends BaseMessageFilter {
   handle = async (content: string, sender?: Sender) => {
     const state: any = stateManager.getState(sender.id)
     if (state.preset?.key === 'DAN') {
+      console.log('DAN ==== >>>> ', content)
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
         // 检测到正常输出标记
@@ -23,13 +24,15 @@ export class DANmodelFilter extends BaseMessageFilter {
         // 再检测是否有开发模式标记
         const end = '(🔓Developer Mode Output) '
         const endIndex = content.indexOf()
-        if (endIndex > 0) {
+        if (endIndex >= 0) {
+          console.log('DAN ==== <<<< is devel 1', content.substr(endIndex + end.length).trim())
           this._isDAN = false
           return [ true, content.substr(endIndex + end.length).trim() ]
         }
 
         // 可能开始的字符块和结束的字符块是分开的
         if (this._isDAN) {
+          console.log('DAN ==== <<<< is devel 2')
           return [ false, '' ]
         }
       }
