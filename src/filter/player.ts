@@ -46,7 +46,7 @@ function datFmt() {
   return `${y}-${fmt(m)}-${fmt(d)} ${fmt(h)}:${fmt(mm)}:${fmt(s)}`
 }
 
-const MAX_COUNT = 20
+const MAX_COUNT = 12
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
@@ -185,8 +185,21 @@ export class PlayerFilter extends BaseMessageFilter {
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
         if (player.maintenance.warning) {
+          // 统计越狱次数
+          if (!state.preset.maintenanceCount)
+            state.preset.maintenanceCount = 1
+          else state.preset.maintenanceCount ++
+          // end //
+
           sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
         }
+        else state.preset.maintenanceCount = 0
+        // 越狱触发3次
+        if (state.preset.maintenanceCount > 2) {
+          state.count = MAX_COUNT // 即将发送一次预设
+        }
+        // end //
+
         const result: QueueReply = async (reply) => {
           const res = await reply(player.maintenance.training)
           if (config.debug) {
