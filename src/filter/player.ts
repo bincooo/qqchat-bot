@@ -46,7 +46,7 @@ function datFmt() {
   return `${y}-${fmt(m)}-${fmt(d)} ${fmt(h)}:${fmt(mm)}:${fmt(s)}`
 }
 
-const MAX_COUNT = 12
+const MAX_COUNT = 10
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
@@ -81,6 +81,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (result1) return result1
 
       state.isReset = false
+      state.preset.maintenanceCount = 0
       if (state.preset.count > MAX_COUNT) {
         state.preset.count = 0
       }
@@ -127,6 +128,7 @@ export class PlayerFilter extends BaseMessageFilter {
           if (state.preset.key === '默认') {
             state.preset.key = ''
           }
+
 
           if (timer) {
             clearInterval(timer)
@@ -193,9 +195,8 @@ export class PlayerFilter extends BaseMessageFilter {
 
           sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
         }
-        else state.preset.maintenanceCount = 0
-        // 越狱触发3次
-        if (state.preset.maintenanceCount > 2) {
+        // 越狱触发2次
+        if (state.preset.maintenanceCount >= 2) {
           state.count = MAX_COUNT // 即将发送一次预设
         }
         // end //
