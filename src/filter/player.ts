@@ -55,15 +55,15 @@ export class PlayerFilter extends BaseMessageFilter {
     super()
     this.type = 0
     cgptOnResetSession((...args: any) => {
-      const uid = args[0]
+      const uid: number | string = args[0]
       if (uid) {
-        const state: any = stateManager.getState(uid as (number | string))
-        state?.isReset = true
+        const state: any = stateManager.getState(uid)
+        state.isReset = true
       } else {
         const ids: Array<number | string> = stateManager.getIds()
         for(let index = 0; index < ids.length; index ++) {
           const state: any = stateManager.getState(ids[index])
-          state?.isReset = true
+          state.isReset = true
         }
       }
     })
