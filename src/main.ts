@@ -25,7 +25,7 @@ async function main () {
   console.log(chalk.green('如果有用点个star吧 !!!'))
 
   const exist = existsConfig()
-  const presetPath = process.cwd() + '/preset.json'
+  const presetPath = process.cwd() + '/conf/preset.json'
   if (existsConfig(presetPath)) {
     Object.assign(preset, await loadConfig(presetPath))
   }
