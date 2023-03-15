@@ -1,6 +1,9 @@
 
+abstract class AbstractUnicodeParser {
+  filter(str: string) : string
+}
 
-class JapaneseUnicodeParser {
+class JapaneseUnicodeParser extends AbstractUnicodeParser {
   protected _interval: Array<{ l: number, r: number }> = [
       { l: 0x3000, r: 0x303f },
       { l: 0x3040, r: 0x309F },
@@ -36,4 +39,11 @@ class JapaneseUnicodeParser {
   }
 }
 
+class SpeakUnicodeParser extends AbstractUnicodeParser {
+  filter(str: string): string {
+    return str.replaceAll('*', '')
+  }
+}
+
 export const japaneseUnicodeParser = new JapaneseUnicodeParser()
+export const speakUnicodeParser = new SpeakUnicodeParser()

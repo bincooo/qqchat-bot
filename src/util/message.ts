@@ -8,7 +8,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { QueueReply } from 'cgpt'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
-import { japaneseUnicodeParser } from 'src/util/lang'
+import { japaneseUnicodeParser, speakUnicodeParser } from 'src/util/lang'
 import stateManager from 'src/util/state'
 import delay from 'delay'
 import fs from 'fs'
@@ -121,7 +121,7 @@ export const onMessage = async (data: any, sender: Sender) => {
 
         if (state.tts) {
           try {
-            const path = await speak({ text: message.trim(), ...parserJapen(state, message) })
+            const path = await speak({ text: speakUnicodeParser.filter(message.trim()), ...parserJapen(state, message) })
             switch (config.type) {
               case "mirai":
                 const b64 = fs.readFileSync(path)
