@@ -50,13 +50,21 @@ const MAX_COUNT = 20
 export class PlayerFilter extends BaseMessageFilter {
 
   // protected _uuid?: string = genUid()
-  protected _isReset: boolean = false
 
   constructor() {
     super()
     this.type = 0
-    cgptOnResetSession(() => {
-      this._isReset = true
+    cgptOnResetSession((uid) => {
+      if (uid) {
+        const state: any = stateManager.getState(uid)
+        state?.isReset = true
+      } else {
+        const ids: Array<number | string> = stateManager.getIds()
+        for(let index = 0; index < ids.length; index ++) {
+          const state: any = stateManager.getState(ids[index])
+          state?.isReset = true
+        }
+      }
     })
   }
 
@@ -71,7 +79,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const result1 = this.handlePresetMaintenance(content, sender, state)
       if (result1) return result1
 
-      this._isReset = false
+      state.isReset = false
       if (state.preset.count > MAX_COUNT) {
         state.preset.count = 0
       }
@@ -153,7 +161,7 @@ export class PlayerFilter extends BaseMessageFilter {
   }
 
   handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
-    if(state.preset.count <= MAX_COUNT && !this._isReset) {
+    if(state.preset.count <= MAX_COUNT && !state.isReset) {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         if (player?.prefix) {

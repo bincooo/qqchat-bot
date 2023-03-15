@@ -126,7 +126,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       if (sender.textMessage?.trim() === '!reset') {
         this._emailPool.resetCurrOpts(sender.id)
         sender.reply('当前会话已重置 ~')
-        cgptEmitResetSession()
+        cgptEmitResetSession(sender.id)
         return false
       }
 

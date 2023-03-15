@@ -15,6 +15,7 @@ class GlobalStateManager {
   protected _gif: Sendable = segment.image('./loading.gif')
   protected _gifB64: string = fs.readFileSync('./loading.gif').toString('base64')
   protected _globalTimer: NodeJS.Timer
+  protected _ids: Array<(number | string)> = []
 
   constructor() {
     this._globalTimer = setInterval(() => {
@@ -32,7 +33,12 @@ class GlobalStateManager {
     return this[uid]
   }
 
+  getIds(): Array<(number | string)> {
+    return this._ids
+  }
+
   setState(uid: number | string, data: any) {
+    this._ids.push(uid)
     this[uid] = data
   }
 

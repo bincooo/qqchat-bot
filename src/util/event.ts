@@ -18,8 +18,8 @@ export function globalEventRemove(event: string, cb: (...args: any) => void) {
   emit.removeListener(event, cb)
 }
 
-export function cgptEmitResetSession() {
-  globalEventEmit('cgpt:resetSession')
+export function cgptEmitResetSession(...args: any) {
+  globalEventEmit('cgpt:resetSession', ...args)
 }
 
 export function cgptOnResetSession(cb: (...args: any) => void) {
