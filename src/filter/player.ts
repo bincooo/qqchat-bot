@@ -95,7 +95,7 @@ export class PlayerFilter extends BaseMessageFilter {
           let timer: NodeJS.Timer = null
           timer = setInterval(() => {
             if (curr + 10000 < dat()) {
-              sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n——————\n\n记忆有些混乱捏,渐渐陷入了回忆...")
+              sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n——————\n\n喝杯咖啡,让我回忆一下...")
               stateManager.sendLoading(sender, { init: true, isEnd: false })
               clearInterval(timer)
               timer = null
