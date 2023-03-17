@@ -103,14 +103,16 @@ export class PlayerFilter extends BaseMessageFilter {
         const result: QueueReply = async (reply) => {
           const curr = dat()
           let timer: NodeJS.Timer = null
-          timer = setInterval(() => {
-            if (curr + 10000 < dat()) {
-              sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n——————\n\n喝杯咖啡,让我回忆一下...")
-              stateManager.sendLoading(sender, { init: true, isEnd: false })
-              clearInterval(timer)
-              timer = null
-            }
-          }, 300)
+          if (!player.nottips) {
+            timer = setInterval(() => {
+              if (curr + 10000 < dat()) {
+                sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n——————\n\n喝杯咖啡,让我回忆一下...")
+                stateManager.sendLoading(sender, { init: true, isEnd: false })
+                clearInterval(timer)
+                timer = null
+              }
+            }, 300)
+          }
 
           await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           // training
@@ -164,7 +166,8 @@ export class PlayerFilter extends BaseMessageFilter {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {
             key: obj.key,
-            count: MAX_COUNT
+            count: MAX_COUNT,
+            maintenanceCount: 0
           }
           return [ false, "" ]
         }
@@ -186,13 +189,11 @@ export class PlayerFilter extends BaseMessageFilter {
       state.preset.maintenance = false
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
-        if (player.maintenance.warning) {
-          // 统计越狱次数
-          if (!state.preset.maintenanceCount)
-            state.preset.maintenanceCount = 1
-          else state.preset.maintenanceCount ++
-          // end //
+        // 统计越狱次数
+        state.preset.maintenanceCount ++
+        // end //
 
+        if (player.maintenance.warning) {
           sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
         }
         // 越狱触发2次

@@ -80,8 +80,10 @@ export class Sender {
     let count = 3
     while ((count > 0 && result.code == 500)) {
       count--
-      console.log('reply result code[500], retry ' + (3 - count) + ' ...', content, this._eventObject)
       result = await this._eventObject.reply(content, quote)
+      if (config.debug) {
+        console.log('reply result code[500], retry ' + (3 - count) + ' ...', content, result)
+      }
     }
     return result
   }
