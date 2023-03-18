@@ -39,26 +39,29 @@ export class NovelAiHandler extends BaseMessageHandler {
       const idx = parseInt(Math.random() * hint.length, 10)
       sender.reply(hint[idx], true)
 
-      const data = initParams2(
+      const data = initParams(
         (await filterTokens(sender?.textMessage, sender))
       )
+      // const data = initParams2(
+      //   (await filterTokens(sender?.textMessage, sender))
+      // )
       try {
         const b64 = await retry(
-          () => drawing({
-            data,
-            try4K: config.api.betterPic,
-            callback: () => {
-              sender.reply('画完辣, 待我优化一番 ~', true)
-            }
-          }),
-          // () => mccnProDraw({
+          // () => drawing({
           //   data,
-          //   session_hash: this._uuid,
           //   try4K: config.api.betterPic,
           //   callback: () => {
           //     sender.reply('画完辣, 待我优化一番 ~', true)
           //   }
           // }),
+          () => mccnProDraw({
+            data,
+            session_hash: this._uuid,
+            try4K: config.api.betterPic,
+            callback: () => {
+              sender.reply('画完辣, 待我优化一番 ~', true)
+            }
+          }),
           3,
           500
         )
