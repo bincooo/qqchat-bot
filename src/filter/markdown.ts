@@ -160,11 +160,13 @@ export class MdFilter extends BaseMessageFilter {
 export async function genTemplate(nickname: string, md: string) {
   let short = ""
   const mdText = md
-    .replaceAll('"', '\\"')
+    .replaceAll('<script>', '&lt;script&gt;')
+    .replaceAll('</script>', '&lt;/script&gt;')
     .replaceAll(/([^$]{1})\$([^$]{1,})\$/g, '$$$$$2$$$$')
   const markdownText = mdText
-    .replaceAll('\\', '\\\\')
-    .replaceAll('\\\\"', '\\"')
+    .replaceAll('"', '\\"')
+    // .replaceAll('\\', '\\\\')
+    // .replaceAll('\\\\"', '\\"')
     .replaceAll('\n', '\\n')
   // https://hk.ft12.com/multi.php?url=www.985.so
   try {
