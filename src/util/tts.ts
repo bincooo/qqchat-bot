@@ -12,6 +12,7 @@ const ffmpegPath = (() => {
   return (typeof ffmpeg === 'string') ? ffmpeg : ffmpeg.path
 })()
 
+let ip = IP()
 let voice = null
 function mp3ToAmr(filepath, outputDir = './amr') {
   return new Promise((resolve, reject) => {
@@ -124,7 +125,6 @@ function IP() {
 }
 
 async function conn(): Promise<WebSocket> {
-  const ip = IP()
   const cid = genCid()
 
   const ws = new WebSocket(BaseURL + cid,
@@ -191,6 +191,8 @@ async function conn(): Promise<WebSocket> {
     })
     ws.on('error', (error) => {
       reject(`ERR ${error}`)
+      // 报错了修改虚拟ip预防封控
+      ip = IP()
     })
     // ws.on('ping', (data) => {
     //   ws.pong(data)
