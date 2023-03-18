@@ -321,7 +321,7 @@ async function speak(
         ttsMap.delete(cid)
         timerMap.delete(cid)
         rej('timeout')
-      }, 60 * 1000)
+      }, 30 * 1000)
     })
   ])
 

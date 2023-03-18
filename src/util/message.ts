@@ -101,7 +101,13 @@ export const onMessage = async (data: any, sender: Sender) => {
 
         if (state.tts) {
           try {
-            const path = await speak({ text: speakUnicodeParser.filter(message.trim()), ...parserJapen(state, message) })
+            const path = await retry(() => speak({
+              text: speakUnicodeParser.filter(message.trim()),
+              ...parserJapen(state, message)
+            }),
+            3,
+            300)
+            
             switch (config.type) {
               case "mirai":
                 const b64 = fs.readFileSync(path)
