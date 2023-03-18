@@ -15,14 +15,13 @@ import execcmd from 'child_process'
 
 async function main() {
 
-  const data = initParams2('petite, 1girl, solo, pink hair, very long hair, school uniform')
-  // const session_hash = '0dfva4ltz7i24'
-  console.log(data)
-  const path = await drawing({
-    data,
-    // try4K: true
-  })
-  console.log(path)
+  // const data = initParams2('petite, 1girl, solo, pink hair, very long hair, school uniform')
+  // console.log(data)
+  // const path = await drawing({
+  //   data,
+  //   // try4K: true
+  // })
+  // console.log(path)
 
 
 
@@ -32,19 +31,21 @@ async function main() {
 
 
 
-  // retry(
-  //   () => mccnProDraw({ data, session_hash, fn_index: 195, try4K: false }),
-  //   3,
-  //   500
-  // )
-  // .then(path => {
-  //   console.log('NovelAI genarate to path:', path)
-  //   // process.exit(1)
-  // })
-  // .catch(err => {
-  //   console.log('NovelAI Error:', err)
-  //   // process.exit(1)
-  // })
+  const session_hash = '0dfva4ltz7i24'
+  const data = initParams('petite, 1girl, solo, pink hair, very long hair, school uniform')
+  retry(
+    () => mccnProDraw({ data, session_hash, try4K: false }),
+    3,
+    500
+  )
+  .then(path => {
+    console.log('NovelAI genarate to path:', path)
+    // process.exit(1)
+  })
+  .catch(err => {
+    console.log('NovelAI Error:', err)
+    // process.exit(1)
+  })
 
   // const path = await retry(
   //   () => mccnProDraw({ data, session_hash, try4K: true }),

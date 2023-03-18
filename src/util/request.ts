@@ -47,6 +47,7 @@ export function clashSetting(name: string): Promise<boolean> {
   })
 }
 
+let has_intercept = false
 // api 要是再变，劳资不玩了
 async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
   if (!_globalThis.mccnPro.page) {
@@ -66,42 +67,52 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
     const curr = dat()
     let timer = null
     timer = setInterval(() => {
-      if (curr + 30000 < dat()) {
+      if (curr + 60000 < dat()) {
         clearInterval(timer)
         reject(new Error('initMccnPro Error: timeout !!!'))
       }
     }, 300)
-
-    intercept(_globalThis.mccnPro.page, patterns.XHR('http://mccn.pro:7860/run/predict/'), {
-      onResponseReceived: event => {
-        const data = (event.request.postData.match(/"data":\["task\([0-9a-zA-Z]+\)"+/g)??[])[0]
-        if (data) {
-          console.log(`${event.request.url} // intercepted, going to modify`)
-          const fn_index = (event.request.postData.match(/"fn_index":([0-9]+)/i)??[])[1]
-          _globalThis.mccnPro.fn_index = fn_index
-          _globalThis.mccnPro.cookie = event.request.headers?.Cookie??"1234567890"
-          _globalThis.mccnPro.expires = dat() + (1000 * 60 * 58)
-          clearInterval(timer)
-          resolve({
-            fn_index,
-            cookie: event.request.headers.Cookie
-          })
+    if (!has_intercept) {
+      has_intercept = true
+      intercept(_globalThis.mccnPro.page, patterns.XHR('http://mccn.pro:7860/run/predict/'), {
+        onResponseReceived: event => {
+          const data = (event.request.postData.match(/"data":\["task\([0-9a-zA-Z]+\)"+/g)??[])[0]
+          if (data) {
+            console.log(`${event.request.url} // intercepted, going to modify`)
+            const fn_index = (event.request.postData.match(/"fn_index":([0-9]+)/i)??[])[1]
+            _globalThis.mccnPro.fn_index = fn_index
+            _globalThis.mccnPro.cookie = event.request.headers?.Cookie??"1234567890"
+            _globalThis.mccnPro.expires = dat() + (1000 * 60 * 58)
+            clearInterval(timer)
+            resolve({
+              fn_index,
+              cookie: event.request.headers.Cookie
+            })
+          }
+          return event.response
         }
-        return event.response
-      }
-    })
+      })
+    }
 
-    await _globalThis.mccnPro.page.goto('http://mccn.pro:7860', {
-      waitUntil: 'networkidle0'
-    })
+    try {
+      await _globalThis.mccnPro.page.goto('http://mccn.pro:7860/', {
+        waitUntil: 'networkidle0',
+        timeout: 60000
+      })
 
-    await _globalThis.mccnPro.page.evaluate(() => {
-      const btm = document.querySelector("body > gradio-app")
-        .shadowRoot
-        .querySelector("#txt2img_generate")
-      console.log('btm', btm)
-      btm.click()
-    })
+      await _globalThis.mccnPro.page.evaluate(() => {
+        const btm = document.querySelector("body > gradio-app")
+          .shadowRoot
+          .querySelector("#txt2img_generate")
+        console.log('btm', btm)
+        btm.click()
+      })
+    } catch(err) {
+      console.log(err)
+    }
+
+
+    console.log('is ok 1')
   })
 }
 
