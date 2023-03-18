@@ -95,7 +95,7 @@ export class NovelAiHandler extends BaseMessageHandler {
 }
 
 const FINAL_NGV_PROMPT = "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{{{bare flesh}}}}}"
-const [ CFG_SCALE, WIDTH, HEIGHT ] = [ 7, 512, 832 ]
+const [ CFG_SCALE, WIDTH, HEIGHT ] = [ 7, 768, 1024 ]//[ 7, 512, 832 ]
 
 export const initParams2 = function(prompt: string): any {
   if (prompt.endsWith(',')) {
@@ -120,7 +120,7 @@ export const initParams2 = function(prompt: string): any {
     "sampler_name": "Euler a",
     "batch_size": 1,
     "n_iter": 1,
-    "steps": 30,
+    "steps": 50,
     "cfg_scale": CFG_SCALE,
     "width": WIDTH,
     "height": HEIGHT,
