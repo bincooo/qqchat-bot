@@ -10,6 +10,7 @@ import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
 import { japaneseUnicodeParser, speakUnicodeParser } from 'src/util/lang'
 import stateManager from 'src/util/state'
+import retry from 'src/util/retry'
 import delay from 'delay'
 import fs from 'fs'
 
@@ -107,7 +108,7 @@ export const onMessage = async (data: any, sender: Sender) => {
             }),
             3,
             300)
-            
+
             switch (config.type) {
               case "mirai":
                 const b64 = fs.readFileSync(path)
