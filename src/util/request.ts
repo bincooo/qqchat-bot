@@ -72,7 +72,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
       }
     }, 300)
 
-    intercept(_globalThis.mccnPro.page, patterns.XHR(BASE_NOVEL_AI_PATH + '/run/predict/'), {
+    intercept(_globalThis.mccnPro.page, patterns.XHR('http://mccn.pro:7860/run/predict/'), {
       onResponseReceived: event => {
         const data = (event.request.postData.match(/"data":\["task\([0-9a-zA-Z]+\)"+/g)??[])[0]
         if (data) {
@@ -91,7 +91,7 @@ async function initMccnPro(): Promise<{ fn_index: number, cookie: string }> {
       }
     })
 
-    await _globalThis.mccnPro.page.goto(BASE_NOVEL_AI_PATH, {
+    await _globalThis.mccnPro.page.goto('http://mccn.pro:7860', {
       waitUntil: 'networkidle0'
     })
 
@@ -184,7 +184,7 @@ export function mccnProDraw(opts: {
           fn_index
         }),
         {
-          'Cookie': cookie,
+          'Cookie': cookie??'123',
           'Content-Type': 'application/json',
           'Proxy-Connection': 'keep-alive',
           // 'Origin': 'http://mccn.pro:7860',
