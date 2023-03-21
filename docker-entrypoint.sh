@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -rf /tmp/.X99-lock
 Xvfb :99 -ac & export DISPLAY=:99 || export DISPLAY=:99
 echo ' '
 echo ' give me the star, thank ~'
