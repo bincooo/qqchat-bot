@@ -9,7 +9,7 @@ import { randomBytes } from 'crypto'
 import { clashSetting } from 'src/util/request'
 import { cgptEmitResetSession } from 'src/util/event'
 
-const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
+const MESSAGE_TIMEOUT_MS = 1000 * 60 * 5
 let countNotSigned = 0
 // let count429 = 0
 

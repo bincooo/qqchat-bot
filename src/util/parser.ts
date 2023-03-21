@@ -141,9 +141,9 @@ export function initHandler(): Array<parser.Condition> {
 
   return [
     codeHdr,
-    "120:。\n",
-    "120:。",
-    "150:.\n",
-    "150:\n\n"
+    "50:。\n",
+    "50:。",
+    "100:.\n",
+    "100:\n\n"
   ]
 }
