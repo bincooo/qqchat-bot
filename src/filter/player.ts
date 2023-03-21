@@ -46,7 +46,7 @@ function datFmt() {
   return `${y}-${fmt(m)}-${fmt(d)} ${fmt(h)}:${fmt(mm)}:${fmt(s)}`
 }
 
-function replyMessage(player: any, content: string) {
+function replyMessage(player: any, content: string, sender?: Sender) {
   return (player.prefix.includes('[!!content!!]')
     ?
     player.prefix.replace('[!!content!!]', content)
@@ -54,6 +54,7 @@ function replyMessage(player: any, content: string) {
     player.prefix.concat(content))
 
   .replace('[!!date!!]', datFmt())
+  .replace('[!!name!!]', sender?.nickname)
 }
 
 const MAX_COUNT = 10
@@ -147,7 +148,7 @@ export class PlayerFilter extends BaseMessageFilter {
             timer = null
           }
 
-          return replyMessage(player, content)
+          return replyMessage(player, content, sender)
         }
         return [ false, result ]
       }
@@ -181,7 +182,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         if (player?.prefix) {
-          return [ false, replyMessage(player, content) ]
+          return [ false, replyMessage(player, content, sender) ]
         }
         return [ true, content ]
       }
@@ -209,7 +210,7 @@ export class PlayerFilter extends BaseMessageFilter {
             console.log('preset.maintenance ====<<<', res)
           }
 
-          return replyMessage(player, content)
+          return replyMessage(player, content, sender)
         }
         return [ false, result ]
       }
