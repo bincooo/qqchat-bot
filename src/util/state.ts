@@ -58,13 +58,17 @@ class GlobalStateManager {
     do {
       identity = state.loading?.shift()
       if(identity) {
-        switch(config.type) {
-          case "mirai":
-            await getClient()?.api.recall(identity)
-            break
-          default:
-            await getClient()?.deleteMsg(identity)
-            break
+        try {
+          switch(config.type) {
+            case "mirai":
+              await getClient()?.api.recall(identity)
+              break
+            default:
+              await getClient()?.deleteMsg(identity)
+              break
+          }
+        } catch(err) {
+          console.log('recall loading error:', err)
         }
       }
     } while(!!identity)
