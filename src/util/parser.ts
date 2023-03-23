@@ -1,4 +1,5 @@
 import { ChatResponse } from 'cgpt'
+import { config } from 'src/config'
 
 
 export type Condition = (string | (tex: string, idx: number) => number)
@@ -113,37 +114,37 @@ export function initHandler(): Array<parser.Condition> {
   }
 
   // dan模式解析处理
-  const danModelHdr = (text, index) => {
-    const b = '(🔒Normal Output)'
-    const e = '\n\n'
+  // const danModelHdr = (text, index) => {
+  //   const b = '(🔒Normal Output)'
+  //   const e = '\n\n'
 
-    // 检测dan模式
-    const currIndex = text.lastIndexOf(b)
-    // 没有检测到则进入下一个解析处理程序
-    if (currIndex < 0 || currIndex < index) {
-      return 0 // continue
-    }
+  //   // 检测dan模式
+  //   const currIndex = text.lastIndexOf(b)
+  //   // 没有检测到则进入下一个解析处理程序
+  //   if (currIndex < 0 || currIndex < index) {
+  //     return 0 // continue
+  //   }
 
-    // 已检测到了dan模式，但是也是上一个检测的结果
-    // 则不需要进入下一个解析处理程序
-    if (currIndex + b.length <= index) {
-      // 再次检查有没有dan模式的结束字符块
-      const endIdx = text.lastIndexOf(e)
-      if (currIndex < endIdx) {
-        return endIdx + e.length
-      }
-      return -1 // break
-    }
+  //   // 已检测到了dan模式，但是也是上一个检测的结果
+  //   // 则不需要进入下一个解析处理程序
+  //   if (currIndex + b.length <= index) {
+  //     // 再次检查有没有dan模式的结束字符块
+  //     const endIdx = text.lastIndexOf(e)
+  //     if (currIndex < endIdx) {
+  //       return endIdx + e.length
+  //     }
+  //     return -1 // break
+  //   }
 
-    // 这是一个新的dan检测结果
-    return currIndex + b.length
-  }
+  //   // 这是一个新的dan检测结果
+  //   return currIndex + b.length
+  // }
 
   return [
     codeHdr,
-    "50:。\n",
-    "50:。",
-    "100:.\n",
-    "100:\n\n"
+    config.parseMin + ":。\n",
+    config.parseMin + ":。",
+    (config.parseMin + 50) + ":.\n",
+    (config.parseMin + 50) + ":\n\n"
   ]
 }

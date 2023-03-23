@@ -48,7 +48,8 @@ export const config = {
   groupList: { },
   clash: {
     enable: false
-  }
+  },
+  parseMin: 100
 }
 
 export const preset: any = {
