@@ -164,7 +164,7 @@ export class PlayerFilter extends BaseMessageFilter {
             const cacheList = state.preset.cacheList
             cacheList.push(message)
             if (cacheList.length > 6) {
-              state.preset.cacheList = cacheList.splice(0, 6)
+              state.preset.cacheList = cacheList.splice(cacheList.length - 6, 6)
             }
           }
         }
@@ -200,6 +200,10 @@ export class PlayerFilter extends BaseMessageFilter {
           
           if (player.enableCached && resultMessage.includes('[!!cacheMsgs!!]')) {
             resultMessage = resultMessage.replace('[!!cacheMsgs!!]', cacheList?.join('\n'))
+          }
+
+          if (resultMessage.includes('[!!content!!]')) {
+            return replyMessage("", resultMessage.replace('[!!content!!]', content), sender)
           }
 
           const res = await reply(resultMessage)
