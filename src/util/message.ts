@@ -37,7 +37,6 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
         const [ stop, reply ] = await (filters[i] as BaseMessageFilter).handle(content, sender, done)
         isStop = !stop
         resultMessage = reply
-        console.log(filters[i], isStop, resultMessage, "get::::" + content)
       }
       if (isStop) {
         break
@@ -73,13 +72,11 @@ export const onMessage = async (data: any, sender: Sender) => {
 
   if (data.response) {
     const filters = messageHandler.filter(item => item.type === 1)
-    console.log('filters ===>>>> ', filters)
     //console.log(index, data.response)
     let message: string | null = globalParser.resolve(data)
     const isDone = () => (data.response === '[DONE]')
     
     if (!!message || isDone()) {
-      console.log('response message ====== >>>> ', message)
       message = await _filterTokens(message??'', filters, sender, isDone())
       if (config.debug) {
         console.log('response message ====== [' + isDone() + ']', data, message)

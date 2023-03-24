@@ -48,6 +48,7 @@ export class MessageParser {
   }
 
   resolve(data: ChatResponse): string | null {
+    console.log('parser resolve ============ >>>>> ', data)
     const cached = this.cacheMessage(data.conversationId)
     let index,
       condition = [... this._condition]
