@@ -16,7 +16,7 @@ function genUid(): string {
 
 
 let DEFAULT_BROWSER: null | Browser = null
-export default async function getBrowser(headless?: boolean = true): (Browser | Page)[] {
+export default async function getBrowser(headless?: boolean = false): (Browser | Page)[] {
   if (DEFAULT_BROWSER) return [DEFAULT_BROWSER, null]
 
   const puppeteerArgs = [
