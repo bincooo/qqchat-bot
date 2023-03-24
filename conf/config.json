@@ -1,9 +1,9 @@
 {
   "debug": false,
-  "docker": false,
-  "adminQQ": "1263212092",
-  "botQQ": "2231668112",
-  "botPassword": "zbc126321",
+  "docker": true,
+  "adminQQ": "xxx",
+  "botQQ": "xxx",
+  "botPassword": "xxx",
   "botNickname": "猫小爱",
   "type": "oicq",
   "oicq": {

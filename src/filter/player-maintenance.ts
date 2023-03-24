@@ -24,9 +24,12 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
           state.preset.maintenanceCondition = condition
         }
       }
+
+      if (!!player && player.enableCached) {
+        this.cacheMessage(sender.id, content, state, !!done)
+      }
     }
-    
-    this.cacheMessage(sender.id, content, state, !!done)
+
     return [ true, content ]
   }
 
@@ -36,7 +39,7 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
     }
 
     const tmpMsgs = this._tmpMessages.get(senderId)
-    tmpMsgs.push(content)
+    tmpMsgs.push(message)
     
     if (!state.preset.maintenance && done) {
       state.preset.cacheList.push(tmpMsgs.join(''))
