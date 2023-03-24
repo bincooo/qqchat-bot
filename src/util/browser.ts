@@ -16,7 +16,7 @@ function genUid(): string {
 
 
 let DEFAULT_BROWSER: null | Browser = null
-export default async function getBrowser(headless?: boolean = false): (Browser | Page)[] {
+export default async function getBrowser(headless?: boolean = true): (Browser | Page)[] {
   if (DEFAULT_BROWSER) return [DEFAULT_BROWSER, null]
 
   const puppeteerArgs = [
@@ -93,26 +93,24 @@ export const defaultChromeExecutablePath = (): string => {
 
 export async function md2jpg(htmlText: string): Promise<string> {
   // let [ browser, page ] = await getBrowser(false)
-  let [ browser, page ] = await getBrowser()
-  let dontClose = true
-  if (!page) {
-    page = await browser.newPage()
-    dontClose = false
-  }
+  const [ browser ] = await getBrowser()
+
+  const page = await browser.newPage()
 
   const html = path.join(path.resolve(), `amr/${genUid()}.html`)
   fs.writeFile(html, htmlText, (err) => {
     if(err) console.log(err)
   })
+  try {
+    await page.goto('file://' + html, {
+      waitUntil: 'networkidle0'
+    })
 
-  await page.goto('file://' + html, {
-    waitUntil: 'networkidle0'
-  })
-
-  await page.reload()
-  const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
-  await page.screenshot({ path: jpg, fullPage: true })
-  if (!dontClose) {
+    await page.reload()
+    const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
+  
+    await page.screenshot({ path: jpg, fullPage: true })
+  } finally {
     await page.close()
   }
   return fs.readFileSync(jpg)
