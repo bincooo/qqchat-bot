@@ -95,7 +95,7 @@ export class PlayerFilter extends BaseMessageFilter {
           }
 
           let resultMessage = content
-          let { training, enableCached } = player.training
+          let { training, enableCached } = player
           if (!enableCached || state.player.cacheList?.length <= 0) {
             await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           }
