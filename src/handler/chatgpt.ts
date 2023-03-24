@@ -146,6 +146,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       await this._api.queueSendMessage(message, {
         timeoutMs: MESSAGE_TIMEOUT_MS,
         onProgress: async (res) => {
+          console.log('queueSendMessage =====>>>> ', res)
           if (res.error) {
             await this.messageErrorHandler(sender, res.error)
             return
