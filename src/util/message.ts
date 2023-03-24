@@ -72,6 +72,7 @@ export const onMessage = async (data: any, sender: Sender) => {
 
   if (data.response) {
     const filters = messageHandler.filter(item => item.type === 1)
+    console.log('filters ===>>>> ', filters)
     //console.log(index, data.response)
     let message: string | null = globalParser.resolve(data)
     const isDone = () => (data.response === '[DONE]')

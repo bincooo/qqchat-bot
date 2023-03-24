@@ -39,7 +39,7 @@ export class MdFilter extends BaseMessageFilter {
 
   async assert_one(content: string, sender?: Sender, done: boolean): (boolean | string)[] {
     if (config.debug) {
-      console.log('markdown =====> [' + done + ']', content)
+      console.log('markdown =====> [' + done + ']')
     }
 
     const doit = async () => {
