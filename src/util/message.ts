@@ -37,6 +37,7 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
         const [ stop, reply ] = await (filters[i] as BaseMessageFilter).handle(content, sender, done)
         isStop = !stop
         resultMessage = reply
+        console.log(filters[i], isStop, resultMessage)
       }
       if (isStop) {
         break
