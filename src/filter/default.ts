@@ -1,6 +1,6 @@
 import { BaseMessageFilter } from 'src/types'
 import { preset, config } from 'src/config'
-
+import { Sender } from 'src/model/sender'
 
 
 export class DefaultFilter extends BaseMessageFilter {
@@ -10,12 +10,14 @@ export class DefaultFilter extends BaseMessageFilter {
     this.type = 0
   }
 
-  handle = async (content: string) => {
+  handle = async (content: string, sender?: Sender) => {
     if (!!preset.default) {
       let result = preset.default
         .replace('[!!date!!]', dat())
       if (result.includes('[!!content!!]')) {
         result = result.replace('[!!content!!]', content)
+          .replace('[!!name!!]', sender?.nickname)
+          .replace('\\n', '\n')
         return [ true, result ]
       }
       return [ true, result + content ]
