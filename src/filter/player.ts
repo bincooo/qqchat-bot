@@ -27,12 +27,12 @@ function datFmt() {
   return `${y}-${fmt(m)}-${fmt(d)} ${fmt(h)}:${fmt(mm)}:${fmt(s)}`
 }
 
-function replyMessage(player: any, content: string, sender?: Sender) {
-  return (player.prefix.includes('[!!content!!]')
+function replyMessage(prefix: string, content: string, sender?: Sender) {
+  return (prefix.includes('[!!content!!]')
     ?
-    player.prefix.replace('[!!content!!]', content)
+    prefix.replace('[!!content!!]', content)
     :
-    player.prefix.concat(content))
+    prefix.concat(content))
 
   .replace('[!!date!!]', datFmt())
   .replace('[!!name!!]', sender?.nickname)
@@ -121,7 +121,11 @@ export class PlayerFilter extends BaseMessageFilter {
             timer = null
           }
 
-          return replyMessage(player, resultMessage, sender)
+          if (resultMessage !== content) {
+            return replyMessage("", resultMessage, sender)
+          }
+
+          return replyMessage(player.prefix, resultMessage, sender)
         }
         return [ false, result ]
       }
@@ -166,7 +170,7 @@ export class PlayerFilter extends BaseMessageFilter {
         }
 
         if (player?.prefix) {
-          const resultMessage = replyMessage(player, content, sender)
+          const resultMessage = replyMessage(player.prefix, content, sender)
           cacheMessage(resultMessage)
           return [ false, resultMessage ]
         }
@@ -199,7 +203,7 @@ export class PlayerFilter extends BaseMessageFilter {
           }
 
           const res = await reply(resultMessage)
-          return replyMessage(player, content, sender)
+          return replyMessage(player.prefix, content, sender)
         }
         return [ false, result ]
       }
