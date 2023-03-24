@@ -141,7 +141,7 @@ export class PlayerFilter extends BaseMessageFilter {
           state.preset = {
             key: obj.key,
             count: MAX_COUNT,
-            cacheList = [],
+            cacheList: [],
             maintenanceCount: 0
           }
           return [ false, "" ]
@@ -206,3 +206,6 @@ export class PlayerFilter extends BaseMessageFilter {
     }
     return null
   }
+
+}
+
