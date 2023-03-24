@@ -113,7 +113,7 @@ export async function md2jpg(htmlText: string): Promise<string> {
     console.log('page.goto >> files://' + html, err)
     await page.evaluate(() => window.stop())
   }
-  // await page.reload()
+  await page.reload()
   const jpg = path.join(path.resolve(), `amr/${genUid()}.jpg`)
   await page.screenshot({ path: jpg, fullPage: true })
   if (!dontClose) {
