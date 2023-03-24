@@ -25,7 +25,7 @@ class GlobalStateManager {
           this.recallLoading(uid)
         }
       })
-    }, 1000)
+    }, 3200)
   }
 
   getState(uid: number | string): any {
