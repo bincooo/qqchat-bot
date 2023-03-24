@@ -9,7 +9,7 @@ log
 
 version-local
 
-build
+/build/
 
 docker
 
