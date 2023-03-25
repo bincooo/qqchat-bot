@@ -165,7 +165,7 @@ export class PlayerFilter extends BaseMessageFilter {
           if (player.enableCached) {
             const cacheList = state.preset.cacheList
             cacheList.push(message)
-            const max_cathe = 5 // 对话次数
+            const max_cathe = 10 // 缓存最大对话次数
             if (cacheList.length > max_cathe * 2) {
               state.preset.cacheList = cacheList.splice(cacheList.length - (max_cathe * 2), max_cathe * 2)
             }
