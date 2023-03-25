@@ -110,8 +110,15 @@ export class ChatGPTHandler extends BaseMessageHandler {
       },
       [{ email, password }, ...slaves ])
     this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
-    await this._api.initSession()
-    console.log('chatgpt - execute initChatGPT method success.')
+    try {
+      await this._api.initSession()
+      console.log('chatgpt - execute initChatGPT method success.')
+    } catch(err) {
+      logger.error(err)
+      if (err.message.includes('Failed to authenticate session')) {
+        await this._api.refreshSession()
+      }
+    }
   }
 
   async reboot () {
