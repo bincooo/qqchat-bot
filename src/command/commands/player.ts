@@ -14,7 +14,7 @@ class PlayerCommand extends BaseCommand {
     `help   - 查看角色扮演帮助信息`
   ]
 
-  requiredAdministrator = false
+  requiredAdministrator = true
   description = 'web chatgpt 配置'
 
   async execute (sender: Sender, params: string[]) {

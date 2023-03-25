@@ -89,14 +89,14 @@ export class Sender {
       console.log('retry fail, use `sendGroupMessage` method: ', 
         this._eventObject.messageChain)
       if(!!this.group) {
-        const chain = (this._eventObject.messageChain??[]).filter(item => ['At', 'Plain'].includes(item.type))
+        const chain = (this._eventObject.messageChain??[]).filter(item => item.type === 'Source')
         if (chain[0]) {
-          result = await getClient()?.api.sendGroupMessage(content, this.id, chain[0]?.id)
+          result = await getClient()?.api.sendGroupMessage("/retry/\n" + content, this.id, chain[0].id)
         }
       } else if (e.type === 'TempMessage') {
-        result = await getClient()?.api.sendTempMessage(content, this.id)
+        result = await getClient()?.api.sendTempMessage("/retry/\n" + content, this.id)
       } else{
-        result = await getClient()?.api.sendFriendMessage(content, this.id)
+        result = await getClient()?.api.sendFriendMessage("/retry/\n" + content, this.id)
       }
     }
     return result

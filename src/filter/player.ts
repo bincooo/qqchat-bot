@@ -28,6 +28,8 @@ function datFmt() {
 }
 
 function replyMessage(prefix: string, content: string, sender?: Sender) {
+  // emoji 过滤
+  const regex = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/g
   return (prefix.includes('[!!content!!]')
     ?
     prefix.replace('[!!content!!]', content)
@@ -35,7 +37,7 @@ function replyMessage(prefix: string, content: string, sender?: Sender) {
     prefix.concat(content))
 
   .replace('[!!date!!]', datFmt())
-  .replace('[!!name!!]', sender?.nickname)
+  .replace('[!!name!!]', sender.nickname.replaceAll(regex, ''))
 }
 
 const MAX_COUNT = 20
