@@ -85,6 +85,20 @@ export class Sender {
         console.log('reply result code[500], retry ' + (3 - count) + ' ...', content, result)
       }
     }
+    if(result.code == 500) {
+      console.log('retry fail, use `sendGroupMessage` method: ', 
+        this._eventObject.messageChain)
+      if(!!this.group) {
+        const chain = (this._eventObject.messageChain?[]).filter(item => ['At', 'Plain'].includes(item.type))
+        if (chain[0]) {
+          result = await getClient()?.api.sendGroupMessage(content, this.id, chain[0]?.id)
+        }
+      } else if (e.type === 'TempMessage') {
+        result = await getClient()?.api.sendTempMessage(content, this.id)
+      } else{
+        result = await getClient()?.api.sendFriendMessage(content, this.id)
+      }
+    }
     return result
   }
 
