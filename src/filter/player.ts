@@ -40,7 +40,7 @@ function replyMessage(prefix: string, content: string, sender?: Sender) {
   .replace('[!!name!!]', sender.nickname.replaceAll(regex, ''))
 }
 
-const MAX_COUNT = 20
+const MAX_COUNT = 15
 export class PlayerFilter extends BaseMessageFilter {
 
   constructor() {

@@ -91,12 +91,12 @@ export class Sender {
       if(!!this.group) {
         const chain = (this._eventObject.messageChain??[]).filter(item => item.type === 'Source')
         if (chain[0]) {
-          result = await getClient()?.api.sendGroupMessage("/retry/\n" + content, this.id, chain[0].id)
+          result = await getClient()?.api.sendGroupMessage(".\n" + content, this.id)
         }
       } else if (e.type === 'TempMessage') {
-        result = await getClient()?.api.sendTempMessage("/retry/\n" + content, this.id)
+        result = await getClient()?.api.sendTempMessage(".\n" + content, this.id)
       } else{
-        result = await getClient()?.api.sendFriendMessage("/retry/\n" + content, this.id)
+        result = await getClient()?.api.sendFriendMessage(".\n" + content, this.id)
       }
     }
     return result
