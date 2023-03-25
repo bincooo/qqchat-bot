@@ -25,8 +25,12 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
         }
       }
 
-      if (!!player && player.enableCached && !state.preset.maintenance) {
-        this.cacheMessage(sender.id, content, state, !!done)
+      if (!!player && player.enableCached) {
+        if (!state.preset.maintenance) {
+          this.cacheMessage(sender.id, content, state, !!done)
+        } else {
+          state.preset.cacheList = state.preset.cacheList.splice(0, state.preset.cacheList.length - 1)
+        }
       }
     }
 
