@@ -89,7 +89,7 @@ export class Sender {
       console.log('retry fail, use `sendGroupMessage` method: ', 
         this._eventObject.messageChain)
       if(!!this.group) {
-        const chain = (this._eventObject.messageChain?[]).filter(item => ['At', 'Plain'].includes(item.type))
+        const chain = (this._eventObject.messageChain??[]).filter(item => ['At', 'Plain'].includes(item.type))
         if (chain[0]) {
           result = await getClient()?.api.sendGroupMessage(content, this.id, chain[0]?.id)
         }
