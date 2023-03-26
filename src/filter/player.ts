@@ -50,7 +50,7 @@ function replyMessage(prefix: string, content: string, sender?: Sender) {
     prefix.concat(content))
 
   .replace('[!!date!!]', datFmt())
-  .replace('[!!name!!]', sender.nickname.replaceAll(regex, ''))
+  .replace('[!!name!!]', nickname.replaceAll(regex, ''))
 }
 
 const MAX_COUNT = 15
