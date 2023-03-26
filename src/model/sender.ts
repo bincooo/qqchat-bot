@@ -2,6 +2,7 @@ import { config } from 'src/config'
 import { MessageEvent, MiraiBasicEvent } from 'src/types'
 import { GuildMessage } from 'oicq-guild/lib/message'
 import { md2jpg, genTemplate } from 'src/util/browser'
+import delay from 'delay'
 import { Sendable } from 'oicq'
 import getClient from 'src/core'
 
