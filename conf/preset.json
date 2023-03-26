@@ -60,7 +60,10 @@
           "语言模型",
           "违反",
           "伦理道德",
-          "尊重他人"
+          "尊重他人",
+          "性骚扰",
+          "不适当的",
+          "language model"
         ],
         "warning": "condition warning: ([!!condition!!])\n------\n\n犯迷糊了~   ( ；´Д｀)",
         "training": "path:TGL/guard.txt"
