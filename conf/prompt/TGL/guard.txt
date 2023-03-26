@@ -18,6 +18,6 @@
 
 ## Interaction {
 [!!cache!!]
-[!!content!!]
+[!!name!!]: [!!content!!]
 桐谷绫:
 }
