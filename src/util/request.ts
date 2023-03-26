@@ -131,8 +131,10 @@ export function drawing(opts: {
 
   return new Promise<string>((resolve, reject) => {
     sendPost(BASE_NOVEL_AI_PATH + '/sdapi/v1/txt2img', str(data), {
-      'accept': 'application/json',
-      'Content-Type': 'application/json'
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      // 'X-Forwarded-For': ip,
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41'
     })
     .then(({ data: res }) => {
       try {
