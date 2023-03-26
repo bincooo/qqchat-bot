@@ -44,9 +44,21 @@ export async function loadPresets(config?: string) {
   }
   for(let index = 0, length = preset.player?.length; index < length; index ++) {
     const player = preset.player[index]
-    if (player.training?.startsWith(prefix)) {
-      const str = (await readFile(basePath + player.training.substr(prefix.length))).toString()
-      player.training = str
+    if (player.training) {
+      if (typeof player.training === 'string') {
+        if (player.training?.startsWith(prefix)) {
+          const str = (await readFile(basePath + player.training.substr(prefix.length))).toString()
+          player.training = str
+        }
+      } else {
+        for(let idx = 0, len = player.training.length; idx < len; idx ++) {
+          const training = player.training[idx]
+          if (training?.startsWith(prefix)) {
+            const str = (await readFile(basePath + training.substr(prefix.length))).toString()
+            player.training[idx] = str
+          }
+        }
+      }
     }
     if (player.maintenance?.training?.startsWith(prefix)) {
       const str = (await readFile(basePath + player.maintenance.training.substr(prefix.length))).toString()
