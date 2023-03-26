@@ -87,6 +87,9 @@ export class Sender {
       if (config.debug) {
         console.log('reply result code[500], retry ' + (3 - count) + ' ...', content, result)
       }
+      if (result.code == 0) {
+        break
+      }
     }
     if(result.code == 500) {
       console.log('retry fail, use `md2jpg` method: ',
