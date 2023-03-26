@@ -3,7 +3,7 @@ import { Sender } from 'src/model/sender'
 import { segment } from 'oicq'
 import { md2jpg, genTemplate } from 'src/util/browser'
 import { config } from 'src/config'
-import { shortURL } from 'src/util/request'
+
 
 const str = '```'
 
