@@ -84,6 +84,7 @@ class EmailPool {
   }
 }
 
+
 export class ChatGPTHandler extends BaseMessageHandler {
   protected _api: ChatGPTAPIBrowser
 
