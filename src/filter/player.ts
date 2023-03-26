@@ -14,6 +14,7 @@ function dat() {
 function IsEmpty(val: string): boolean {
   if (!val) return true
   const value = val.trim()
+    .replaceAll('　', '')
   if (value === '') return true
   if (value.length === 0) return true
   return false
@@ -39,7 +40,7 @@ function replyMessage(prefix: string, content: string, sender?: Sender) {
   // emoji 过滤
   let nickname = sender.nickname.trim()
   if (IsEmpty(nickname)) {
-    nickname = '“???”'
+    nickname = '陆仁贾'
   }
   const regex = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/g
   return (prefix.includes('[!!content!!]')
