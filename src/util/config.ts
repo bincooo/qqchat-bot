@@ -33,7 +33,7 @@ export async function loadPresets(config?: string) {
   if (!config) config = process.cwd() + '/conf/preset.json'
   const basePath = process.cwd() + '/conf/prompt/',
     prefix = 'path:'
-  const preset = NonErr(() => JSON.parse((await readFile(config)).toString()), {})
+  const preset = await NonErr(async () => JSON.parse((await readFile(config)).toString()), {})
   if (preset.novelAiHelper?.startsWith(prefix)) {
     const str = (await readFile(basePath + preset.novelAiHelper.substr(prefix.length))).toString()
     preset.novelAiHelper = str
@@ -61,9 +61,9 @@ export async function loadPresets(config?: string) {
  * @cb callback function
  * @def default object
  */
-function NonErr(cb: () => any, def?: any): any {
+async function NonErr(cb: () => any, def?: any): any {
   try {
-    return cb.call(undefined)
+    return await cb.call(undefined)
   } catch(err) {}
   return def
 }
