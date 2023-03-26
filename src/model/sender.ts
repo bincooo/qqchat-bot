@@ -80,6 +80,7 @@ export class Sender {
     }
     let count = 3
     while ((count > 0 && result.code == 500)) {
+      await delay(3000)
       count--
       result = await this._eventObject.reply(content, quote)
       if (config.debug) {
@@ -89,8 +90,9 @@ export class Sender {
     if(result.code == 500) {
       console.log('retry fail, use `md2jpg` method: ',
         this._eventObject.messageChain)
+      await delay(3000)
       const b64 = await md2jpg((await genTemplate(this.nickname, content)))
-      result = await this._eventObject.reply([{ type: 'Image', base64: b64 }], quote)
+      result = await this._eventObject.reply([{ type: 'Image', base64: b64 }])
     }
     return result
   }
