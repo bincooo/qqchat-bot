@@ -45,6 +45,6 @@
 }
 
 ## Interaction {
-折戟沉沙丶丿：嗨~
+[!!name!!]:[!!content!!]
 喵小爱:
 }
