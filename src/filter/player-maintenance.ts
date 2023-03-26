@@ -25,7 +25,7 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
         }
       }
 
-      if (!!player && player.enableCached) {
+      if (!!player && player.enableCache) {
         if (!state.preset.maintenance) {
           this.cacheMessage(sender.id, content, state, !!done)
         } else {

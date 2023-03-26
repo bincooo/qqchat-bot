@@ -1,7 +1,7 @@
 import logger from 'src/util/log'
 import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
-import { config } from 'src/config'
+import { preset as globalPreset } from 'src/config'
 import chalk from 'chalk'
 
 const configFile = process.cwd() + '/conf/config.json'
@@ -27,4 +27,43 @@ export async function writeConfig (config: object) {
   const content = JSON.stringify(config, null, 2)
   await writeFile(configFile, content)
   logger.info(chalk.green(`config.json 创建成功！${configFile}`))
+}
+
+export async function loadPresets(config?: string) {
+  if (!config) config = process.cwd() + '/conf/preset.json'
+  const basePath = process.cwd() + '/conf/prompt/',
+    prefix = 'path:'
+  const preset = NonErr(() => JSON.parse((await readFile(config)).toString()), {})
+  if (preset.novelAiHelper?.startsWith(prefix)) {
+    const str = (await readFile(basePath + preset.novelAiHelper.substr(prefix.length))).toString()
+    preset.novelAiHelper = str
+  }
+  if (preset.default?.startsWith(prefix)) {
+    const str = (await readFile(basePath + preset.default.substr(prefix.length))).toString()
+    preset.default = str
+  }
+  for(let index = 0, length = preset.player?.length; index < length; index ++) {
+    const player = preset.player[index]
+    if (player.training?.startsWith(prefix)) {
+      const str = (await readFile(basePath + player.training.substr(prefix.length))).toString()
+      player.training = str
+    }
+    if (player.maintenance?.training?.startsWith(prefix)) {
+      const str = (await readFile(basePath + player.maintenance.training.substr(prefix.length))).toString()
+      player.maintenance.training = str
+    }
+  }
+  Object.assign(globalPreset, preset)
+}
+
+/**
+ * ignore error stask, and return default object.
+ * @cb callback function
+ * @def default object
+ */
+function NonErr(cb: () => any, def?: any): any {
+  try {
+    return cb.call(undefined)
+  } catch(err) {}
+  return def
 }

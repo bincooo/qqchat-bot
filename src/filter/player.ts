@@ -109,8 +109,8 @@ export class PlayerFilter extends BaseMessageFilter {
           }
 
           let resultMessage = content
-          let { training, enableCached } = player
-          if (!enableCached || state.preset.cacheList?.length <= 0) {
+          let { training, enableCache } = player
+          if (!enableCache || state.preset.cacheList?.length <= 0) {
             await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           }
           if (typeof training === 'string') {
@@ -178,7 +178,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         const cacheMessage = (message: string) => {
-          if (player.enableCached) {
+          if (player.enableCache) {
             const cacheList = state.preset.cacheList
             cacheList.push(message)
             const max_cathe = 5 // 缓存最大对话次数
@@ -217,8 +217,8 @@ export class PlayerFilter extends BaseMessageFilter {
           let resultMessage = player.maintenance.training
           const cacheList = state.preset.cacheList
           
-          if (player.enableCached && resultMessage.includes('[!!cacheMsgs!!]')) {
-            resultMessage = resultMessage.replace('[!!cacheMsgs!!]', cacheList?.join('\n'))
+          if (player.enableCache && resultMessage.includes('[!!cache!!]')) {
+            resultMessage = resultMessage.replace('[!!cache!!]', cacheList?.join('\n'))
           }
 
           if (resultMessage.includes('[!!content!!]')) {

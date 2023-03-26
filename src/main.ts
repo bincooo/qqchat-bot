@@ -3,7 +3,7 @@ import logger from './util/log'
 import { initOicq } from './core/oicq'
 import { initMirai } from './core/mirai'
 import MessageHandlers from './handler'
-import { existsConfig, loadConfig, writeConfig } from './util/config'
+import { existsConfig, loadConfig, writeConfig, loadPresets } from './util/config'
 import { config, preset } from './config'
 import { run } from './auto'
 import { clashSetting } from './util/request'
@@ -27,7 +27,8 @@ async function main () {
   const exist = existsConfig()
   const presetPath = process.cwd() + '/conf/preset.json'
   if (existsConfig(presetPath)) {
-    Object.assign(preset, await loadConfig(presetPath))
+    // Object.assign(preset, await loadConfig(presetPath))
+    await loadPresets(presetPath)
   }
   if (!exist) {
     await run()

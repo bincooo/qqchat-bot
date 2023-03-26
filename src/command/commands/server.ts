@@ -4,7 +4,7 @@ import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
 import { config, preset } from '../../config'
-import { existsConfig, loadConfig } from 'src/util/config'
+import { existsConfig, loadConfig, loadPresets } from 'src/util/config'
 import path from 'path'
 
 class ServerCommand extends BaseCommand {
@@ -57,8 +57,9 @@ class ServerCommand extends BaseCommand {
       case 'load:preset':
         const presetPath = path.join(process.cwd(), '/conf/preset.json')
         if (existsConfig(presetPath)) {
-          const presetConfig = await loadConfig(presetPath)
-          Object.assign(preset, presetConfig)
+          // const presetConfig = await loadConfig(presetPath)
+          // Object.assign(preset, presetConfig)
+          await loadPresets(presetPath)
           sender.reply('加载预设完成~')
         }
         else sender.reply('加载预设失败~')
