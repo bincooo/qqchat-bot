@@ -1,6 +1,7 @@
 import { config } from 'src/config'
 import { MessageEvent, MiraiBasicEvent } from 'src/types'
 import { GuildMessage } from 'oicq-guild/lib/message'
+import { md2jpg, genTemplate } from 'src/util/browser'
 import { Sendable } from 'oicq'
 import getClient from 'src/core'
 
@@ -86,18 +87,10 @@ export class Sender {
       }
     }
     if(result.code == 500) {
-      console.log('retry fail, use `sendGroupMessage` method: ', 
+      console.log('retry fail, use `md2jpg` method: ',
         this._eventObject.messageChain)
-      if(!!this.group) {
-        const chain = (this._eventObject.messageChain??[]).filter(item => item.type === 'Source')
-        if (chain[0]) {
-          result = await getClient()?.api.sendGroupMessage(".\n" + content, this.id)
-        }
-      } else if (e.type === 'TempMessage') {
-        result = await getClient()?.api.sendTempMessage(".\n" + content, this.id)
-      } else{
-        result = await getClient()?.api.sendFriendMessage(".\n" + content, this.id)
-      }
+      const b64 = await md2jpg((await genTemplate(this.nickname, content)))
+      result = await this._eventObject.reply([{ type: 'Image', base64: b64 }], quote)
     }
     return result
   }
