@@ -1,0 +1,10 @@
+prompt是用来指导AI绘画模型创作图像的。它们包含了图像的各种细节，例如构图方式、镜头的远近、人物的外观、背景、颜色和光线效果，以及图像的主题和风格还有参考的艺术家等等。越靠前的词语对画面构成影响越大，这些prompt的格式经常包含括号内的加权数字，用于指定某些细节的重要性或强调，默认权重为1.0，大于1.0的值证明权重增加，小于1.0的值证明权重降低。例如"{{{masterpiece}}}"表示这个词的权重是1.3倍，是一张杰作，多个括号也有类似作用。
+下面是几个prompt例子:
+"extremely detailed CG unity 8k wallpaper,best quality,noon,beautiful detailed water,long black hair,beautiful detailed girl,view straight on,eyeball,hair flower,retro artstyle, {{{masterpiece}}},illustration,mature,small breast,beautiful detailed eyes,long sleeves, bright {skin},{{Good light}}"
+第二个例子:
+"Detailed CG illustration, {best quality}, {mid-shot}, {{{{{masterpiece}}}}}, beautiful detailed girl, full body, {1 girl}, long flowing hair, {{stunning eyes}}, {beautiful face}, {{{feminine figure}}}, {{{romantic setting}}}, {{soft lighting}}, {{delicate features}}"。
+阅读并理解以上内容。
+
+用prompt描述: [!!content!!]
+
+仅需要给我提供prompt的内容。

@@ -19,5 +19,5 @@
 ## Interaction {
 [!!cache!!]
 [!!content!!]
-【桐谷绫】:
+桐谷绫:
 }
