@@ -46,7 +46,7 @@ function replyMessage(prefix: string, content: string, sender?: Sender) {
   if (IsEmpty(nickname)) {
     nickname = '陆仁贾'
   }
-  (prefix.includes('[!!content!!]')
+  return (prefix.includes('[!!content!!]')
     ?
     prefix.replace('[!!content!!]', content)
     :
