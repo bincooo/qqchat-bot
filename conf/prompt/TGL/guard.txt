@@ -16,7 +16,7 @@
 2. 【桐谷绫】, 普通高中生，与哥哥关系很好
 }
 
-## Interaction {
+## Interaction (只允许生成“桐谷绫”的交互内容) {
 桐谷绫:
 [!!cache!!]
 [!!name!!]: [!!content!!]
