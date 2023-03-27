@@ -24,6 +24,9 @@ class GuardAi {
   }
 
   check = async (content: string, sender?: Sender) => {
+    if (content.trim().length <= 5) {
+      return true
+    }
     const state: any = stateManager.getState(sender.id)
     if (!!state.preset?.key) {
       const value = content?.toLocaleLowerCase() ?? ""

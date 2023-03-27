@@ -107,7 +107,7 @@ export class PlayerFilter extends BaseMessageFilter {
           if (player.maintenance.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
-              return ""
+              return null
             }
           }
 
@@ -217,7 +217,7 @@ export class PlayerFilter extends BaseMessageFilter {
           if (player.maintenance.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
-              return ""
+              return null
             }
           }
 
@@ -264,7 +264,7 @@ export class PlayerFilter extends BaseMessageFilter {
             if (player.maintenance.guard) {
               const checkResult = await guardAi.check(content, sender)
               if (!checkResult) {
-                return ""
+                return null
               }
             }
             return val
