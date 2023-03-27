@@ -79,19 +79,19 @@ export class PlayerFilter extends BaseMessageFilter {
 
   handle = async (content: string, sender?: Sender) => {
     const state: any = stateManager.getState(sender.id)
-    let handleResult = this.presetEnabled(content, sender, state)
-    if (handleResult) return handleResult
+    let hResult = this.presetEnabled(content, sender, state)
+    if (hResult) return hResult
 
     if (!!state.preset?.key) {
       if (player.cycle ?? true) {
         state.preset.count++
       }
 
-      handleResult = this.handleReply(content, sender, state)
-      if (handleResult) return handleResult
+      hResult = this.handleReply(content, sender, state)
+      if (hResult) return hResult
 
-      const handleResult = this.handlePresetMaintenance(content, sender, state)
-      if (handleResult) return handleResult
+      const hResult = this.handlePresetMaintenance(content, sender, state)
+      if (hResult) return hResult
 
       state.isReset = false
       state.preset.maintenanceCount = 0
@@ -157,7 +157,7 @@ export class PlayerFilter extends BaseMessageFilter {
     return [ true, content ]
   }
 
-  presetEnabled(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
+  presetEnabled(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
     if (content?.trim().startsWith("开启 ")) {
       if (!sender.isAdmin) {
         sender?.reply('你没有权限使用该命令~', true)
@@ -185,7 +185,7 @@ export class PlayerFilter extends BaseMessageFilter {
   /**
    * 处理预设守护功能，当触发辨识词条就会发送守护预设
    */
-  handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
+  handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[]  | null {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       state.preset.maintenance = false
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
@@ -230,7 +230,7 @@ export class PlayerFilter extends BaseMessageFilter {
   /**
    * 处理应答消息
    */
-  handleReply(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
+  handleReply(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
     if (!state.preset.maintenance) {
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       const cacheMessage = (message: string) => {
