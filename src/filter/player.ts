@@ -4,7 +4,7 @@ import { config, preset } from 'src/config'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
 import { cgptOnResetSession } from 'src/util/event'
-
+import guardAi from 'src/util/guard'
 
 function dat() {
   return new Date()
@@ -104,6 +104,13 @@ export class PlayerFilter extends BaseMessageFilter {
         preset.maintenance = false
         
         const result: QueueReply = async (reply) => {
+          if (player.maintenance.guard) {
+            const checkResult = await guardAi.check(content, sender)
+            if (!checkResult) {
+              return ""
+            }
+          }
+
           const curr = dat()
           let timer: NodeJS.Timer = null
           if (!player.nottips) {
@@ -207,6 +214,13 @@ export class PlayerFilter extends BaseMessageFilter {
         // end //
 
         const result: QueueReply = async (reply) => {
+          if (player.maintenance.guard) {
+            const checkResult = await guardAi.check(content, sender)
+            if (!checkResult) {
+              return ""
+            }
+          }
+
           let resultMessage = player.maintenance.training
           const cacheList = state.preset.cacheList
           
@@ -245,13 +259,25 @@ export class PlayerFilter extends BaseMessageFilter {
           }
         }
 
+        const newReply = (val: string) => {
+          return async (reply) => {
+            if (player.maintenance.guard) {
+              const checkResult = await guardAi.check(content, sender)
+              if (!checkResult) {
+                return ""
+              }
+            }
+            return val
+          }
+        }
+
         if (player?.prefix) {
           const resultMessage = replyMessage(player.prefix, content, sender)
           cacheMessage(resultMessage)
-          return [ false, resultMessage ]
+          return [ false, newReply(resultMessage) ]
         }
         cacheMessage(content)
-        return [ true, content ]
+        return [ false, newReply(content) ]
       }
     }
     return null

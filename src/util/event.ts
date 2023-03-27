@@ -25,3 +25,12 @@ export function cgptEmitResetSession(...args: any) {
 export function cgptOnResetSession(cb: (...args: any) => void) {
   globalEventRegist('cgpt:resetSession', cb)
 }
+
+
+export function cgptEmitChangeAccount(...args: any) {
+  globalEventEmit('cgpt:resetSession', ...args)
+}
+
+export function cgptOnChangeAccount(cb: (...args: any) => void) {
+  globalEventRegist('cgpt:resetSession', cb)
+}

@@ -23,6 +23,9 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
           state.preset.maintenance = !!condition
           if (!player.maintenance.warning) {
             sender.reply('system: warning(' + condition + ')\n———————\nAi觉醒了, 请重新编辑对话 ...', true)
+            if (!!player && player.enableCache) {
+              state.preset.cacheList = state.preset.cacheList.splice(0, state.preset.cacheList.length - 1)
+            }
             return [ false, '' ]
           } else {
             state.preset.maintenanceCondition = condition

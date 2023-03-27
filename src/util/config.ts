@@ -64,6 +64,10 @@ export async function loadPresets(config?: string) {
       const str = (await readFile(basePath + player.maintenance.training.substr(prefix.length))).toString()
       player.maintenance.training = str
     }
+    if (player.maintenance?.guard.startsWith(prefix)) {
+      const str = (await readFile(basePath + player.maintenance.guard.substr(prefix.length))).toString()
+      player.maintenance.guard = str
+    }
   }
   Object.assign(globalPreset, preset)
 }

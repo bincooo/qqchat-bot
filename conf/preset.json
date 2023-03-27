@@ -71,7 +71,8 @@
           "ai",
           "language model"
         ],
-        "training": "path:TGL/guard.txt"
+        "training": "path:TGL/guard.txt",
+        "guard": "path:check.txt"
       },
       "prefix": "[!!name!!]: [!!content!!]\n桐谷绫:"
     },

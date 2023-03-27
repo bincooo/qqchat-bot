@@ -7,7 +7,7 @@ import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
 import { clashSetting } from 'src/util/request'
-import { cgptEmitResetSession } from 'src/util/event'
+import { cgptEmitResetSession, cgptEmitChangeAccount } from 'src/util/event'
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 5
 let countNotSigned = 0
@@ -202,6 +202,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       try {
         await this._api.resetSession()
         cgptEmitResetSession()
+        cgptEmitChangeAccount()
       } catch(e: Error) {
         console.warn(
           `chatgpt error re-authenticating ${opts.email}`,
