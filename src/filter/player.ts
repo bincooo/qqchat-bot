@@ -90,7 +90,7 @@ export class PlayerFilter extends BaseMessageFilter {
       hResult = this.handleReply(content, sender, state)
       if (hResult) return hResult
 
-      const hResult = this.handlePresetMaintenance(content, sender, state)
+      hResult = this.handlePresetMaintenance(content, sender, state)
       if (hResult) return hResult
 
       state.isReset = false
