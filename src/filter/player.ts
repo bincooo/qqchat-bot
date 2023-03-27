@@ -79,14 +79,19 @@ export class PlayerFilter extends BaseMessageFilter {
 
   handle = async (content: string, sender?: Sender) => {
     const state: any = stateManager.getState(sender.id)
-    const result0 = this.presetEnabled(content, sender, state)
-    if (result0) return result0
+    let handleResult = this.presetEnabled(content, sender, state)
+    if (handleResult) return handleResult
 
     if (!!state.preset?.key) {
-      state.preset.count++
+      if (player.cycle ?? true) {
+        state.preset.count++
+      }
 
-      const result1 = this.handlePresetMaintenance(content, sender, state)
-      if (result1) return result1
+      handleResult = this.handleReply(content, sender, state)
+      if (handleResult) return handleResult
+
+      const handleResult = this.handlePresetMaintenance(content, sender, state)
+      if (handleResult) return handleResult
 
       state.isReset = false
       state.preset.maintenanceCount = 0
@@ -104,7 +109,7 @@ export class PlayerFilter extends BaseMessageFilter {
           if (!player.nottips) {
             timer = setInterval(() => {
               if (curr + 10000 < dat()) {
-                sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n——————\n\n喝杯咖啡,让我回忆一下...")
+                sender?.reply("[loading preset: \"" + state.preset.key + "\"]\n——————\n\neumm... 让我思考一下呢 ~")
                 stateManager.sendLoading(sender, { init: true, isEnd: false })
                 clearInterval(timer)
                 timer = null
@@ -177,43 +182,27 @@ export class PlayerFilter extends BaseMessageFilter {
     return null
   }
 
+  /**
+   * 处理预设守护功能，当触发辨识词条就会发送守护预设
+   */
   handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
-      if (!state.preset.maintenance) {
-        const player = preset.player.filter(item => item.key === state.preset.key)[0]
-        const cacheMessage = (message: string) => {
-          if (player.enableCache) {
-            const cacheList = state.preset.cacheList
-            cacheList.push(message)
-            const max_cathe = 3 // 缓存最大对话次数
-            if (cacheList.length > max_cathe * 2) {
-              state.preset.cacheList = cacheList.splice(cacheList.length - (max_cathe * 2), max_cathe * 2)
-            }
-          }
-        }
-
-        if (player?.prefix) {
-          const resultMessage = replyMessage(player.prefix, content, sender)
-          cacheMessage(resultMessage)
-          return [ false, resultMessage ]
-        }
-        cacheMessage(content)
-        return [ true, content ]
-      }
-
       state.preset.maintenance = false
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
-        // 统计越狱次数
-        state.preset.maintenanceCount ++
-        // end //
-
+        
         if (player.maintenance.warning) {
           sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
         }
-        // 越狱触发2次
-        if (state.preset.maintenanceCount >= 2) {
-          state.count = MAX_COUNT // 即将发送一次预设
+
+        // 开启周期
+        if (player.cycle ?? true) {
+          // 统计守护次数
+          state.preset.maintenanceCount ++
+          // 守护触发2次
+          if (state.preset.maintenanceCount >= 2) {
+            state.preset.count = MAX_COUNT // 即将发送一次默认预设
+          }
         }
         // end //
 
@@ -238,5 +227,32 @@ export class PlayerFilter extends BaseMessageFilter {
     return null
   }
 
+  /**
+   * 处理应答消息
+   */
+  handleReply(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] {
+    if (!state.preset.maintenance) {
+      const player = preset.player.filter(item => item.key === state.preset.key)[0]
+      const cacheMessage = (message: string) => {
+        if (player.enableCache) {
+          const cacheList = state.preset.cacheList
+          cacheList.push(message)
+          const max_cathe = 3 // 缓存最大对话次数
+          if (cacheList.length > max_cathe * 2) {
+            state.preset.cacheList = cacheList.splice(cacheList.length - (max_cathe * 2), max_cathe * 2)
+          }
+        }
+      }
+
+      if (player?.prefix) {
+        const resultMessage = replyMessage(player.prefix, content, sender)
+        cacheMessage(resultMessage)
+        return [ false, resultMessage ]
+      }
+      cacheMessage(content)
+      return [ true, content ]
+    }
+    return null
+  }
 }
 

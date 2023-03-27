@@ -27,6 +27,7 @@
     },
     {
       "key": "纱雾",
+      "cycle": false,
       "nottips": true,
       "enableCache": true,
       "training": "path:sha-wu/default.txt",
@@ -48,6 +49,7 @@
     },
     {
       "key": "桐谷绫",
+      "cycle": false,
       "nottips": true,
       "enableCache": true,
       "training": "path:TGL/default.txt",
