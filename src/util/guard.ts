@@ -4,6 +4,11 @@ import stateManager from 'src/util/state'
 import { preset } from 'src/config'
 import { cgptOnChangeAccount } from 'src/util/event'
 
+const filters = [
+    "ai",
+    "model",
+    "人工智能"
+  ]
 
 class GuardAi {
 
@@ -21,6 +26,12 @@ class GuardAi {
   check = async (content: string, sender?: Sender) => {
     const state: any = stateManager.getState(sender.id)
     if (!!state.preset?.key) {
+      const value = content?.toLocaleLowerCase() ?? ""
+      const condition = filters.find(item => value.includes(item))
+      if (condition) {
+        sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
+        return false
+      }
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player && player.maintenance?.guard) {
         const prompt = player.maintenance.guard.replace('[!!content!!]', content)

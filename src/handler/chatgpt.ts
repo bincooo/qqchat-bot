@@ -151,6 +151,9 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       this._iswait = true
       stateManager.sendLoading(sender, { init: true, isEnd: false })
+      const state: any = stateManager.getState(sender.id)
+      state.chatApi = this._api
+      
       await this._api.queueSendMessage(message, {
         timeoutMs: MESSAGE_TIMEOUT_MS,
         onProgress: async (res) => {
