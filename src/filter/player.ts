@@ -171,7 +171,7 @@ export class PlayerFilter extends BaseMessageFilter {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {
             key: obj.key,
-            count: MAX_COUNT,
+            count: MAX_COUNT + 1,
             cacheList: [],
             maintenanceCount: 0
           }
@@ -201,7 +201,7 @@ export class PlayerFilter extends BaseMessageFilter {
           state.preset.maintenanceCount ++
           // 守护触发2次
           if (state.preset.maintenanceCount >= 2) {
-            state.preset.count = MAX_COUNT // 即将发送一次默认预设
+            state.preset.count = MAX_COUNT + 1 // 即将发送一次默认预设
           }
         }
         // end //
@@ -231,26 +231,28 @@ export class PlayerFilter extends BaseMessageFilter {
    * 处理应答消息
    */
   handleReply(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
-    if (!state.preset.maintenance) {
-      const player = preset.player.filter(item => item.key === state.preset.key)[0]
-      const cacheMessage = (message: string) => {
-        if (player.enableCache) {
-          const cacheList = state.preset.cacheList
-          cacheList.push(message)
-          const max_cathe = 3 // 缓存最大对话次数
-          if (cacheList.length > max_cathe * 2) {
-            state.preset.cacheList = cacheList.splice(cacheList.length - (max_cathe * 2), max_cathe * 2)
+    if(state.preset.count <= MAX_COUNT && !state.isReset) {
+      if (!state.preset.maintenance) {
+        const player = preset.player.filter(item => item.key === state.preset.key)[0]
+        const cacheMessage = (message: string) => {
+          if (player.enableCache) {
+            const cacheList = state.preset.cacheList
+            cacheList.push(message)
+            const max_cathe = 3 // 缓存最大对话次数
+            if (cacheList.length > max_cathe * 2) {
+              state.preset.cacheList = cacheList.splice(cacheList.length - (max_cathe * 2), max_cathe * 2)
+            }
           }
         }
-      }
 
-      if (player?.prefix) {
-        const resultMessage = replyMessage(player.prefix, content, sender)
-        cacheMessage(resultMessage)
-        return [ false, resultMessage ]
+        if (player?.prefix) {
+          const resultMessage = replyMessage(player.prefix, content, sender)
+          cacheMessage(resultMessage)
+          return [ false, resultMessage ]
+        }
+        cacheMessage(content)
+        return [ true, content ]
       }
-      cacheMessage(content)
-      return [ true, content ]
     }
     return null
   }
