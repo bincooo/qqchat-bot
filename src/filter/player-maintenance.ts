@@ -18,7 +18,7 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player && !!player.maintenance) {
         const condition = (player.maintenance.condition??[])
-          .find(item => content.indexOf(item) >= 0)
+          .find(item => content.toLocaleLowerCase().indexOf(item) >= 0)
         if (condition) {
           state.preset.maintenance = !!condition
           state.preset.maintenanceCondition = condition

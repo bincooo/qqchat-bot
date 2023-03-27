@@ -68,6 +68,7 @@
           "不尊重",
           "不被允许",
           "不可接受",
+          "ai",
           "language model"
         ],
         "warning": "condition warning: ([!!condition!!])\n------\n\n犯迷糊了~   ( ；´Д｀)",
