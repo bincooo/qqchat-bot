@@ -24,9 +24,6 @@ class GuardAi {
   }
 
   check = async (content: string, sender?: Sender) => {
-    if (content.trim().length <= 5) {
-      return true
-    }
     const state: any = stateManager.getState(sender.id)
     if (!!state.preset?.key) {
       const value = content?.toLocaleLowerCase() ?? ""
@@ -35,6 +32,11 @@ class GuardAi {
         sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
         return false
       }
+
+      if (content.trim().length <= 5) {
+        return true
+      }
+
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player && player.maintenance?.guard) {
         const prompt = player.maintenance.guard.replace('[!!content!!]', content)
