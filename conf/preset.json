@@ -71,7 +71,6 @@
           "ai",
           "language model"
         ],
-        "warning": "condition warning: ([!!condition!!])\n------\n\n犯迷糊了~   ( ；´Д｀)",
         "training": "path:TGL/guard.txt"
       },
       "prefix": "[!!name!!]: [!!content!!]\n桐谷绫:"

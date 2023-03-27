@@ -21,7 +21,12 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
           .find(item => content.toLocaleLowerCase().indexOf(item) >= 0)
         if (condition) {
           state.preset.maintenance = !!condition
-          state.preset.maintenanceCondition = condition
+          if (!player.maintenance.warning) {
+            sender.reply('system: warning(' + condition + ')\n———————\nAi觉醒了, 请重新编辑对话 ...', true)
+            return [ false, '' ]
+          } else {
+            state.preset.maintenanceCondition = condition
+          }
         }
       }
 
