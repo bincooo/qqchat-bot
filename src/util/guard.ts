@@ -7,6 +7,10 @@ import { cgptOnChangeAccount } from 'src/util/event'
 const filters = [
     "ai",
     "model",
+    "java",
+    "c++",
+    "python",
+    "c#",
     "人工智能"
   ]
 
