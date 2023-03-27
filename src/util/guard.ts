@@ -28,8 +28,9 @@ class GuardAi {
         console.log('GuardAi ===== >>>> ', result)
         this.session.parentMessageId = result.messageId
         this.session.conversationId = result.conversationId
-        if (result.response) {
-          return !(result.response.toLocaleLowerCase().includes('yes')) 
+        if (result.response && (result.response.toLocaleLowerCase().includes('yes'))) {
+          sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
+          return false 
         }
       }
     }
