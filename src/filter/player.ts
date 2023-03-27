@@ -82,6 +82,7 @@ export class PlayerFilter extends BaseMessageFilter {
     let hResult = this.presetEnabled(content, sender, state)
     if (hResult) return hResult
 
+    const player =  preset.player?.find(item => item.key === state.preset.key)
     if (!!state.preset?.key) {
       if (player.cycle ?? true) {
         state.preset.count++
@@ -99,7 +100,6 @@ export class PlayerFilter extends BaseMessageFilter {
         state.preset.count = 0
       }
 
-      const player =  preset.player?.find(item => item.key === state.preset.key)
       if (!!player) {
         preset.maintenance = false
         
