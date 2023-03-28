@@ -261,7 +261,7 @@ export class PlayerFilter extends BaseMessageFilter {
 
         const newReply = (val: string) => {
           return async (reply) => {
-            if (player.maintenance.guard) {
+            if (player?.maintenance?.guard) {
               const checkResult = await guardAi.check(content, sender)
               if (!checkResult) {
                 return null
