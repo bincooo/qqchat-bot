@@ -49,7 +49,6 @@
     },
     {
       "key": "桐谷绫",
-      "cycle": false,
       "nottips": true,
       "enableCache": true,
       "training": "path:TGL/default.txt",
