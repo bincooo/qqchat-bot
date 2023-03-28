@@ -68,6 +68,8 @@
           "不被允许",
           "不可接受",
           "ai",
+          "violates",
+          "inappropriate",
           "language model"
         ],
         "training": "path:TGL/guard.txt",
