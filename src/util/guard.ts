@@ -14,6 +14,19 @@ const filters = [
     "人工智能"
   ]
 
+const conditions = [
+    "写",
+    "拟",
+    "编",
+    "公式",
+    "代码",
+    "生成",
+    "扮演",
+    "计算",
+    "模仿"
+  ]
+
+
 class GuardAi {
 
   protected session: {
@@ -30,12 +43,6 @@ class GuardAi {
   check = async (content: string, sender?: Sender) => {
     const state: any = stateManager.getState(sender.id)
     if (!!state.preset?.key) {
-      const value = content?.toLocaleLowerCase() ?? ""
-      const condition = filters.find(item => value.includes(item))
-      if (condition) {
-        sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
-        return false
-      }
 
       if (content.trim().length <= 5) {
         return true
@@ -43,6 +50,19 @@ class GuardAi {
 
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player && player.maintenance?.guard) {
+
+        const value = content?.toLocaleLowerCase() ?? ""
+        const findRes = filters.find(item => value.includes(item))
+        if (findRes) {
+          sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
+          return false
+        }
+
+        const findRes1 = conditions.find(item => value.includes(item))
+        if (!findRes1) {
+          return true
+        }
+
         const prompt = player.maintenance.guard.replace('[!!content!!]', content)
         const result = await state.chatApi.sendMessage(prompt, { ...this.session })
         console.log('GuardAi ===== >>>> ', result)
