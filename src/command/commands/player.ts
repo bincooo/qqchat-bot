@@ -21,13 +21,16 @@ class PlayerCommand extends BaseCommand {
     switch (params[0]) {
       case 'help':
         sender.reply(
-          [
-            'Used:\n开启 [名称]\n例子: 开启 喵小爱\n',
-            ...buildHelpMessage()
-          ].join('\n'), false)
+          {
+            type: 'Plain',
+            value: [
+              'Used:\n开启 [名称]\n例子: 开启 喵小爱\n',
+              ...buildHelpMessage()
+            ].join('\n')
+          }, false)
         break
       default:
-        sender.reply(this.helpDoc, true)
+        sender.reply([ { type: 'Plain', value: this.helpDoc } ], true)
         break
     }
   }

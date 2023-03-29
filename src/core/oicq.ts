@@ -233,7 +233,6 @@ class OicqImpl extends types.TalkWrapper {
    * 回复消息
    */
   async reply(e: any, chain: TalkChain[], quote?: boolean = false): [boolean, any] {
-    // console.log('chain', chain)
     const content = chain.map(it => {
       switch(it.type) {
       case 'Plain':

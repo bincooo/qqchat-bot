@@ -53,25 +53,18 @@ class GlobalStateManager {
   }
 
   async recallLoading(uid: number | string) {
-    let identity
+    let target
     const state = this.getState(uid)
     do {
-      identity = state.loading?.shift()
-      if(identity) {
+      target = state.loading?.shift()
+      if(target) {
         try {
-          switch(config.type) {
-            case "mirai":
-              await getClient()?.api.recall(identity)
-              break
-            default:
-              await getClient()?.deleteMsg(identity)
-              break
-          }
+          await getClient().recall(target)
         } catch(err) {
           console.log('recall loading error:', err)
         }
       }
-    } while(!!identity)
+    } while(!!target)
   }
 
   sendLoading(

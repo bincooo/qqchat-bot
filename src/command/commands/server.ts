@@ -39,33 +39,30 @@ class ServerCommand extends BaseCommand {
       case 'draw':
       case 'draw:on':
         config.api.betterPic = true
-        sender.reply('已开启画质增强~')
+        sender.reply([ { type: 'Plain', value: '已开启画质增强~' } ])
         break
       case 'draw:off':
         config.api.betterPic = false
-        sender.reply('已关闭画质增强~')
+        sender.reply([ { type: 'Plain', value: '已关闭画质增强~' } ])
         break
       case 'debug':
       case 'debug:on':
         config.debug = true
-        sender.reply('已开启调试模式~')
+        sender.reply([ { type: 'Plain', value: '已开启调试模式~' } ])
         break
       case 'debug:off':
         config.debug = false
-        sender.reply('已关闭调试模式~')
+        sender.reply([ { type: 'Plain', value: '已关闭调试模式~' } ])
         break
       case 'load:preset':
         const presetPath = path.join(process.cwd(), '/conf/preset.json')
         if (existsConfig(presetPath)) {
-          // const presetConfig = await loadConfig(presetPath)
-          // Object.assign(preset, presetConfig)
           await loadPresets(presetPath)
-          sender.reply('加载预设完成~')
-        }
-        else sender.reply('加载预设失败~')
+          sender.reply([ { type: 'Plain', value: '加载预设完成~' } ])
+        } else sender.reply([ { type: 'Plain', value: '加载预设失败~' } ])
         break
       default:
-        sender.reply(this.helpDoc, true)
+        sender.reply([ { type: 'Plain', value: this.helpDoc } ], true)
         break
     }
   }

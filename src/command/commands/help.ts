@@ -36,7 +36,7 @@ class HelpCommand extends BaseCommand {
   execute (sender: Sender, params: string[]) {
     const replyMessage = buildHelpMessage(sender.isAdmin)
     // sender.reply(segment.xml(replyMessage))
-    sender.reply(replyMessage)
+    sender.reply([ { type: 'Plain', value: replyMessage } ], true)
   }
 }
 

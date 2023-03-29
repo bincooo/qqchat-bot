@@ -29,31 +29,31 @@ class CgptCommand extends BaseCommand {
     switch (params[0]) {
       case 'tts':
       case 'tts:on':
-        sender.reply('已开启语音模式 ~', false)
+        sender.reply([ { type: 'Plain', value: '已开启语音模式 ~' } ], true)
         state.tts = true
         break
       case 'tts:off':
-        sender.reply('已关闭语音模式 ~', false)
+        sender.reply([ { type: 'Plain', value: '已关闭语音模式 ~' } ], true)
         state.tts = false
         break
       case 'tts:lang':
         const key = params[1]??'none'
         const value = lang[key]
         if (!value) {
-          sender.reply('语音类型不存在 ~\n' + this.langDoc(), false)
+          sender.reply([ { type: 'Plain', value: '语音类型不存在 ~\n' + this.langDoc() } ], true)
           break
         }
         const split = value.split(':')
         const emptyToUndef = (tex: string) => {
           return (!!tex) ? tex : undefined
         }
-        sender.reply('已切换' + split[0] + '语音 ~', false)
+        sender.reply([ { type: 'Plain', value: '已切换' + split[0] + '语音 ~' } ], true)
         state.lang = emptyToUndef(split[1])??'zh-CN-XiaoyiNeural'
         state.sname = emptyToUndef(split[2])??'general'
         state.pitch = parseInt(emptyToUndef(split[3])??'0')
         break
       default:
-        sender.reply(this.helpDoc, true)
+        sender.reply([ { type: 'Plain', value: this.helpDoc } ], true)
         break
     }
   }

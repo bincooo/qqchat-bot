@@ -41,7 +41,7 @@ export class Sender {
   }
 
   async reply(content: (TalkChain[] | string), quote?: boolean): [boolean, any] {
-    return getClient().reply(this._event, (typeof content == 'string') ? [{ type: 'Plan', text: content }] : content, quote)
+    return getClient().reply(this._event, (typeof content == 'string') ? [{ type: 'Plain', value: content }] : content, quote)
   }
 
   async recall(target: any): any {

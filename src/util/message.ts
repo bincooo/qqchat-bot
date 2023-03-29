@@ -129,7 +129,7 @@ export const onMessage = async (data: any, sender: Sender) => {
           console.log("发送QQ消息发生错误", err)
         }
       }
-      
+
     }
   }
 }

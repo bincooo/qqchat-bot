@@ -1,13 +1,15 @@
-import { ChatGPTUnofficialProxyAPI, ChatResponse } from 'chatgpt'
+import { ChatGPTUnofficialProxyAPI, ChatMessage } from 'chatgpt'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
-import { BaseMessageHandler } from 'src/types'
+import { BaseMessageHandler, type QueueReply } from 'src/types'
 import logger from 'src/util/log'
 import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
-import { clashSetting } from 'src/util/request'
+import FunctionManager from 'src/util/queue'
 import { cgptEmitResetSession, cgptEmitChangeAccount } from 'src/util/event'
+import delay from 'delay'
+
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 5
 let countNotSigned = 0
@@ -92,6 +94,10 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   protected _emailPool: EmailPool
 
+  protected _conversationMapper : Map<number, string> = new Map()
+
+  protected _manager: FunctionManager = new FunctionManager()
+
   async load () {
     if (!config.api.enable) return
     await this.initChatGPT()
@@ -109,6 +115,24 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async reboot () {
     this.load()
+  }
+
+  push(uid: number, option: {
+    conversationId?: string
+    parentMessageId?: string
+  }) {
+    this._conversationMapper.set(uid, option)
+  }
+
+  delete(uid: number) {
+    this._conversationMapper.delete(uid)
+  }
+
+  get(uid: number): {
+    conversationId?: string
+    parentMessageId?: string
+  } {
+    return this._conversationMapper.get(uid)
   }
 
   handle = async (sender: Sender) => {
@@ -139,27 +163,56 @@ export class ChatGPTHandler extends BaseMessageHandler {
       const state: any = stateManager.getState(sender.id)
       state.chatApi = this._api
 
-      console.log('sendMessage', message)
-      const result: ChatResponse = await this._api.sendMessage(message, {
-        timeoutMs: MESSAGE_TIMEOUT_MS,
-        onProgress: async (res) => {
-          if (res.error) {
-            await this.messageErrorHandler(sender, res.error)
-            return
-          }
-          await onMessage(res, sender)
-        }
-      })
-      await onMessage({
-        ...result,
-        text: '[DONE]'
-      }, sender)
+      // console.log('sendMessage', message)
+      this._manager.push(this.buildExecutor(sender, message, async (res: ChatMessage) => onMessage(res, sender)))
     } catch (err) {
       await this.messageErrorHandler(sender, err)
     }
     
     this._iswait = false
     return false
+  }
+
+  buildExecutor(sender: Sender, message: QueueReply, onProgress: (r: ChatMessage) => Promise<void>) {
+    return async (err?: Error) => {
+      if (err) {
+        this.messageErrorHandler(sender, err)
+        return
+      }
+
+      const reply = async (
+        str: string,
+        onProgress?: (partialResponse: ChatMessage) => Promise<void>,
+        timeoutMs: number = 500
+      ): Promise<ChatMessage> => {
+        const result = await this._api.sendMessage(str, {
+          ... this.get(sender.id),
+          onProgress
+        })
+        if (result.error) {
+          return result
+        }
+        this.push(sender.id, {
+          conversationId: result.conversationId,
+          parentMessageId: result.id
+        })
+        if (onProgress) {
+          await onProgress(result)
+        }
+        await delay(timeoutMs)
+        return result
+      }
+      let result
+      if (typeof message === 'string') {
+        result = await reply(message, onProgress)
+      } else {
+        result = await message.call(undefined, reply, onProgress)
+      }
+      await onProgress({
+        ...result,
+        text: '[DONE]'
+      })
+    }
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
@@ -213,33 +266,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     } else {
       sender.reply(`发生错误\n${err} ${append}`)
-    }
-  }
-
-  async clash() {
-    if (config.clash?.enable) {
-      countNotSigned++
-      let { http, list, index } = config.clash
-      if (!http) {
-        throw new Error('please edit config.json: [ clash.http ] !')
-      }
-      if (!list || list.length <= 0) {
-        throw new Error('please edit config.json: [ clash.list ] !')
-      }
-
-      if (countNotSigned < 2) {
-        return
-      }
-
-      if (!index || index >= list.length) {
-        index = 0
-        config.clash.index = 0
-      }
-      const name = list[index]
-      console.log('clash will be change to name: [' + name + '].')
-      await clashSetting(name)
-      countNotSigned = 0
-
     }
   }
 }

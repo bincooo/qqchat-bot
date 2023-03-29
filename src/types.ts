@@ -30,6 +30,13 @@ export abstract class BaseMessageHandler {
   handle: MessageHandler
 }
 
+/**
+ * 队列执行类型
+ */
+export type QueueReply =
+  | string
+  | ((reply: (s: string, onProgress: (partialResponse: ChatMessage) => Promise<void>) => Promise<ChatResponse>) => Promise<string>)
+
 
 // return [ boolean, (string | QueueReply)]
 // boolean: 是否继续拦截 true 是 false 否
