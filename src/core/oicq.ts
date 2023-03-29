@@ -1,7 +1,7 @@
 import { Client, createClient, segment } from 'oicq'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
-import { BaseMessageHandler, MessageEvent, MessageHandler } from 'src/types'
+import type * as types from 'src/types'
 import logger from 'src/util/log'
 import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
@@ -19,15 +19,15 @@ const dats = () => {
     .getTime()
 }
 
-async function handleMessage (e: MessageEvent) {
+async function handleMessage (e) {
   const sender = new Sender(e)
   try {
     for (let i = 0; i < messageHandler.length; i++) {
       let isStop = false
       if (messageHandler[i] instanceof BaseMessageHandler) {
-        isStop = !await (messageHandler[i] as BaseMessageHandler).handle(sender)
+        isStop = !await (messageHandler[i] as types.BaseMessageHandler).handle(sender)
       } else if (typeof messageHandler[i] === 'function') {
-        isStop = !await (messageHandler[i] as MessageHandler)(sender)
+        isStop = !await (messageHandler[i] as types.MessageHandler)(sender)
       }
       if (isStop) {
         return
@@ -43,7 +43,7 @@ export function getClient(): null | Client {
   return client
 }
 
-export async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessageHandler>) {
+async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessageHandler>): Promise<Client> {
   messageHandler = initMessageHandler ?? messageHandler ?? []
   await client?.logout()
   client = createClient(config.botQQ, {
@@ -186,3 +186,68 @@ function loginHelper(client) {
     break
   }
 }
+
+
+class OicqImpl extends types.TalkWrapper {
+  protected _oicq?: Client
+  /**
+   * 初始化处理器
+   */
+  async initHandlers(initMessageHandler?: (types.MessageHandler | types.BaseMessageHandler)[]): void {
+    this._oicq = await initOicq(initMessageHandler)
+  }
+
+  /**
+   * 基础信息
+   */
+  information(e: any): Record<string, (number | string)> & {
+    textMessage: string
+    nickname: string
+    isAdmin: boolean
+    group?: string
+  } {
+    const result = {
+      nickname: '',
+      isAdmin: false
+    }
+    result.group = e.group
+    result.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
+    if (!e.atme && !!config.botNickname) {
+      result.textMessage = result.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
+    }
+    if (!(e instanceof GuildMessage)) {
+      result.nickname = e.sender?.nickname || e.nickname
+      result.isAdmin = this.userId === Number(config.adminQQ)
+    }
+    return result
+  }
+
+  /**
+   * 会话Id
+   */
+  sessionId(e: any): number {
+    return e.group?.group_id ?? e.userId
+  }
+
+  /**
+   * 回复消息
+   */
+  async reply(e: any, chain: TalkChain[], quote?: boolean = false): [boolean, any] {
+    // TODO ----
+    const result = await e.reply(chain, quote)
+    return [ true, result ]
+  }
+
+  /**
+   * 撤回消息
+   */
+  async recall(target: any): boolean {
+    if (config.debug)
+      console.log('sender recall message: ', target)
+    this._oicq.deleteMsg(target)
+    return true
+  }
+}
+
+export default new OicqImpl()
+

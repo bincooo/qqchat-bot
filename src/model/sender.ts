@@ -1,5 +1,4 @@
 import { config } from 'src/config'
-import { MessageEvent, MiraiBasicEvent } from 'src/types'
 import { GuildMessage } from 'oicq-guild/lib/message'
 import { md2jpg, genTemplate } from 'src/util/browser'
 import delay from 'delay'
@@ -17,99 +16,35 @@ export class Sender {
    */
   public textMessage: string
 
-  protected _eventObject: MessageEvent
-
-  public userId: number
+  protected _event: any
 
   public nickname: string
 
   public group?: any
 
-  public isMirai: boolean = false
 
-  constructor (e: MessageEvent) {
-    this.isMirai = !!e.mirai
-    // mirai
-    if (config.type === 'mirai') {
-      this._eventObject = e
-      this.textMessage = e.messageChain?.filter(item => item.type === 'Plain').map(item => item.text).join().trim()
-      this.group = (e.type === 'GroupMessage' ? e.sender.group : undefined)
-      if (!(e.isAt && e.isAt()) && !!config.botNickname) {
-        this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
-      }
-      this.userId = e.sender?.id??e.member.id
-      this.nickname = e.sender?.memberName??e.sender?.nickname
-      this.isAdmin = this.userId === Number(config.adminQQ)
-      return
-    }
-
-    // oicq
-    this._eventObject = e
-    this.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
-    this.group = e.group
-    if (!e.atme && !!config.botNickname) {
-      this.textMessage = this.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
-    }
-    if (!(e instanceof GuildMessage)) {
-      this.userId = e.sender?.user_id || e.user_id
-      this.nickname = e.sender?.nickname || e.nickname
-      this.isAdmin = this.userId === Number(config.adminQQ)
-    }
+  constructor (e: any) {
+    const info = getClient().information(e)
+    this.isAdmin = info.isAdmin
+    this.group = this.info.group
+    this.nickname = info.nickname
+    this.textMessage = info.textMessage
+    this._event = e
   }
 
-  getEventObject(): MessageEvent {
-    return this._eventObject
+  getEventObject(): any {
+    return this._event
   }
 
   get id(): number {
-    let result = undefined
-    switch (config.type) {
-      case "mirai":
-        result = this.group ? this.group.id : this.userId
-        break
-      default:
-        result = this.group ? this.group.group_id : this.userId
-        break
-    }
-    return result
+    return getClient().sessionId(this._event)
   }
 
-  async reply(content: (Sendable | (any)[]), quote?: boolean): any {
-    let result = await this._eventObject.reply(content, quote)
-    if (config.debug) {
-      console.log('sender reply result: ', result)
-    }
-    let count = 3
-    while ((count > 0 && result.code == 500)) {
-      await delay(3000)
-      count--
-      result = await this._eventObject.reply(content, quote)
-      if (config.debug) {
-        console.log('reply result code[500], retry ' + (3 - count) + ' ...', content, result)
-      }
-      if (result.code == 0) {
-        break
-      }
-    }
-    if(result.code == 500) {
-      console.log('retry fail, use `md2jpg` method: ',
-        this._eventObject.messageChain)
-      await delay(3000)
-      const b64 = await md2jpg((await genTemplate(this.nickname, content)))
-      result = await this._eventObject.reply([{ type: 'Image', base64: b64 }])
-    }
-    return result
+  async reply(content: (TalkChain[] | string), quote?: boolean): [boolean, any] {
+    return getClient().reply((typeof content == 'string') ? [{ type: 'Plan', text: content }] : content, quote)
   }
 
-  async recallMsg(identity: any): any {
-    if (config.debug) {
-      console.log('sender recall message: ', identity)
-    }
-    switch(config.type) {
-      case "mirai":
-        return await getClient()?.api.recall(identity)
-      default:
-        return await getClient()?.deleteMsg(identity)
-    }
+  async recall(target: any): any {
+    return await getClient().recall(target)
   }
 }

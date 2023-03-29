@@ -1,39 +1,12 @@
-import type { DiscussMessageEvent, GroupMessageEvent, PrivateMessageEvent } from 'oicq'
-import type { GuildMessage } from 'oicq-guild/lib/message'
 import { QueueReply } from 'cgpt'
 import { Sender } from './model/sender'
+//https://www.typescriptlang.org/play?#code
+
 
 export interface envConfig {
   adminQQ?: string
   qq: string
   token: string
-}
-
-export type MessageEvent = PrivateMessageEvent 
-  | GroupMessageEvent 
-  | DiscussMessageEvent 
-  | GuildMessage
-  | MiraiBasicEvent
-
-
-export type MiraiBasicEvent = {
-  type: string
-  messageChain: (any)[]
-  sender: {
-    id: number
-    memberName: string
-    specialTitle: string
-    permission: string
-    joinTimestamp: number
-    lastSpeakTimestamp: number
-    muteTimeRemaining: number
-    group: any
-  }
-  plain: string
-  isAt: ((qq?: number) => boolean)
-  group: ((...groupIds: number[]) => Boolean)
-  friend: ((...qqs: number[]) => Boolean)
-  reply: ((msgChain: string | (any)[], quote?: boolean) => Promise<any>)
 }
 
 
@@ -71,3 +44,42 @@ export abstract class BaseMessageFilter {
 
   handle: MessageFilter
 }
+
+
+export type TalkChain = { type: string } & Record<string, (number | string)>
+
+export abstract class TalkWrapper {
+  /**
+   * 初始化处理器
+   */
+  abstract async initHandlers(initMessageHandler?: (types.MessageHandler | types.BaseMessageHandler)[]): void
+
+  /**
+   * 基础信息
+   */
+  abstract information(e: any): Record<string, (number | string)> & {
+    textMessage: string
+    nickname: string
+    isAdmin: boolean
+    group?: string
+  }
+
+  /**
+   * 会话Id
+   */
+  abstract sessionId(e: any): number
+
+  /**
+   * 回复消息
+   */
+  abstract async reply(e: any, chain: TalkChain[], quote?: boolean = false): [boolean, any]
+
+  /**
+   * 撤回消息
+   */
+  abstract async recall(target: any): boolean
+
+}
+
+
+

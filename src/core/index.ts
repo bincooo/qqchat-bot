@@ -1,12 +1,13 @@
 import { config } from 'src/config'
-import { getClient as getOicq } from './oicq'
-import { getClient as getMirai } from './mirai'
+import type { TalkWrapper } from 'src/types'
+import oicq from './oicq'
+import mirai from './mirai'
 
-export default function getClient() {
+export default function getClient(): TalkWrapper {
   switch(config.type) {
     case "mirai":
-      return getMirai()
+      return mirai
     default:
-      return getOicq()
+      return oicq
   }
 }
