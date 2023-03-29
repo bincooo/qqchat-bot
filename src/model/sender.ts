@@ -26,7 +26,7 @@ export class Sender {
   constructor (e: any) {
     const info = getClient().information(e)
     this.isAdmin = info.isAdmin
-    this.group = this.info.group
+    this.group = info.group
     this.nickname = info.nickname
     this.textMessage = info.textMessage
     this._event = e
@@ -41,7 +41,7 @@ export class Sender {
   }
 
   async reply(content: (TalkChain[] | string), quote?: boolean): [boolean, any] {
-    return getClient().reply((typeof content == 'string') ? [{ type: 'Plan', text: content }] : content, quote)
+    return getClient().reply(this._event, (typeof content == 'string') ? [{ type: 'Plan', text: content }] : content, quote)
   }
 
   async recall(target: any): any {

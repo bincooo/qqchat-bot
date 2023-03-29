@@ -52,7 +52,7 @@ export abstract class TalkWrapper {
   /**
    * 初始化处理器
    */
-  abstract async initHandlers(initMessageHandler?: (types.MessageHandler | types.BaseMessageHandler)[]): void
+  abstract async initHandlers(initMessageHandler?: (MessageHandler | BaseMessageHandler)[]): void
 
   /**
    * 基础信息

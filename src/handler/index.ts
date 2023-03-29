@@ -1,4 +1,3 @@
-import { ChatGPTOfficialHandler } from './chatgpt-official'
 import { ChatGPTHandler } from './chatgpt'
 import { commandHandler } from './command'
 import { emptyHandler } from './empty'
@@ -11,8 +10,7 @@ const messageHandlers = [
   emptyHandler,
   commandHandler,
   new NovelAiHandler(),
-  ////////////////new ChatGPTHandler(),
-  new ChatGPTOfficialHandler()
+  new ChatGPTHandler(),
 ]
 
 export default messageHandlers

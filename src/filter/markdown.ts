@@ -1,7 +1,6 @@
 import { BaseMessageFilter } from 'src/types'
 import { Sender } from 'src/model/sender'
-import { segment } from 'oicq'
-import { md2jpg, genTemplate } from 'src/util/browser'
+import { md2jpg } from 'src/util/request'
 import { config } from 'src/config'
 
 
@@ -142,17 +141,10 @@ export class MdFilter extends BaseMessageFilter {
       content = content.substr(0, content.length - 3)
     }
     try {
-      const b64 = await md2jpg((await genTemplate(sender.nickname, content)))
-      switch (config.type) {
-        case "mirai":
-          sender.reply([{ type: 'Image', base64: b64 }], true)
-          break
-        default:
-          sender.reply(segment.image('base64://' + b64), true)
-          break
-      }
+      const base64 = await md2jpg(sender.nickname, content)
+      sender.reply([{ type: 'Image', value: base64 }], true)
     } catch(error: Error) {
-      sender.reply('——————————————\nError: 4002\n' + error + '\n\n生成markdown图片失败辣 ...', true)
+      sender.reply([{ type: 'Plain', value: '——————————————\nError: 4002\n' + error + '\n\n生成markdown图片失败辣 ...' }], true)
     }
   }
 }

@@ -1,4 +1,4 @@
-import { ChatGPTAPIBrowser, ChatResponse } from 'cgpt'
+import { ChatGPTUnofficialProxyAPI, ChatResponse } from 'chatgpt'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
@@ -101,25 +101,10 @@ export class ChatGPTHandler extends BaseMessageHandler {
     if (!config.api.enable) return
     const { email, password, pingMs, slaves } = config.api
     const { proxyServer, browserPath } = config
-    this._emailPool = new EmailPool(
-      {
-        email,
-        password,
-        proxyServer,
-        heartbeatMs: pingMs,
-        executablePath: browserPath
-      },
-      [{ email, password }, ...slaves ])
-    this._api = new ChatGPTAPIBrowser(this._emailPool.getOpts())
-    try {
-      await this._api.initSession()
-      console.log('chatgpt - execute initChatGPT method success.')
-    } catch(err) {
-      logger.error(err)
-      if (err.message.includes('Failed to authenticate session')) {
-        await this._api.refreshSession()
-      }
-    }
+    this._api = new ChatGPTUnofficialProxyAPI({
+      accessToken: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJhdWVuaHVrdXJhakBvdXRsb29rLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlfSwiaHR0cHM6Ly9hcGkub3BlbmFpLmNvbS9hdXRoIjp7InVzZXJfaWQiOiJ1c2VyLTA2NE5kNEtIZnI1MXRrUjk0ZDlrVU9GViJ9LCJpc3MiOiJodHRwczovL2F1dGgwLm9wZW5haS5jb20vIiwic3ViIjoiYXV0aDB8NjNmM2I0ZjU5OWQ0ZTEyODQ3ZDNjMzdmIiwiYXVkIjpbImh0dHBzOi8vYXBpLm9wZW5haS5jb20vdjEiLCJodHRwczovL29wZW5haS5vcGVuYWkuYXV0aDBhcHAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTY3OTI3OTMzNiwiZXhwIjoxNjgwNDg4OTM2LCJhenAiOiJUZEpJY2JlMTZXb1RIdE45NW55eXdoNUU0eU9vNkl0RyIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgbW9kZWwucmVhZCBtb2RlbC5yZXF1ZXN0IG9yZ2FuaXphdGlvbi5yZWFkIG9mZmxpbmVfYWNjZXNzIn0.aSYz5CWTN17TdfcKYU1mX-QWwjhaDNiJ1VZJm6p2GgCQozeqw-xTc8IDYAaIdoPNs0L5VtyJJnGMozX4mkVSTYuoZFj9noGJAyxhoVMV0I2cuU8SFGKrHYP5DyNOwHqBd4UDk_ivRBjH3dDapWRk7QddGdAjrIEXfpOcSIXkKlS-nZZEHKkptfGmV9BnNZCI5xooyVNZjwys1SfqI45oetZBAKyxKxgOejWIn1qs7fdLc7kpZByT4qx5Twcav-3uGpFiAcIGzF57eQJ2HZocIZVPglZXvasvG1HL4VB1UgTOr49SFHz_jPmH3hx1Gp0wpxK3gzG9j4hieTE19197wQ'
+    })
+    console.log('chatgpt - execute initChatGPT method success.')
   }
 
   async reboot () {
@@ -154,17 +139,21 @@ export class ChatGPTHandler extends BaseMessageHandler {
       const state: any = stateManager.getState(sender.id)
       state.chatApi = this._api
 
-      await this._api.queueSendMessage(message, {
+      console.log('sendMessage', message)
+      const result: ChatResponse = await this._api.sendMessage(message, {
         timeoutMs: MESSAGE_TIMEOUT_MS,
         onProgress: async (res) => {
           if (res.error) {
             await this.messageErrorHandler(sender, res.error)
             return
           }
-          // count429 = 0
           await onMessage(res, sender)
         }
-      }, this._emailPool.getId(sender.id))
+      })
+      await onMessage({
+        ...result,
+        text: '[DONE]'
+      }, sender)
     } catch (err) {
       await this.messageErrorHandler(sender, err)
     }
@@ -186,7 +175,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
     const append = !currentTimeIsBusy() ? ""
       : "\n——————\n\n晚上20:00 ~ 凌晨06:00为国外高峰期, 尽量避开使用哦 ~"
 
-    // if (err instanceof ChatGPTError) {
     if (err.message === 'ChatGPT invalid session token') {
       sender.reply('token 无效' + append)
 

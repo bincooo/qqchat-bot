@@ -7,12 +7,18 @@ async function patch () {
   const path = './src/handler/index.ts'
   const handlerContent = (await readFile(path)).toString().replace('new ChatGPTHandler()', '//new ChatGPTHandler()')
   await writeFile(path, handlerContent)
+  const ffmpeg = 'node_modules/fluent-ffmpeg/index.js'
+  const ffmpegContent = `module.exports = ${process.env.FLUENTFFMPEG_COV ? "require('./lib-cov/fluent-ffmpeg');" : "require('./lib/fluent-ffmpeg');" }`
+  await writeFile(ffmpeg, ffmpegContent)
   console.log('patch...')
 }
 async function unpatch () {
   const path = './src/handler/index.ts'
   const handlerContent = (await readFile(path)).toString().replace('//new ChatGPTHandler()', 'new ChatGPTHandler()')
   await writeFile(path, handlerContent)
+  const ffmpeg = 'node_modules/fluent-ffmpeg/index.js'
+  const ffmpegContent = `module.exports = process.env.FLUENTFFMPEG_COV ? require('./lib-cov/fluent-ffmpeg') : require('./lib/fluent-ffmpeg');`
+  await writeFile(ffmpeg, ffmpegContent)
   console.log('unpatch...')
 }
 

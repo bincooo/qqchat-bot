@@ -5,7 +5,7 @@ import type { MiraiApiHttpSetting, MessageType } from 'mirai-ts'
 import logger from 'src/util/log'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
-import type * as types from 'src/types'
+import * as types from 'src/types'
 
 
 let client: Mirai
@@ -21,7 +21,7 @@ async function handleMessage (e) {
   try {
     for (let i = 0; i < messageHandler.length; i++) {
       let isStop = false
-      if (messageHandler[i] instanceof BaseMessageHandler) {
+      if (messageHandler[i] instanceof types.BaseMessageHandler) {
         isStop = !await (messageHandler[i] as types.BaseMessageHandler).handle(sender)
       } else if (typeof messageHandler[i] === 'function') {
         isStop = !await (messageHandler[i] as types.MessageHandler)(sender)
@@ -95,8 +95,8 @@ class MiraiImpl extends types.TalkWrapper {
   } & Record<string, (number | string)> {
     const result = {
     }
-    result.isAdmin = this.userId == config.adminQQ
     result.nickname = e.sender?.nickname
+    result.isAdmin = e.sender?.id == config.adminQQ
     result.group = (e.type === 'GroupMessage' ? e.sender.group : undefined)
     result.textMessage = e.messageChain?.filter(item => item.type === 'Plain').map(item => item.text).join().trim()??''
     if (!(e.isAt && e.isAt()) && !!config.botNickname) {
@@ -116,26 +116,28 @@ class MiraiImpl extends types.TalkWrapper {
    * 回复消息
    */
   async reply(e: any, chain: TalkChain[], quote?: boolean = false): [ boolean, any ] {
-    let result = await e.reply(chain, quote)
+    const content = chain.map(it => {
+      switch(it.type) {
+      case 'Plain':
+        return { type: 'Plain', text: it.value }
+      case 'Image':
+        return { type: 'Image', base64: it.value }
+      case 'Voice':
+        return { type: 'Voice', base64: it.value }
+      default:
+        throw new Error('oicq reply error: unknown type `' + it.type + '`.')
+      }
+    })
+    let result = await e.reply(content, quote)
     let count = 3
     while (count > 0 && result.code == 500) {
       count --
       await delay(5000)
-      result = await e.reply(chain, quote)
+      result = await e.reply(content, quote)
       if (config.debug)
         console.log('reply result code[500], retry ' + (3 - count) + ' ...', chain, result)
       if (result.code == 0)
         break
-    }
-    // 依旧失败则尝试发送图片的形式
-    if(result.code == 500) {
-      console.log(
-        'retry fail, use `md2jpg` method: ',
-        this._eventObject.messageChain
-      )
-      await delay(5000)
-      const base64 = await md2jpg((await genTemplate(e.sender?.nickname, chain)))
-      result = await e.reply([{ type: 'Image', base64 }])
     }
     return [ (result.code == 0), result ]
   }

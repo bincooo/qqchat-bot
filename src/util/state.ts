@@ -113,22 +113,14 @@ class GlobalStateManager {
           return
         }
 
-        let result
+        const [ok, result] = await sender.reply([{ type: 'Image', value: this._gifB64 }])
+        await this.recallLoading(sender.id)
+        if (!ok) return
         switch(config.type) {
           case "mirai":
-            result = await sender.reply([{
-              type: 'Image',
-              base64: this._gifB64
-            }])
-            await this.recallLoading(sender.id)
-            state.loading.push({
-              messageId: result.messageId,
-              target: sender.id
-            })
+            state.loading.push({ messageId: result.messageId, target: sender.id })
             break
           default:
-            result = await sender.reply(this._gif)
-            await this.recallLoading(sender.id)
             state.loading.push(result.message_id)
             break
         }

@@ -1,6 +1,6 @@
 import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
-import { drawing, mccnProDraw, mccnProReboot } from 'src/util/request'
+import { drawing } from 'src/util/request'
 import { filterTokens } from 'src/util/message'
 import { segment } from 'oicq'
 import retry from 'src/util/retry'
@@ -75,21 +75,11 @@ export class NovelAiHandler extends BaseMessageHandler {
         }
       } catch(err) {
         sender.reply('——————————————\nError: 4001\n作画失败了, CPU都淦冒烟啦 ~', true)
-        await this.reset()
       }
       return false
     }
 
     return true
-  }
-
-  async reset() {
-    try {
-      this._uuid = genUid()
-      await mccnProReboot()
-    } catch(err) {
-      console.error(err)
-    }
   }
 
 }

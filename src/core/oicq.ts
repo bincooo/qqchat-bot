@@ -1,7 +1,8 @@
 import { Client, createClient, segment } from 'oicq'
+import { GuildMessage } from 'oicq-guild/lib/message'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
-import type * as types from 'src/types'
+import * as types from 'src/types'
 import logger from 'src/util/log'
 import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
@@ -10,7 +11,7 @@ import chalk from 'chalk'
 import fs from 'fs'
 
 let client: Client
-let messageHandler: Array<MessageHandler | BaseMessageHandler>
+let messageHandler: Array<types.MessageHandler | types.BaseMessageHandler>
 let timer: NodeJS.Timer | null = null
 let loginType: number = 2
 
@@ -24,7 +25,7 @@ async function handleMessage (e) {
   try {
     for (let i = 0; i < messageHandler.length; i++) {
       let isStop = false
-      if (messageHandler[i] instanceof BaseMessageHandler) {
+      if (messageHandler[i] instanceof types.BaseMessageHandler) {
         isStop = !await (messageHandler[i] as types.BaseMessageHandler).handle(sender)
       } else if (typeof messageHandler[i] === 'function') {
         isStop = !await (messageHandler[i] as types.MessageHandler)(sender)
@@ -79,7 +80,7 @@ async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessage
         try {
           const e: MessageEvent = config.groupList[key]
           if (config.debug) {
-            console.log('ping group: ' + (e.group_name??e.group.group_name))
+            console.log('ping group: ' + (e.group_name??e.group?.group_name))
           }
           const { message_id } = await e?.reply('Hi~')
           await delay(500)
@@ -187,7 +188,6 @@ function loginHelper(client) {
   }
 }
 
-
 class OicqImpl extends types.TalkWrapper {
   protected _oicq?: Client
   /**
@@ -233,8 +233,20 @@ class OicqImpl extends types.TalkWrapper {
    * 回复消息
    */
   async reply(e: any, chain: TalkChain[], quote?: boolean = false): [boolean, any] {
-    // TODO ----
-    const result = await e.reply(chain, quote)
+    // console.log('chain', chain)
+    const content = chain.map(it => {
+      switch(it.type) {
+      case 'Plain':
+        return segment.text(it.value)
+      case 'Image':
+        return segment.image('base64://' + it.value)
+      case 'Voice':
+        return segment.record('base64://' + it.value)
+      default:
+        throw new Error('oicq reply error: unknown type `' + it.type + '`.')
+      }
+    })
+    const result = await e.reply(content, quote)
     return [ true, result ]
   }
 

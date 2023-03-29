@@ -56,7 +56,7 @@ export class MessageParser {
       if (typeof(condit) == 'string') {
         const len = (condit.match(/([0-9]+):.+/)??[])[1]
         condit = !len ? condit : condit.substr(len.length + 1)
-        index = data.response.lastIndexOf(condit)
+        index = data.text.lastIndexOf(condit)
         if (index > 0) {
           index += condit.length
           if (len) {
@@ -66,12 +66,12 @@ export class MessageParser {
           } else break
         }
       } else {
-        index = condit(data.response, cached.index)
+        index = condit(data.text, cached.index)
         if (index == -1 || index > 0) break
       }
     }
 
-    const IsDONE = (data.response === '[DONE]')
+    const IsDONE = (data.text === '[DONE]')
     const assert = (c: Cached) => {
       const _index = IsDONE ? c.message?.length : index
       return (c.index !== c.old?.index && c.index < _index)
@@ -82,9 +82,9 @@ export class MessageParser {
       return assert(cached) ? cached.message.substr(cached.index) : null
     }
 
-    cached.message = data.response
+    cached.message = data.text
     if (index > 0 && assert(cached)) {
-      const message = data.response.substr(cached.index, index - cached.index)
+      const message = data.text.substr(cached.index, index - cached.index)
       const old = {
         index: cached.index,
         fragment: message

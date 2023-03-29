@@ -70,11 +70,11 @@ function initParser() {
 export const onMessage = async (data: any, sender: Sender) => {
   initParser()
 
-  if (data.response) {
+  if (data.text) {
     const filters = messageHandler.filter(item => item.type === 1)
-    //console.log(index, data.response)
+    //console.log(index, data.text)
     let message: string | null = globalParser.resolve(data)
-    const isDone = () => (data.response === '[DONE]')
+    const isDone = () => (data.text === '[DONE]')
     
     if (!!message || isDone()) {
       message = await _filterTokens(message??'', filters, sender, isDone())
@@ -109,16 +109,9 @@ export const onMessage = async (data: any, sender: Sender) => {
             3,
             300)
 
-            switch (config.type) {
-              case "mirai":
-                const b64 = fs.readFileSync(path)
-                  .toString('base64')
-                await sender.reply([{ type: 'Voice', base64: b64 }], true)
-                break
-              default:
-                await sender.reply(segment.record(path))
-                break
-            }
+           const base64 = fs.readFileSync(path)
+              .toString('base64')
+            await sender.reply([{ type: 'Voice', value: base64 }], true)
           } catch(err) {
             console.log("语音发生错误", err)
             sender.reply(`语音发生错误\n${err.message??err}`)
@@ -126,11 +119,10 @@ export const onMessage = async (data: any, sender: Sender) => {
         }
 
         try {
+          await sender.reply([{ type: 'Plain', value: message }], true)
           if (isDone()) {
-            await sender.reply(message, true)
             await stateManager.recallLoading(sender.id)
           } else {
-            await sender.reply(message, true)
             stateManager.sendLoading(sender)
           }
         } catch(err) {
