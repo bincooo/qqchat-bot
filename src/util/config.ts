@@ -68,7 +68,7 @@ export async function loadPresets(config?: string) {
       const str = (await readFile(basePath + player.maintenance.guard.substr(prefix.length))).toString()
       player.maintenance.guard = str
     }
-    if(player.prefix) {
+    if(player.prefix?.startsWith(prefix)) {
       const str = (await readFile(basePath + player.prefix.substr(prefix.length))).toString()
       player.prefix = str
     }
