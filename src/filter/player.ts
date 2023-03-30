@@ -104,7 +104,7 @@ export class PlayerFilter extends BaseMessageFilter {
         preset.maintenance = false
         
         const result: QueueReply = async (reply, onProgress) => {
-          if (player.maintenance.guard) {
+          if (player.maintenance?.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
               return null
@@ -198,7 +198,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
       if (!!player) {
         
-        if (player.maintenance.warning) {
+        if (player.maintenance?.warning) {
           sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
         }
 
@@ -214,14 +214,14 @@ export class PlayerFilter extends BaseMessageFilter {
         // end //
 
         const result: QueueReply = async (reply, onProgress) => {
-          if (player.maintenance.guard) {
+          if (player.maintenance?.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
               return null
             }
           }
 
-          let resultMessage = player.maintenance.training
+          let resultMessage = player.maintenance?.training
           const cacheList = state.preset.cacheList
           
           if (player.enableCache && resultMessage.includes('[!!cache!!]')) {

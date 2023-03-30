@@ -14,17 +14,17 @@
     "postinstall": "npx patch-package --patch-dir ./.patches"
   },
   "pkg": {
-    "assets": [
-    ],
+    "assets": [],
     "scripts": [
       "build/app.js"
     ],
-    "copy": [{
-      "source": "conf",
-      "destination": "build/conf"
-    }],
-    "targets": [
+    "copy": [
+      {
+        "source": "conf",
+        "destination": "build/conf"
+      }
     ],
+    "targets": [],
     "outputPath": "build"
   },
   "repository": {
@@ -57,6 +57,7 @@
     "inquirer": "^9.1.4",
     "mirai-ts": "^2.4.4",
     "node-fetch": "^3.3.1",
+    "node-schedule": "^2.1.1",
     "oicq": "^2.3.1",
     "oicq-guild": "^0.1.0",
     "pkg": "^5.8.0",

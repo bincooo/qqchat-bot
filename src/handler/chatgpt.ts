@@ -8,6 +8,9 @@ import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
 import FunctionManager from 'src/util/queue'
 import { cgptEmitResetSession, cgptEmitChangeAccount } from 'src/util/event'
+import { openAIAuth } from 'src/util/request'
+import { loadConfig, writeConfig } from 'src/util/config'
+import schedule from 'node-schedule'
 import delay from 'delay'
 
 
@@ -21,68 +24,118 @@ function genUid(): string {
     .toLowerCase()
 }
 
+function dat(): number {
+  return new Date()
+    .getTime()
+}
+
 declare type Email = {
-  uuid?: Map<number, string>,
-  email: string,
+  email: string
   password: string
+  accessToken?: string
+  session?: Map<number, {
+    conversationId?: string
+    parentMessageId?: string
+  }>
 }
 
 class EmailPool {
-  protected _emails: Array<Email>
-  protected _args: any = {}
+  protected _pool: Array<Email>
   protected _currentIndex: number = 0
-  protected _opts: any
 
   constructor(
-    opts: {
-      email: string
-      password: string
-      proxyServer?: string
-      heartbeatMs?: number
-    },
-    emails: Array<Email>
+    pool: Array<Email>
   ) {
-    this._opts = opts
-    this._emails = emails
-    console.log('email pool:', emails)
+
+    this._pool = pool.map(it => {
+      it.session = new Map()
+      return it
+    })
+    console.log('email pool:', pool)
+    this.scheduleJob()
   }
 
-  next(uid: number) {
-    const size = this._emails.length
+  scheduleJob() {
+    schedule.scheduleJob('obtain-accessToken-job', '30 1 1 * * *', async () => {
+      let needSave = false
+      for(let index = 0, length = this._pool.length; index < length; index ++) {
+        const it = this._pool[index]
+        if (!it.expires) {
+          continue
+        }
+
+        if (it.expires < dat()) {
+          const accessToken = await login(it.email, it.password)
+          if (accessToken) {
+            // 存留28天
+            it.expires = dat() + 1000 * 120 * 12 * 28
+            it.accessToken = accessToken
+            needSave = true
+          }
+        }
+      }
+      if (needSave) {
+        saveConfig(this._pool)
+      }
+    })
+  }
+
+  next(): string {
+    const size = this._pool.length
     this._currentIndex ++
-    if (this._currentIndex >= size) {
+    if (this._currentIndex >= size)
       this._currentIndex = 0
-    }
-    return this.getId(uid)
+    return this._pool[this._currentIndex]
   }
 
-  getId(uid: number): string {
-    const account = this._emails[this._currentIndex]
-    this._opts.email = account.email
-    this._opts.password = account.password
-    if (!account.uuid) {
-      account.uuid = new Map<number, string>()
-    }
-    if (!account.uuid.has(uid)) {
-      account.uuid.set(uid, genUid())
-    }
-    return account.uuid.get(uid)
+  getArgs(uid: number): {
+    conversationId?: string
+    parentMessageId?: string
+  } {
+    const account = this._pool[this._currentIndex]
+    return account.session.get(uid) ?? {}
   }
 
-  getOpts(): any {
-    return this._opts
+  setArgs(uid: number, args: {
+    conversationId?: string
+    parentMessageId?: string
+  }) {
+    const account = this._pool[this._currentIndex]
+    account.session.set(uid, args)
   }
 
-  resetCurrOpts(uid: number): string {
-    const account = this._emails[this._currentIndex]
-    if (!account.uuid) {
-      account.uuid = new Map<number, string>()
+  delArgs(uid: number) {
+    const account = this._pool[this._currentIndex]
+    account.delete(uid)
+  }
+}
+
+async function login(email: string, passwd: string) {
+  try {
+    console.log('[' + email + '] Begin obtain accessToken ...')
+    const result = await openAIAuth(email, passwd)
+    if (result.statusCode !== 200) {
+      console.log(`[${email}] Failed to obtain accessToken ===>>>`, result)
+    } else {
+      console.log('['+ email +'] Succeeded in obtaining `accessToken`!')
+      return result.data
     }
-    if (account.uuid.has(uid)) {
-      account.uuid.delete(uid)
-    }
-    account.uuid.set(uid, genUid())
-    return account.uuid.get(uid)
+  } catch(err) {
+    console.log(`[${email}] Failed to obtain accessToken ===>>>`, err)
+  }
+  return null
+}
+
+async function saveConfig(pool: Array<Email>) {
+  const configFile = process.cwd() + '/conf/config.json'
+  const jsonObject = await loadConfig(configFile)
+  if (jsonObject?.api?.account) {
+    jsonObject.api.account = pool.map(it => {
+      const result = {...it}
+      delete result.session
+      return result
+    })
+    await writeConfig(jsonObject)
   }
 }
 
@@ -105,34 +158,34 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   async initChatGPT () {
     if (!config.api.enable) return
-    const { email, password, pingMs, slaves } = config.api
-    const { proxyServer, browserPath } = config
+    const { endpoint, account } = config.api
+    let needSave = false
+    for(let index = 0, length = account.length; index < length; index ++) {
+      const it = account[index]
+      if (it.accessToken) {
+        continue
+      }
+      const accessToken = await login(it.email, it.password)
+      if (accessToken) {
+        it.accessToken = accessToken
+        needSave = true
+      }
+    }
+    if (needSave) {
+      await saveConfig(account)
+    }
+
+    this._emailPool = new EmailPool([...account])
+    const { accessToken } = this._emailPool.next()
     this._api = new ChatGPTUnofficialProxyAPI({
-      accessToken: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJhdWVuaHVrdXJhakBvdXRsb29rLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlfSwiaHR0cHM6Ly9hcGkub3BlbmFpLmNvbS9hdXRoIjp7InVzZXJfaWQiOiJ1c2VyLTA2NE5kNEtIZnI1MXRrUjk0ZDlrVU9GViJ9LCJpc3MiOiJodHRwczovL2F1dGgwLm9wZW5haS5jb20vIiwic3ViIjoiYXV0aDB8NjNmM2I0ZjU5OWQ0ZTEyODQ3ZDNjMzdmIiwiYXVkIjpbImh0dHBzOi8vYXBpLm9wZW5haS5jb20vdjEiLCJodHRwczovL29wZW5haS5vcGVuYWkuYXV0aDBhcHAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTY3OTI3OTMzNiwiZXhwIjoxNjgwNDg4OTM2LCJhenAiOiJUZEpJY2JlMTZXb1RIdE45NW55eXdoNUU0eU9vNkl0RyIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgbW9kZWwucmVhZCBtb2RlbC5yZXF1ZXN0IG9yZ2FuaXphdGlvbi5yZWFkIG9mZmxpbmVfYWNjZXNzIn0.aSYz5CWTN17TdfcKYU1mX-QWwjhaDNiJ1VZJm6p2GgCQozeqw-xTc8IDYAaIdoPNs0L5VtyJJnGMozX4mkVSTYuoZFj9noGJAyxhoVMV0I2cuU8SFGKrHYP5DyNOwHqBd4UDk_ivRBjH3dDapWRk7QddGdAjrIEXfpOcSIXkKlS-nZZEHKkptfGmV9BnNZCI5xooyVNZjwys1SfqI45oetZBAKyxKxgOejWIn1qs7fdLc7kpZByT4qx5Twcav-3uGpFiAcIGzF57eQJ2HZocIZVPglZXvasvG1HL4VB1UgTOr49SFHz_jPmH3hx1Gp0wpxK3gzG9j4hieTE19197wQ'
+      apiReverseProxyUrl: endpoint.conversation,
+      accessToken
     })
     console.log('chatgpt - execute initChatGPT method success.')
   }
 
   async reboot () {
     this.load()
-  }
-
-  push(uid: number, option: {
-    conversationId?: string
-    parentMessageId?: string
-  }) {
-    this._conversationMapper.set(uid, option)
-  }
-
-  delete(uid: number) {
-    this._conversationMapper.delete(uid)
-  }
-
-  get(uid: number): {
-    conversationId?: string
-    parentMessageId?: string
-  } {
-    return this._conversationMapper.get(uid)
   }
 
   handle = async (sender: Sender) => {
@@ -185,13 +238,13 @@ export class ChatGPTHandler extends BaseMessageHandler {
         timeoutMs: number = 500
       ): Promise<ChatMessage> => {
         const result = await this._api.sendMessage(str, {
-          ... this.get(sender.id),
+          ... this._emailPool.getArgs(sender.id),
           onProgress
         })
         if (result.error) {
           return result
         }
-        this.push(sender.id, {
+        this._emailPool.setArgs(sender.id, {
           conversationId: result.conversationId,
           parentMessageId: result.id
         })
@@ -238,21 +291,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       // 429 1hours 限制, 换号处理. 三次后触发
       // if (++count429 < 3) return
       // count429 = 0
-      this._emailPool.next(sender.id)
-      const opts = this._emailPool.getOpts()
-      this._api.setAccount(opts.email, opts.password)
-      this._iswait = true
-      try {
-        await this._api.resetSession()
-        cgptEmitResetSession()
-        cgptEmitChangeAccount()
-      } catch(e: Error) {
-        console.warn(
-          `chatgpt error re-authenticating ${opts.email}`,
-          err.toString()
-        )
-      }
-      this._iswait = false
+      this._emailPool.next()
 
     } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)

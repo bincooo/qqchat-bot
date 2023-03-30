@@ -30,10 +30,19 @@ const _globalThis: {
   }
 }
 
+export async function openAIAuth(email: string, passwd: string): Promise<any> {
+  const { auth } = config.api.endpoint ?? {}
+  if (!auth) throw new Error('The server address from which the accessToken was obtained did not exist !')
+  const { data } = await sendPost(auth, str({ email, passwd }), {
+    'content-type': 'application/json'
+  })
+  return JSON.parse(data)
+}
+
 export function clashSetting(name: string): Promise<boolean> {
   return new Promise<boolean>((resolve, reject) => {
     sendPut(config.clash.http, str({ name }), {
-      'Content-Type': 'application/json'
+      'content-type': 'application/json'
     })
     .then(_ => resolve(true))
     .catch(err => {
@@ -207,7 +216,8 @@ export async function shortURL(url: string) {
 
 export async function md2jpg(nickname: stirng, markdownText: string) {
   const htmlText = await genTemplate(nickname, markdownText)
-  const { data } = await sendPost('http://114.132.201.94:8082/openai/api/html2jpg', str({ htmlText }), {
+  const { html2jpg } = config
+  const { data } = await sendPost(html2jpg ?? 'http://114.132.201.94:8082/openai/api/html2jpg', str({ htmlText }), {
     'content-type': 'application/json'
   })
   const result = JSON.parse(data)
