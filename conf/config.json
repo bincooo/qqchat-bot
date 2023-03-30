@@ -35,10 +35,10 @@
       {
         "email": "xxx@outlook.com",
         "password": "xxx",
-        "accessToken": "xxxx"
+        "accessToken": "xxx"
       },
       {
-        "accessToken": "xxxx"
+        "accessToken": "xxx"
       }
     ]
   },
