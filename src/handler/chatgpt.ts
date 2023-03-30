@@ -167,6 +167,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
       }
       const accessToken = await login(it.email, it.password)
       if (accessToken) {
+        // 存留28天
+        it.expires = dat() + 1000 * 120 * 12 * 28
         it.accessToken = accessToken
         needSave = true
       }
