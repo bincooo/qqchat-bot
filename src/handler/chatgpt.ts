@@ -41,7 +41,7 @@ declare type Email = {
 
 class EmailPool {
   protected _pool: Array<Email>
-  protected _currentIndex: number = 0
+  protected _currentIndex: number = -1
 
   constructor(
     pool: Array<Email>
@@ -51,7 +51,14 @@ class EmailPool {
       it.session = new Map()
       return it
     })
-    console.log('email pool:', pool)
+    console.log('email pool:', pool.map(it => {
+      return {
+        email: it.email ?? 'null',
+        password: it.password ? it.password.substr(0, 1) + '***' + it.password.substr(it.password.length - 2) : 'null',
+        expires: it.expires ?? -1,
+        accessToken: it.accessToken ? (it.accessToken.substr(0, 50) ?? '???') + ' ...' : 'null'
+      }
+    }))
     this.scheduleJob()
   }
 
