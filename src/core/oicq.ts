@@ -207,17 +207,14 @@ class OicqImpl extends types.TalkWrapper {
     group?: string
   } {
     const result = {
-      nickname: '',
-      isAdmin: false
     }
     result.group = e.group
+    result.nickname = e.sender?.nickname ?? e.nickname
+    const userId = e.user_id ?? e.sender?.user_id
+    result.isAdmin = ( userId == config.adminQQ )
     result.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
     if (!e.atme && !!config.botNickname) {
       result.textMessage = result.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()
-    }
-    if (!(e instanceof GuildMessage)) {
-      result.nickname = e.sender?.nickname || e.nickname
-      result.isAdmin = this.userId === Number(config.adminQQ)
     }
     return result
   }
@@ -226,7 +223,7 @@ class OicqImpl extends types.TalkWrapper {
    * 会话Id
    */
   sessionId(e: any): number {
-    return e.group?.group_id ?? e.userId
+    return e.group?.group_id ?? e.user_id ?? e.sender?.user_id
   }
 
   /**

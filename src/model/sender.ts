@@ -32,7 +32,7 @@ export class Sender {
     this._event = e
   }
 
-  getEventObject(): any {
+  getEvent(): any {
     return this._event
   }
 

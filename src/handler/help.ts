@@ -1,10 +1,10 @@
-import { MessageEvent, MessageHandler } from 'src/types'
+import { MessageHandler } from 'src/types'
 import { getClient } from 'src/core/oicq'
 import { config } from 'src/config'
 import getClient from 'src/core'
 
 export const helpHandler: MessageHandler = function (sender) {
-  const e: MessageEvent = sender.getEventObject()
+  const e: any = sender.getEvent()
   const replyMessage = (nickname: string): string => {
     return `欢迎🌹🌹 ${nickname} 🎉🎉加入\n@${config.botNickname} /help 有惊喜哦 ~ ✨`
   }

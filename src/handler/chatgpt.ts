@@ -136,7 +136,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   handle = async (sender: Sender) => {
-    if (config.debug) this._api.setDebug(config.debug)
     if (!config.api.enable) return true
     try {
 

@@ -103,7 +103,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!!player) {
         preset.maintenance = false
         
-        const result: QueueReply = async (reply) => {
+        const result: QueueReply = async (reply, onProgress) => {
           if (player.maintenance.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
