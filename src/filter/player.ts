@@ -152,10 +152,10 @@ export class PlayerFilter extends BaseMessageFilter {
           }
 
           if (resultMessage !== content) {
-            return replyMessage("", resultMessage, sender)
+            return await reply( replyMessage("", resultMessage, sender), onProgress )
           }
 
-          return replyMessage(player.prefix, resultMessage, sender)
+          return await reply( replyMessage(player.prefix, resultMessage, sender), onProgress )
         }
         return [ false, result ]
       }
@@ -213,7 +213,7 @@ export class PlayerFilter extends BaseMessageFilter {
         }
         // end //
 
-        const result: QueueReply = async (reply) => {
+        const result: QueueReply = async (reply, onProgress) => {
           if (player.maintenance.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
@@ -233,7 +233,7 @@ export class PlayerFilter extends BaseMessageFilter {
           }
 
           const res = await reply(resultMessage)
-          return replyMessage(player.prefix, content, sender)
+          return await reply( replyMessage(player.prefix, content, sender), onProgress )
         }
         return [ false, result ]
       }
@@ -260,14 +260,14 @@ export class PlayerFilter extends BaseMessageFilter {
         }
 
         const newReply = (val: string) => {
-          return async (reply) => {
+          return async (reply, onProgress) => {
             if (player?.maintenance?.guard) {
               const checkResult = await guardAi.check(content, sender)
               if (!checkResult) {
                 return null
               }
             }
-            return val
+            return await reply(val, onProgress)
           }
         }
 

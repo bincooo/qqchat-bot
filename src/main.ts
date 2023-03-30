@@ -1,4 +1,5 @@
 import { BaseMessageHandler } from 'src/types'
+import fetch from 'node-fetch'
 import logger from './util/log'
 import getClient from './core'
 import MessageHandlers from './handler'

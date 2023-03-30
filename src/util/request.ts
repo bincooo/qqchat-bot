@@ -67,23 +67,23 @@ export function drawing(opts: {
     .then(({ data: res }) => {
       try {
         const result = (JSON.parse(res)?.images??[])[0]
-        if (try4K) {
-          if (callback) {
-            callback()
-          }
+        // if (try4K) {
+        //   if (callback) {
+        //     callback()
+        //   }
 
-          retry(() => tryBetter(result), 3, 800)
-            .then(b64 => {
-              if (b64) {
-                resolve(b64)
-              } else resolve(result)
-            })
-            .catch((err) => {
-              console.log(err)
-              resolve(result)
-            })
-          return
-        }
+        //   retry(() => tryBetter(result), 3, 800)
+        //     .then(b64 => {
+        //       if (b64) {
+        //         resolve(b64)
+        //       } else resolve(result)
+        //     })
+        //     .catch((err) => {
+        //       console.log(err)
+        //       resolve(result)
+        //     })
+        //   return
+        // }
         resolve(result)
       } catch(err: Error) {
         reject(err)

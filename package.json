@@ -7,20 +7,23 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx tsx src/main.ts",
+    "start": "node --no-warnings build/app.js",
     "lint": "eslint . --fix",
     "patch": "npx patch-package --patch-dir ./.patches",
     "build": "node build.js",
     "postinstall": "npx patch-package --patch-dir ./.patches"
   },
   "pkg": {
-    "assets": [],
+    "assets": [
+    ],
     "scripts": [
       "build/app.js"
     ],
+    "copy": [{
+      "source": "conf",
+      "destination": "build/conf"
+    }],
     "targets": [
-      "win",
-      "linux",
-      "mac"
     ],
     "outputPath": "build"
   },

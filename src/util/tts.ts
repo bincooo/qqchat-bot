@@ -14,31 +14,31 @@ const ffmpegPath = (() => {
 
 let ip = IP()
 let voice = null
-function mp3ToAmr(filepath, outputDir = './amr') {
+function mp3Totmp(filepath, outputDir = './tmp') {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
-    const cmdStr = `${ffmpegPath} -y -i ${filepath} -ac 1 -ar 8000 ${outputDir}/${filename}.amr`
+    const cmdStr = `${ffmpegPath} -y -i ${filepath} -ac 1 -ar 8000 ${outputDir}/${filename}.tmp`
     const executor = util.promisify(execcmd.exec)
     
     executor(cmdStr, (err, stdout, stderr) => {
       if (err) {
         reject('error:' + stderr)
       } else {
-        resolve(`${outputDir}/${filename}.amr`)
+        resolve(`${outputDir}/${filename}.tmp`)
       }
       fs.unlinkSync(filepath)
     })
   })
 }
 
-function mp3ToSilk(filepath, outputDir = './amr') {
+function mp3ToSilk(filepath, outputDir = './tmp') {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
-    if (!voice) voice = new WxVoice('./amr', ffmpegPath)
+    if (!voice) voice = new WxVoice('./tmp', ffmpegPath)
     voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
       if (path) {
         resolve(path)
@@ -53,11 +53,11 @@ function mp3ToSilk(filepath, outputDir = './amr') {
 async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<string> {
   const cid = genCid()
   return new Promise((resolve, reject) => {
-    fs.writeFile(`./amr/${cid}.tmp`, buffer, (err) => {
+    fs.writeFile(`./tmp/${cid}.tmp`, buffer, (err) => {
       if (err) {
         reject('generate voice fail: ' + err)
       } else {
-        resolve(`./amr/${cid}.tmp`)
+        resolve(`./tmp/${cid}.tmp`)
       }
     })
   }).then(path => {
@@ -72,8 +72,8 @@ async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<strin
       case 'mp3':
       case 'pcm':
         return rename(path, vt)
-      case 'mp3ToAmr':
-        return mp3ToAmr(rename(path, 'mp3'))
+      case 'mp3Totmp':
+        return mp3Totmp(rename(path, 'mp3'))
       case 'mp3ToSilk':
       default:
         return mp3ToSilk(rename(path, 'mp3'))
