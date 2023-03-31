@@ -49,10 +49,10 @@ export class NovelAiHandler extends BaseMessageHandler {
         const b64 = await retry(
           () => drawing({
             data,
-            try4K: config.api.betterPic,
-            callback: () => {
-              sender.reply('画完辣, 待我优化一番 ~', true)
-            }
+            // try4K: config.api.betterPic,
+            // callback: () => {
+            //   sender.reply('画完辣, 待我优化一番 ~', true)
+            // }
           }),
           // () => mccnProDraw({
           //   data,
@@ -67,10 +67,10 @@ export class NovelAiHandler extends BaseMessageHandler {
         )
         switch (config.type) {
           case "mirai":
-            sender.reply([{ type: 'Image', base64: b64 }], true)
+            sender.reply([{ type: 'Image', value: b64 }], true)
             break
           default:
-            sender.reply(segment.image('base64://' + b64), true)
+            sender.reply([{ type: 'Image', value: 'base64://' + b64 }], true)
             break
         }
       } catch(err) {

@@ -197,13 +197,17 @@ async function conn(): Promise<WebSocket> {
       // 报错了修改虚拟ip预防封控
       ip = IP()
     })
-    // ws.on('ping', (data) => {
-    //   ws.pong(data)
-    //   console.debug('sent pong %s', data)
-    // })
-    // ws.on('pong', (data) => {
-    //   console.debug('received pong %s', data)
-    // })
+    ws.on('ping', (data) => {
+      ws.pong(data)
+      if (config.debug) {
+        console.debug('sent pong %s', data)
+      }
+    })
+    ws.on('pong', (data) => {
+      if (config.debug) {
+        console.debug('received pong %s', data)
+      }
+    })
   })
 }
 
