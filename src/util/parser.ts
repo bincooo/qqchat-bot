@@ -139,12 +139,12 @@ export function initHandler(): Array<parser.Condition> {
   //   // 这是一个新的dan检测结果
   //   return currIndex + b.length
   // }
-
+  const { parseMinimum } = config
   return [
     codeHdr,
-    config.parseMin + ":。\n",
-    config.parseMin + ":。",
-    (config.parseMin + 50) + ":.\n",
-    (config.parseMin + 50) + ":\n\n"
+    parseMinimum + ":。\n",
+    parseMinimum + ":。",
+    (parseMinimum + 50) + ":.\n",
+    (parseMinimum + 50) + ":\n\n"
   ]
 }
