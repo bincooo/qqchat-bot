@@ -17,7 +17,7 @@ export class CodeFilter extends BaseMessageFilter {
         && state.preset?.key 
         && preset.player?.find(it => (
           it.key == state.preset.key 
-          && !['DAN', 'Linux', '面试官', '工作表', '开发者顾问', 'IT工程师'].includes(it.key))
+          && !['默认', 'DAN', 'Linux', '面试官', '工作表', '开发者顾问', 'IT工程师'].includes(it.key))
         )
     ) {
       sender.reply(`角色扮演【${state.preset.key}】时无法使用[code]、[md]、[md:latex] !`)

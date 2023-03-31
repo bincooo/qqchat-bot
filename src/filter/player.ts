@@ -136,7 +136,7 @@ export class PlayerFilter extends BaseMessageFilter {
 
           for(let index = 0; index < training?.length; index++) {
             const message = training[index]
-            if (index === training.length - 1 && message.includes('[!!content!!]')) {
+            if (index === training.length - 1 && message?.includes('[!!content!!]')) {
               resultMessage = message.replace('[!!content!!]', content)
               break
             }
@@ -225,11 +225,11 @@ export class PlayerFilter extends BaseMessageFilter {
           let resultMessage = player.maintenance?.training
           const cacheList = state.preset.cacheList
           
-          if (player.enableCache && resultMessage.includes('[!!cache!!]')) {
+          if (player.enableCache && resultMessage?.includes('[!!cache!!]')) {
             resultMessage = resultMessage.replace('[!!cache!!]', cacheList?.join('\n'))
           }
 
-          if (resultMessage.includes('[!!content!!]')) {
+          if (resultMessage?.includes('[!!content!!]')) {
             return replyMessage("", resultMessage.replace('[!!content!!]', content), sender)
           }
 

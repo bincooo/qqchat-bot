@@ -307,8 +307,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)
     
     } else if (err.statusCode === 422) {
-      // ignore error    
-    } else if (err.message.includes('Not signed in')) {
+      // ignore error
+    } else if (err.message?.includes('Not signed in')) {
       sender.reply(`发生错误\n${err} ${append}`)
 
     } else {

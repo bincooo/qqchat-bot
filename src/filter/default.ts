@@ -14,7 +14,7 @@ export class DefaultFilter extends BaseMessageFilter {
     if (!!preset.default) {
       let result = preset.default
         .replace('[!!date!!]', dat())
-      if (result.includes('[!!content!!]')) {
+      if (result?.includes('[!!content!!]')) {
         result = result.replace('[!!content!!]', content)
           .replace('[!!name!!]', sender?.nickname)
           .replace('\\n', '\n')

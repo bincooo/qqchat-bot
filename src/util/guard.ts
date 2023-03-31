@@ -47,7 +47,7 @@ class GuardAi {
 
   check = async (content: string, sender?: Sender) => {
     const state: any = stateManager.getState(sender.id)
-    if (!!state.preset?.key) {
+    if (!!state.preset?.key && state.preset.key !== '默认') {
 
       if (content.trim().length <= 5) {
         return true
