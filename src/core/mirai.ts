@@ -102,7 +102,7 @@ class MiraiImpl extends types.TalkWrapper {
     const result = {
     }
     result.isAdmin = e.sender?.id == config.adminQQ
-    result.nickname = e.sender?.memberName ?? e.sender.nickname ?? ''
+    result.nickname = (e.sender?.memberName ?? e.sender?.nickname ?? e.sender?.id) + ''
     result.group = (e.type === 'GroupMessage' ? e.sender.group : undefined)
     result.textMessage = e.messageChain?.filter(item => item.type === 'Plain').map(item => item.text).join().trim()??''
     if (!(e.isAt && e.isAt()) && !!config.botNickname) {

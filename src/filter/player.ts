@@ -13,7 +13,7 @@ function dat() {
 
 function IsEmpty(val: string): boolean {
   if (!val) return true
-  const value = val.trim()
+  const value = val?.trim()
     .replaceAll('　', '')
   if (value === '') return true
   if (value.length === 0) return true
