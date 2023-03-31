@@ -267,6 +267,9 @@ export class ChatGPTHandler extends BaseMessageHandler {
       } else {
         result = await message.call(undefined, reply, onProgress)
       }
+      if (config.debug) {
+        console.log('chatgpt web ======>>>>>', result)
+      }
       await onProgress({
         ...result,
         text: '[DONE]'

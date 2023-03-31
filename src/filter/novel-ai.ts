@@ -70,7 +70,7 @@ export class NovelAiFilter extends BaseMessageFilter {
         if (prompt) {
           return [ false, prompt ]
         }
-      } else return [ false, resultMessage.trim() ]
+      } else return [ false, resultMessage ]
     }
     return [ true, content ]
   }

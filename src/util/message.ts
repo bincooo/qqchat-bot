@@ -27,7 +27,7 @@ export async function filterTokens (content: string, sender?: Sender) {
 }
 
 async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender, done?: boolean) {
-  if (filters.length === 0) return content.trim()
+  if (filters.length === 0) return content?.trim()
   let resultMessage: QueueReply = ''
 
   try {
@@ -79,7 +79,7 @@ export const onMessage = async (data: any, sender: Sender) => {
     if (!!message || isDone()) {
       message = await _filterTokens(message??'', filters, sender, isDone())
       if (config.debug) {
-        console.log('response message ====== [' + isDone() + ']', data, message)
+        console.log('response message ====== [' + isDone() + ']', message)
       }
 
       const parserJapen = (state: any, tex: string) => {

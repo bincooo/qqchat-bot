@@ -144,6 +144,9 @@ class MiraiImpl extends types.TalkWrapper {
       if (result.code == 0)
         break
     }
+    if (config.debug) {
+      console.log('mirai reply ======>>>>', content, result)
+    }
     return [ (result.code == 0), result ]
   }
 
