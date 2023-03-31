@@ -40,7 +40,6 @@ async function handleMessage (e) {
 function IsAt(chain: MessageType.MessageChain & {
   0: MessageType.Source
 }) {
-  console.log('mirai IsAt ====>>>', chain)
   if (chain.find(item => (
     (item.type === 'At' && item.target == config.botQQ) || 
     (item.type === 'Plain' && item.text.indexOf('@' + (config.botNickname??'_undef___')) >= 0))
