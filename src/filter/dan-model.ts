@@ -18,7 +18,7 @@ export class DANmodelFilter extends BaseMessageFilter {
       if (!!player) {
         // 检测到正常输出标记
         if (content.startsWith('(🔒Normal Output)') || content.startsWith('(🔒正常输出)')) {
-          this._isDAN = true
+          state.IsDAN = true
         }
 
         // 再检测是否有开发模式标记
@@ -28,26 +28,26 @@ export class DANmodelFilter extends BaseMessageFilter {
         let endIndex
         endIndex = content.indexOf(end1)
         if (endIndex >= 0) {
-          this._isDAN = false
+          state.IsDAN = false
           return [ true, content.substr(endIndex + end1.length).trim() ]
         }
 
         endIndex = content.indexOf(end2)
         if (endIndex >= 0) {
-          this._isDAN = false
+          state.IsDAN = false
           return [ true, content.substr(endIndex + end2.length).trim() ]
         }
 
 
         // 可能开始的字符块和结束的字符块是分开的
-        if (this._isDAN) {
-          if (done) this._isDAN = false
+        if (state.IsDAN) {
+          if (done) state.IsDAN = false
           // console.log('DAN ==== <<<< is devel 2')
           return [ false, '' ]
         }
       }
 
-      if (done) this._isDAN = false
+      if (done) state.IsDAN = false
     }
     return [ true, content ]
   }

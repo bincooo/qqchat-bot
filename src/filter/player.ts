@@ -167,10 +167,10 @@ export class PlayerFilter extends BaseMessageFilter {
 
   presetEnabled(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
     if (content?.trim().startsWith("开启 ")) {
-      if (!sender.isAdmin) {
-        sender?.reply('你没有权限使用该命令~', true)
-        return [ false, "" ]
-      }
+      // if (!sender.isAdmin) {
+      //   sender?.reply('你没有权限使用该命令~', true)
+      //   return [ false, "" ]
+      // }
       const message = content.trim()
         .split(" ")[1]
       if (message) {

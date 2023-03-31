@@ -2,6 +2,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { QueueReply } from 'cgpt'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
+import { preset } from 'src/config'
 
 export class CodeFilter extends BaseMessageFilter {
 
@@ -11,6 +12,18 @@ export class CodeFilter extends BaseMessageFilter {
   }
 
   handle = async (content: string, sender?: Sender) => {
+    const state: any = stateManager.getState(sender.id)
+    if ((content.startsWith('[code]') || content.startsWith('[md]') || content.startsWith('[md:latex]'))
+        && state.preset?.key 
+        && preset.find(it => (
+          it.key == state.preset.key 
+          && !['DAN', 'Linux', '面试官', '工作表', '开发者顾问', 'IT工程师'].includes(it.key))
+        )
+    ) {
+      sender.reply(`角色扮演【${state.preset.key}】时无法使用[code]、[md]、[md:latex] !`)
+      return [ false, '' ]
+    }
+
     let resultMessage = ''
     if (content.startsWith('[code]')) {
       resultMessage = [
