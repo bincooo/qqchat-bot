@@ -114,7 +114,7 @@ class MiraiImpl extends types.TalkWrapper {
    * 会话Id
    */
   sessionId(e: any): number {
-    return (e.type === 'GroupMessage') ? e.group.id : e.sender.id
+    return (e.type === 'GroupMessage') ? e.sender.group.id : e.sender.id
   }
 
   /**
@@ -144,10 +144,10 @@ class MiraiImpl extends types.TalkWrapper {
       if (result.code == 0)
         break
     }
-    if (config.debug) {
-      console.log('mirai reply ======>>>>', content, result)
-    }
-    return [ (result.code == 0), result ]
+    // if (config.debug) {
+    //   console.log('mirai reply ======>>>>', content, result)
+    // }
+    return [ (result.code == 0), { messageId: result.messageId, target: this.sessionId(e) } ]
   }
 
   /**

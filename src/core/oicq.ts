@@ -244,7 +244,7 @@ class OicqImpl extends types.TalkWrapper {
       }
     })
     const result = await e.reply(content, quote)
-    return [ true, result ]
+    return [ true, result.message_id ]
   }
 
   /**
