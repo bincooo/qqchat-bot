@@ -35,7 +35,8 @@ export class NovelAiHandler extends BaseMessageHandler {
   }
 
   handle = async (sender: Sender) => {
-    if ((sender?.textMessage||'').startsWith(DRAW)) {
+    const message = sender?.textMessage ?? ''
+    if (message.startsWith(DRAW) || message.startsWith('[tag:draw]')) {
       const idx = parseInt(Math.random() * hint.length, 10)
       sender.reply(hint[idx], true)
 
@@ -45,6 +46,7 @@ export class NovelAiHandler extends BaseMessageHandler {
       const data = initParams2(
         (await filterTokens(sender?.textMessage, sender))
       )
+      
       try {
         const b64 = await retry(
           () => drawing({

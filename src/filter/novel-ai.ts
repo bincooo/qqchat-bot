@@ -2,13 +2,21 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { preset } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
+import { cgptOnChangeAccount } from 'src/util/event'
 
 const DRAW: string = '/draw'
 export class NovelAiFilter extends BaseMessageFilter {
+  protected session: {
+    conversationId?: string
+    parentMessageId?: string
+  } = {}
 
   constructor() {
     super()
     this.type = 0
+    cgptOnChangeAccount(() => {
+      this.session = {}
+    })
   }
 
   handle = async (content: string, sender?: Sender) => {
@@ -38,6 +46,29 @@ export class NovelAiFilter extends BaseMessageFilter {
       return [ false, resultMessage.trim() ]
     }
 
+    if (content.startsWith('[tag:draw]')) {
+      if (novelAiHelper) {
+        resultMessage = novelAiHelper.indexOf('[!!content!!]') >= 0 ? 
+          novelAiHelper.replace('[!!content!!]', content.substr(10)) :
+          novelAiHelper.concat(content.substr(10))
+        const result = await state.chatApi.sendMessage(resultMessage, { ...this.session })
+        console.log('noval-ai [tag:draw] ===== >>>> ', result)
+        this.session.parentMessageId = result.messageId
+        this.session.conversationId = result.conversationId
+
+        const prompt = result.text
+          .replaceAll('，', ',')
+          .match(/[a-zA-Z0-9,{}\[\]]/g)
+          .join('')
+          .split(',')
+          .filter(it => !!it.trim())
+          .join(', ')
+
+        if (prompt) {
+          return [ false, prompt ]
+        }
+      } else return [ false, resultMessage.trim() ]
+    }
     return [ true, content ]
   }
 }
