@@ -71,7 +71,7 @@ class GuardAi {
         const prompt = player.maintenance.guard.replace('[!!content!!]', content)
         const result = await config.chatApi.sendMessage(prompt, { ...this.session })
         console.log('GuardAi ===== >>>> ', result)
-        this.session.parentMessageId = result.messageId
+        this.session.parentMessageId = result.id
         this.session.conversationId = result.conversationId
         if (result.text && (result.text.toLocaleLowerCase().includes('yes'))) {
           sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
