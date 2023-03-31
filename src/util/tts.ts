@@ -244,12 +244,14 @@ function buildSsml(config: Config) {
     rate = 0,
     pitch = 0
   } = config
-
+  if (!text || !text.trim()) {
+    throw new Error('text is empty!')
+  }
   if (!lexicon) {
     return `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
       <voice name="${vname}" styledegree="${degree}">
         <mstts:express-as style="${sname}">
-          <prosody rate="${rate}%" pitch="${pitch}%">${text}</prosody>
+          <prosody rate="${rate}%" pitch="${pitch}%">${text.trim()}</prosody>
         </mstts:express-as>
       </voice>
      </speak>`
@@ -258,7 +260,7 @@ function buildSsml(config: Config) {
       <voice name="${vname}">
         <lexicon uri="${lexicon}"/>
           <mstts:express-as style="${sname}" styledegree="${degree}">
-            <prosody rate="${rate}%" pitch="${pitch}%">${text}</prosody>
+            <prosody rate="${rate}%" pitch="${pitch}%">${text.trim()}</prosody>
           </mstts:express-as>
         </lexicon>
       </voice>
