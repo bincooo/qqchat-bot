@@ -15,7 +15,7 @@ export class CodeFilter extends BaseMessageFilter {
     const state: any = stateManager.getState(sender.id)
     if ((content.startsWith('[code]') || content.startsWith('[md]') || content.startsWith('[md:latex]'))
         && state.preset?.key 
-        && preset.find(it => (
+        && preset.player?.find(it => (
           it.key == state.preset.key 
           && !['DAN', 'Linux', '面试官', '工作表', '开发者顾问', 'IT工程师'].includes(it.key))
         )
