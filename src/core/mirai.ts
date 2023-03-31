@@ -40,11 +40,13 @@ async function handleMessage (e) {
 function IsAt(chain: MessageType.MessageChain & {
   0: MessageType.Source
 }) {
-  if (chain.filter(item => (
+  console.log('mirai IsAt ====>>>', chain)
+  if (chain.find(item => (
     (item.type === 'At' && item.target == config.botQQ) || 
     (item.type === 'Plain' && item.text.indexOf('@' + (config.botNickname??'_undef___')) >= 0))
-  ).length > 0)
+  )) {
     return true
+  }
   else return false
 }
 
@@ -69,7 +71,7 @@ class MiraiImpl extends types.TalkWrapper {
     mirai.on('message', e => {
       if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.type === 'GroupMessage' && IsAt(e.messageChain))) {
         if (e.sender?.memberName !== 'Q群管家') {
-          handleMessage(e as MiraiBasicEvent)
+          handleMessage(e)
         }
       }
     })
@@ -81,7 +83,7 @@ class MiraiImpl extends types.TalkWrapper {
 
       if (dat + 30000 < dats()) {
         const ds = dats()
-        handleMessage(e as MiraiBasicEvent)
+        handleMessage(e)
       }
     })
 
