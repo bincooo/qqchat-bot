@@ -56,6 +56,7 @@ export abstract class BaseMessageFilter {
 export type TalkChain = { type: string } & Record<string, (number | string)>
 
 export abstract class TalkWrapper {
+  abstract get target(): any
   /**
    * 初始化处理器
    */

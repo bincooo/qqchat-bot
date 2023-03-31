@@ -51,6 +51,10 @@ function IsAt(chain: MessageType.MessageChain & {
 class MiraiImpl extends types.TalkWrapper {
   protected _mirai?: Mirai
 
+  get target(): any {
+    return this._mirai
+  }
+
   /**
    * 初始化处理器
    */

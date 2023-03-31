@@ -40,10 +40,6 @@ async function handleMessage (e) {
   }
 }
 
-export function getClient(): null | Client {
-  return client
-}
-
 async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessageHandler>): Promise<Client> {
   messageHandler = initMessageHandler ?? messageHandler ?? []
   await client?.logout()
@@ -190,6 +186,11 @@ function loginHelper(client) {
 
 class OicqImpl extends types.TalkWrapper {
   protected _oicq?: Client
+
+  get target(): any {
+    this._oicq
+  }
+
   /**
    * 初始化处理器
    */

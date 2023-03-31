@@ -15,7 +15,7 @@ const ffmpegPath = (() => {
 let ip = IP()
 let voice = null
 function mp3Totmp(filepath, outputDir = './tmp') {
-  await fs.mkdirSync(outputDir, { recursive: true })
+  fs.mkdirSync(outputDir, { recursive: true })
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
@@ -35,7 +35,7 @@ function mp3Totmp(filepath, outputDir = './tmp') {
 }
 
 function mp3ToSilk(filepath, outputDir = './tmp') {
-  await fs.mkdirSync(outputDir, { recursive: true })
+  fs.mkdirSync(outputDir, { recursive: true })
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
@@ -54,7 +54,7 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
 
 async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<string> {
   const cid = genCid()
-  await fs.mkdirSync(outputDir, { recursive: true })
+  fs.mkdirSync(outputDir, { recursive: true })
   return new Promise((resolve, reject) => {
     fs.writeFile(`./tmp/${cid}.tmp`, buffer, (err) => {
       if (err) {
