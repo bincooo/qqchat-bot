@@ -1,6 +1,5 @@
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { QueueReply } from 'cgpt'
-import { config } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
 
@@ -13,7 +12,6 @@ export class CodeFilter extends BaseMessageFilter {
 
   handle = async (content: string, sender?: Sender) => {
     let resultMessage = ''
-    const { tagsHelper } = config.api
     if (content.startsWith('[code]')) {
       resultMessage = [
           content.substr(6),
@@ -35,9 +33,9 @@ export class CodeFilter extends BaseMessageFilter {
 
       // console.log("CodeFilter ===> search images", content, content.match(/来[0-9]?张[^图片]{0,}图片/g))
       if (content.match(/来[0-9]?张[^图片]{0,}图片/g)) {
-        const result: QueueReply = async (reply) => {
+        const result: QueueReply = async (reply, onProgress) => {
           await reply('从现在起, 当你想发送一张照片时，请使用 Markdown ,并且 不要有反斜线, 不要用代码块。使用 Unsplash API (https://source.unsplash.com/1280x720/? < PUT YOUR QUERY HERE >)。如果你明白了，请回复“明白”')
-          return resultMessage.trim()
+          return reply( resultMessage.trim(), onProgress )
         }
         return [ false, result ]
       }

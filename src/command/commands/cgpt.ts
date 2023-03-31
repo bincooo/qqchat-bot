@@ -59,7 +59,7 @@ class CgptCommand extends BaseCommand {
   }
 
   override showHelp(): boolean {
-    return !!config.api.enable
+    return !!config.openaiWebAPI.enable
   }
 
   langDoc() {

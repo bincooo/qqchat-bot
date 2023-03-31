@@ -6,7 +6,6 @@ import MessageHandlers from './handler'
 import { existsConfig, loadConfig, writeConfig, loadPresets } from './util/config'
 import { config, preset } from './config'
 import { run } from './auto'
-import { clashSetting } from './util/request'
 import chalk from 'chalk'
 
 /**

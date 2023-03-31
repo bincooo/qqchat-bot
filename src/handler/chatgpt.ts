@@ -159,13 +159,13 @@ export class ChatGPTHandler extends BaseMessageHandler {
   protected _manager: FunctionManager = new FunctionManager()
 
   async load () {
-    if (!config.api.enable) return
+    if (!config.openaiWebAPI.enable) return
     await this.initChatGPT()
   }
 
   async initChatGPT () {
-    if (!config.api.enable) return
-    const { endpoint, account } = config.api
+    if (!config.openaiWebAPI.enable) return
+    const { endpoint, account } = config.openaiWebAPI
     let needSave = false
     for(let index = 0, length = account.length; index < length; index ++) {
       const it = account[index]
@@ -198,7 +198,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   handle = async (sender: Sender) => {
-    if (!config.api.enable) return true
+    if (!config.openaiWebAPI.enable) return true
     try {
 
       if (sender.textMessage?.trim() === '!reset') {
@@ -309,7 +309,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
       // ignore error    
     } else if (err.message.includes('Not signed in')) {
       sender.reply(`发生错误\n${err} ${append}`)
-      this.clash()
 
     } else {
       sender.reply(`发生错误\n${err} ${append}`)

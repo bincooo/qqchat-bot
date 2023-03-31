@@ -5,12 +5,11 @@
   "main": "src/main.ts",
   "bin": "build/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tsx src/main.ts",
-    "start": "node --no-warnings build/app.js",
+    "commit": "cz",
     "lint": "eslint . --fix",
-    "patch": "npx patch-package --patch-dir ./.patches",
+    "dev": "npx tsx src/main.ts",
     "build": "node build.js",
+    "patch": "npx patch-package --patch-dir ./.patches",
     "postinstall": "npx patch-package --patch-dir ./.patches"
   },
   "pkg": {
@@ -37,10 +36,17 @@
     "url": "https://github.com/bincooo/qqchat-bot/issues"
   },
   "homepage": "https://github.com/bincooo/qqchat-bot#readme",
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
   "devDependencies": {
     "@types/inquirer": "^9.0.3",
     "@types/node": "^18.11.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.25.2",

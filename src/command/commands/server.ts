@@ -12,7 +12,7 @@ class ServerCommand extends BaseCommand {
   usage = [
     `reboot   ${this.sp(7)}重启机器人`,
     `status   ${this.sp(9)}服务器状态`,
-    `draw:on/off  ${this.sp(6)}开/关画质增强`,
+    // `draw:on/off  ${this.sp(6)}开/关画质增强`,
     `debug:on/off ${this.sp(6)}开/关调试模式`,
     'load:preset  加载预设'
   ]
@@ -36,15 +36,15 @@ class ServerCommand extends BaseCommand {
       case 'status':
         sender.reply(JSON.stringify(process.memoryUsage()), true)
         break
-      case 'draw':
-      case 'draw:on':
-        config.api.betterPic = true
-        sender.reply([ { type: 'Plain', value: '已开启画质增强~' } ])
-        break
-      case 'draw:off':
-        config.api.betterPic = false
-        sender.reply([ { type: 'Plain', value: '已关闭画质增强~' } ])
-        break
+      // case 'draw':
+      // case 'draw:on':
+      //   config.api.betterPic = true
+      //   sender.reply([ { type: 'Plain', value: '已开启画质增强~' } ])
+      //   break
+      // case 'draw:off':
+      //   config.api.betterPic = false
+      //   sender.reply([ { type: 'Plain', value: '已关闭画质增强~' } ])
+      //   break
       case 'debug':
       case 'debug:on':
         config.debug = true

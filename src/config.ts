@@ -15,7 +15,7 @@ export const config = {
   },
 
   // handler config...
-  officialAPI: {
+  openaiOfficialAPI: {
 
     enable: false,
     key: '',
@@ -26,7 +26,7 @@ export const config = {
     temperature: 0.9,
     stop: ['Humen', 'AI']
   },
-  api: {
+  openaiWebAPI: {
 
     enable: true,
     email: '',
@@ -44,12 +44,12 @@ export const config = {
 
   // browserPath: '',
   proxyServer: 'http://master.io:7890',
-  groupPingMs: 1000 * 60 * 60,
-  groupList: { },
-  clash: {
-    enable: false
-  },
-  parseMin: 100
+  // groupPingMs: 1000 * 60 * 60,
+  // groupList: { },
+  // clash: {
+  //   enable: false
+  // },
+  parseMinimum: 80
 }
 
 export const preset: any = {

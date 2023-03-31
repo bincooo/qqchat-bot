@@ -52,25 +52,27 @@ export async function run (): Promise<{}> {
       message: '选择API源:',
       type: 'list',
       choices: [
-        { name: 'webAPI', value: 'officialAPI' }
+        { name: 'openai webAPI', value: 'openaiWebAPI' },
+        { name: 'openai officialAPI', value: 'openaiOfficialAPI' }
       ]
     }
   ])).apiType
 
-  if (apiType === 'officialAPI') {
-    config[apiType] = await inquirer.prompt([
-      {
-        name: 'key',
-        message: 'key申请地址: https://beta.openai.com/account/api-keys\n请输入API key:',
-        type: 'input',
-        validate (input: string) {
-          if (!input) {
-            return '请输入正确的key!'
-          }
-          return true
-        }
-      }
-    ])
-  }
+  config[apiType]?.enable = true
+  // if (apiType === 'openaiOfficialAPI') {
+  //   config[apiType] = await inquirer.prompt([
+  //     {
+  //       name: 'key',
+  //       message: 'key申请地址: https://beta.openai.com/account/api-keys\n请输入API key:',
+  //       type: 'input',
+  //       validate (input: string) {
+  //         if (!input) {
+  //           return '请输入正确的key!'
+  //         }
+  //         return true
+  //       }
+  //     }
+  //   ])
+  // }
   return config
 }

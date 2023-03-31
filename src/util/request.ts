@@ -31,7 +31,7 @@ const _globalThis: {
 }
 
 export async function openAIAuth(email: string, passwd: string): Promise<any> {
-  const { auth } = config.api.endpoint ?? {}
+  const { auth } = config.openaiWebAPI.endpoint ?? {}
   if (!auth) throw new Error('The server address from which the accessToken was obtained did not exist !')
   const { data } = await sendPost(auth, str({ email, passwd }), {
     'content-type': 'application/json'
@@ -39,18 +39,18 @@ export async function openAIAuth(email: string, passwd: string): Promise<any> {
   return JSON.parse(data)
 }
 
-export function clashSetting(name: string): Promise<boolean> {
-  return new Promise<boolean>((resolve, reject) => {
-    sendPut(config.clash.http, str({ name }), {
-      'content-type': 'application/json'
-    })
-    .then(_ => resolve(true))
-    .catch(err => {
-      console.log('Error: clash edit proxies fail !', err)
-      resolve(false)
-    })
-  })
-}
+// export function clashSetting(name: string): Promise<boolean> {
+//   return new Promise<boolean>((resolve, reject) => {
+//     sendPut(config.clash.http, str({ name }), {
+//       'content-type': 'application/json'
+//     })
+//     .then(_ => resolve(true))
+//     .catch(err => {
+//       console.log('Error: clash edit proxies fail !', err)
+//       resolve(false)
+//     })
+//   })
+// }
 
 
 

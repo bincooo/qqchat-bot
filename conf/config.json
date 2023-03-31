@@ -1,8 +1,8 @@
 {
   "debug": false,
   "docker": false,
-  "adminQQ": "1263212092",
-  "botQQ": "2732684243",
+  "adminQQ": "xxx",
+  "botQQ": "xxx",
   "botPassword": "",
   "botNickname": "猫小爱",
   "type": "oicq",
@@ -29,7 +29,7 @@
     "enable": true,
     "endpoint": {
       "auth": "http://114.132.201.94:8082/openai/api/auth",
-      "conversation": "http://114.132.201.94:8082/openai/api/conversation"
+      "conversation": "https://bypass.churchless.tech/api/conversation"
     },
     "account": [
       {
@@ -44,12 +44,4 @@
   },
   "html2jpg": "http://114.132.201.94:8082/openai/api/html2jpg",
   "proxyServer": "http://master.io:7890",
-  "groupPingMs": 0,
-  "groupList": {
-  },
-  "clash": {
-    "enable": false,
-    "http": "xxx",
-    "list": [ "xxx" ]
-  }
 }
