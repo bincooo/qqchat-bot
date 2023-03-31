@@ -63,7 +63,7 @@ class EmailPool {
   }
 
   scheduleJob() {
-    schedule.scheduleJob('obtain-accessToken-job', '30 1 1 * * *', async () => {
+    schedule.scheduleJob('obtain-accessToken-job', '30 0 4 * * *', async () => {
       let needSave = false
       for(let index = 0, length = this._pool.length; index < length; index ++) {
         const it = this._pool[index]

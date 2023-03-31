@@ -6,6 +6,7 @@ import logger from 'src/util/log'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import * as types from 'src/types'
+import delay from 'delay'
 
 
 let client: Mirai
