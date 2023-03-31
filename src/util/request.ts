@@ -75,6 +75,9 @@ export function drawing(opts: {
     })
     .then(({ data: res }) => {
       try {
+        if (config.debug) {
+          console.log('drawing result =======>>>>>', res)
+        }
         const result = (JSON.parse(res)?.images??[])[0]
         // if (try4K) {
         //   if (callback) {
@@ -93,6 +96,9 @@ export function drawing(opts: {
         //     })
         //   return
         // }
+        if (!result) {
+          reject(new Error('draw error!'))
+        }
         resolve(result)
       } catch(err: Error) {
         reject(err)

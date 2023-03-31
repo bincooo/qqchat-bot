@@ -54,7 +54,7 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
 
 async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<string> {
   const cid = genCid()
-  fs.mkdirSync(outputDir, { recursive: true })
+  fs.mkdirSync('./tmp', { recursive: true })
   return new Promise((resolve, reject) => {
     fs.writeFile(`./tmp/${cid}.tmp`, buffer, (err) => {
       if (err) {
