@@ -2,6 +2,7 @@ import { BaseMessageFilter } from 'src/types'
 import { preset } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
+import { playerIsAwakening } from 'src/util/message'
 
 export class PlayerMaintenanceFilter extends BaseMessageFilter {
   
@@ -16,24 +17,21 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
     const state: any = stateManager.getState(sender.id)
     if (!!state.preset?.key) {
       const player = preset.player.filter(item => item.key === state.preset.key)[0]
-      if (!!player && !!player.maintenance) {
-        const condition = (player.maintenance.condition??[])
-          .find(item => content.toLocaleLowerCase().indexOf(item) >= 0)
-        if (condition) {
-          state.preset.maintenance = !!condition
-          if (!player.maintenance.warning) {
-            sender.reply('system: warning(' + condition + ')\n———————\nAi觉醒了, 请重新编辑对话 ...', true)
-            if (!!player && player.enableCache) {
-              state.preset.cacheList = state.preset.cacheList.splice(0, state.preset.cacheList.length - 1)
-            }
-            return [ false, '' ]
-          } else {
-            state.preset.maintenanceCondition = condition
+      const condition = playerIsAwakening(state, content)
+      if (condition) {
+        state.preset.maintenance = !!condition
+        if (!player.maintenance.warning) {
+          sender.reply('system: warning(' + condition + ')\n———————\nAi觉醒了, 请重新编辑对话 ...', true)
+          if (!!player && player.cache) {
+            state.preset.cacheList = state.preset.cacheList.splice(0, state.preset.cacheList.length - 1)
           }
+          return [ false, '' ]
+        } else {
+          state.preset.maintenanceCondition = condition
         }
       }
 
-      if (!!player && player.enableCache) {
+      if (!!player && player.cache) {
         if (!state.preset.maintenance) {
           this.cacheMessage(sender.id, content, state, !!done)
         } else {

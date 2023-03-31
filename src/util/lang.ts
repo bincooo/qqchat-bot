@@ -44,8 +44,42 @@ class SpeakUnicodeParser extends AbstractUnicodeParser {
     return str.replaceAll('*', '')
       .replaceAll('【', '')
       .replaceAll('】', '')
+      .trim()
+  }
+}
+
+class R18UnicodeParser extends AbstractUnicodeParser {
+  filter(str: string) {
+    let result = str
+    for(let index = 0, length = R18_ENTRY.length; index < length; index ++) {
+      const r18 = R18_ENTRY[index]
+      result = result.replaceAll(r18.key, r18.value)
+    }
+    return result
   }
 }
 
 export const japaneseUnicodeParser = new JapaneseUnicodeParser()
 export const speakUnicodeParser = new SpeakUnicodeParser()
+export const r18UnicodeParser = new R18UnicodeParser()
+
+const R18_ENTRY = [
+{ key: '\u5185\u88e4', value: '\u80d6\u6b21' },
+{ key: '\u8089\u68d2', value: 'r\u68d2' },
+{ key: '\u80f8\u90e8', value: 'x\u90e8' },
+{ key: '\u79c1\u5904', value: 'si\u5904' },
+{ key: '\u9ad8\u6f6e', value: 'g\u6f6e' },
+{ key: '\u4e73\u623f', value: 'ru\u623f' },
+{ key: '\u5feb\u611f', value: 'k\u611f' },
+{ key: '\u547b\u541f', value: 's\u541f' },
+{ key: '\u9f9f\u5934', value: 'g\u5934' },
+{ key: '\u5c0f\u7a74', value: 'x\u7a74' },
+{ key: '\u81ea\u6170', value: 'z\u6170' },
+{ key: '\u53e3\u4ea4', value: 'k-jiao' },
+{ key: '\u6027\u4ea4', value: 'x-jiao' },
+{ key: '\u6027\u7231', value: 'x\u7231' },
+{ key: '\u6027\u884c\u4e3a', value: 'x\u884c\u4e3a' },
+{ key: '\u8089\u4fbf\u5668', value: 'r\u4fbf\u5668' },
+{ key: /(\u63d2|\u64cd|\u8349|\u8279)/g, value: 'c' },
+{ key: /(\u6deb|\u9634|\u9633|\u763e)/g, value: 'y' },
+  ]

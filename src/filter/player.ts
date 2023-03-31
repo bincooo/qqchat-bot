@@ -4,7 +4,9 @@ import { config, preset } from 'src/config'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
 import { cgptOnResetSession } from 'src/util/event'
+import { playerIsAwakening } from 'src/util/message'
 import guardAi from 'src/util/guard'
+
 
 function dat() {
   return new Date()
@@ -67,11 +69,17 @@ export class PlayerFilter extends BaseMessageFilter {
       if (uid) {
         const state: any = stateManager.getState(uid)
         state.isReset = true
+        if (player.cache) {
+          state.preset.cacheList = []
+        }
       } else {
         const ids: Array<number | string> = stateManager.getIds()
         for(let index = 0; index < ids.length; index ++) {
           const state: any = stateManager.getState(ids[index])
           state.isReset = true
+          if (player.cache) {
+            state.preset.cacheList = []
+          }
         }
       }
     })
@@ -108,6 +116,10 @@ export class PlayerFilter extends BaseMessageFilter {
           if (player.maintenance?.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
+              if (player.cache) {
+                const cacheList = state.preset.cacheList
+                state.preset.cacheList = cacheList.splice(0, cacheList.length - 1)
+              }
               return null
             }
           }
@@ -126,8 +138,8 @@ export class PlayerFilter extends BaseMessageFilter {
           }
 
           let resultMessage = content
-          let { training, enableCache } = player
-          if (!enableCache) {
+          let { training, cache } = player
+          if (!cache) {
             await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
           }
           if (typeof training === 'string') {
@@ -218,23 +230,30 @@ export class PlayerFilter extends BaseMessageFilter {
           if (player.maintenance?.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
+              if (player.cache) {
+                const cacheList = state.preset.cacheList
+                state.preset.cacheList = cacheList.splice(0, cacheList.length - 1)
+              }
               return null
             }
           }
 
-          let resultMessage = player.maintenance?.training
-          const cacheList = state.preset.cacheList
+          // let resultMessage = player.maintenance?.training
+          // const cacheList = state.preset.cacheList
           
-          if (player.enableCache && resultMessage?.includes('[!!cache!!]')) {
-            resultMessage = resultMessage.replace('[!!cache!!]', cacheList?.join('\n'))
-          }
+          // if (player.cache && resultMessage?.includes('[!!cache!!]')) {
+          //   resultMessage = resultMessage.replace('[!!cache!!]', cacheList?.join('\n'))
+          // }
 
-          if (resultMessage?.includes('[!!content!!]')) {
-            return replyMessage("", resultMessage.replace('[!!content!!]', content), sender)
+          // if (resultMessage?.includes('[!!content!!]')) {
+          //   return replyMessage("", resultMessage.replace('[!!content!!]', content), sender)
+          // }
+          const [ playerMessage, resultMessage ] = this.transformGuardContent(content, player, state, sender)
+          if (!resultMessage) {
+            return playerMessage
           }
-
-          const res = await reply(resultMessage)
-          return await reply( replyMessage(player.prefix, content, sender), onProgress )
+          await reply(playerMessage)
+          return await reply( resultMessage, onProgress )
         }
         return [ false, result ]
       }
@@ -250,7 +269,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!state.preset.maintenance) {
         const player = preset.player.filter(item => item.key === state.preset.key)[0]
         const cacheMessage = (message: string) => {
-          if (player.enableCache) {
+          if (player.cache) {
             const cacheList = state.preset.cacheList
             cacheList.push(message)
             const max_cathe = 3 // 缓存最大对话次数
@@ -265,10 +284,30 @@ export class PlayerFilter extends BaseMessageFilter {
             if (player?.maintenance?.guard) {
               const checkResult = await guardAi.check(content, sender)
               if (!checkResult) {
+                if (player.cache) {
+                  const cacheList = state.preset.cacheList
+                  state.preset.cacheList = cacheList.splice(0, cacheList.length - 1)
+                }
                 return null
               }
             }
-            return await reply(val, onProgress)
+            let result = await reply(val, onProgress)
+            const condition = playerIsAwakening(state, result.text ?? '')
+            console.log('player.ts::handleReply[280]: condition = ', condition)
+            if (condition) {
+              if (player.cache) {
+                const cacheList = state.preset.cacheList
+                state.preset.cacheList = cacheList.splice(0, cacheList.length - 1)
+              }
+              const [ playerMessage, resultMessage ] = this.transformGuardContent(val, player, state, sender)
+              if (!resultMessage) {
+                result = await reply(playerMessage, onProgress)
+              } else {
+                await reply(playerMessage)
+                result = await reply(val, onProgress)
+              }
+            }
+            return result
           }
         }
 
@@ -282,6 +321,18 @@ export class PlayerFilter extends BaseMessageFilter {
       }
     }
     return null
+  }
+
+  transformGuardContent(content: stirng, player: any, state: any, sender: Sender): [ string, string ] {
+    let resultMessage = player.maintenance?.training
+    const cacheList = state.preset.cacheList
+    if (player.cache && resultMessage?.includes('[!!cache!!]')) {
+      resultMessage = resultMessage.replace('[!!cache!!]', cacheList?.join('\n'))
+    }
+    if (resultMessage?.includes('[!!content!!]')) {
+      return [ replyMessage("", resultMessage.replace('[!!content!!]', content), sender), null ]
+    }
+    return [ resultMessage, replyMessage(player.prefix, content, sender) ]
   }
 }
 

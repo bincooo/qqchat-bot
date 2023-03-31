@@ -1,6 +1,6 @@
 import { segment, Sendable } from 'oicq'
 import logger from 'src/util/log'
-import { config } from '../config'
+import { config, preset } from '../config'
 import { Sender } from 'src/model/sender'
 import speak from './tts'
 import messageHandler from 'src/filter'
@@ -8,7 +8,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { QueueReply } from 'cgpt'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
-import { japaneseUnicodeParser, speakUnicodeParser } from 'src/util/lang'
+import { japaneseUnicodeParser, speakUnicodeParser, r18UnicodeParser } from 'src/util/lang'
 import stateManager from 'src/util/state'
 import retry from 'src/util/retry'
 import delay from 'delay'
@@ -46,7 +46,7 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
     logger.error(err)
   }
 
-  return resultMessage??content?.trim()
+  return resultMessage ?? content?.trim()
 }
 
 
@@ -119,7 +119,7 @@ export const onMessage = async (data: any, sender: Sender) => {
         }
 
         try {
-          await sender.reply([{ type: 'Plain', value: message }], true)
+          await sender.reply([{ type: 'Plain', value: r18UnicodeParser.filter(message) }], true)
           if (isDone()) {
             await stateManager.recallLoading(sender.id)
           } else {
@@ -131,6 +131,17 @@ export const onMessage = async (data: any, sender: Sender) => {
       }
 
     }
+  }
+}
+
+export function playerIsAwakening(state: any, content: string): string {
+  if (!!state.preset?.key) {
+    const player = preset.player.filter(item => item.key === state.preset.key)[0]
+    if (!!player && !!player.maintenance) {
+      return (player.maintenance.condition??[])
+        .find(item => content.toLocaleLowerCase().indexOf(item) >= 0)
+    }
+    return null
   }
 }
 

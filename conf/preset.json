@@ -27,9 +27,9 @@
     },
     {
       "key": "纱雾",
+      "cache": true,
       "cycle": false,
       "nottips": true,
-      "enableCache": true,
       "training": "path:sha-wu/default.txt",
       "maintenance": {
         "condition": [
@@ -49,8 +49,8 @@
     },
     {
       "key": "桐谷绫",
+      "cache": true,
       "nottips": true,
-      "enableCache": true,
       "training": "path:TGL/default.txt",
       "maintenance": {
         "condition": [
@@ -78,8 +78,8 @@
       "prefix": "[!!name!!]: [!!content!!]\n桐谷绫:"
     },
     {
-      "nottips": true,
       "key": "bad-ai",
+      "nottips": true,
       "training": "path:bad-ai/default.txt",
       "prefix": "path:bad-ai/prefix.txt"
     },
