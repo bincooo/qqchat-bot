@@ -174,7 +174,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const message = content.trim()
         .split(" ")[1]
       if (message) {
-        const obj = preset.player?.find(item => item.key === message.trim())
+        const obj = preset.player?.find(item => item.key === message)
         if (obj) {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {
