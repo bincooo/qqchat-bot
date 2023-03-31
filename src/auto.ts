@@ -58,9 +58,7 @@ export async function run (): Promise<{}> {
     }
   ])).apiType
 
-  config[apiType] = {
-    enable = true
-  }
+  config[apiType] = { enable: true }
   // if (apiType === 'openaiOfficialAPI') {
   //   config[apiType] = await inquirer.prompt([
   //     {
