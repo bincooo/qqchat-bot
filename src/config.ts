@@ -49,7 +49,9 @@ export const config = {
   // clash: {
   //   enable: false
   // },
-  parseMinimum: 80
+  parseMinimum: 80,
+
+  chatApi: null
 }
 
 export const preset: any = {

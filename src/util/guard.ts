@@ -69,7 +69,7 @@ class GuardAi {
         }
 
         const prompt = player.maintenance.guard.replace('[!!content!!]', content)
-        const result = await state.chatApi.sendMessage(prompt, { ...this.session })
+        const result = await config.chatApi.sendMessage(prompt, { ...this.session })
         console.log('GuardAi ===== >>>> ', result)
         this.session.parentMessageId = result.messageId
         this.session.conversationId = result.conversationId

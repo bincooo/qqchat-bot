@@ -190,6 +190,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       apiReverseProxyUrl: endpoint.conversation,
       accessToken
     })
+    config.chatApi = this._api
     console.log('chatgpt - execute initChatGPT method success.')
   }
 
@@ -221,9 +222,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       this._iswait = true
       stateManager.sendLoading(sender, { init: true, isEnd: false })
-      const state: any = stateManager.getState(sender.id)
-      state.chatApi = this._api
-
       // console.log('sendMessage', message)
       this._manager.push(this.buildExecutor(sender, message, async (res: ChatMessage) => onMessage(res, sender)))
     } catch (err) {

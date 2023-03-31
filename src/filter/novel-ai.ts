@@ -1,5 +1,5 @@
 import { BaseMessageFilter, MessageFilter } from 'src/types'
-import { preset } from 'src/config'
+import { config, preset } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
 import { cgptOnChangeAccount } from 'src/util/event'
@@ -51,17 +51,20 @@ export class NovelAiFilter extends BaseMessageFilter {
         resultMessage = novelAiHelper.indexOf('[!!content!!]') >= 0 ? 
           novelAiHelper.replace('[!!content!!]', content.substr(10)) :
           novelAiHelper.concat(content.substr(10))
-        const result = await state.chatApi.sendMessage(resultMessage, { ...this.session })
+        const result = await config.chatApi.sendMessage(resultMessage, { ...this.session })
         console.log('noval-ai [tag:draw] ===== >>>> ', result)
         this.session.parentMessageId = result.messageId
         this.session.conversationId = result.conversationId
 
         const prompt = result.text
           .replaceAll('，', ',')
-          .match(/[a-zA-Z0-9,{}\[\]]/g)
+          .replaceAll(' ', '-')
+          .match(/[a-zA-Z0-9,{}\[\]-]/g)
           .join('')
+          .replaceAll('-', ' ')
           .split(',')
-          .filter(it => !!it.trim())
+          .map(it => it.trim())
+          .filter(it => !!it)
           .join(', ')
 
         if (prompt) {
