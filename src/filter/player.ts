@@ -6,6 +6,7 @@ import stateManager from 'src/util/state'
 import { cgptOnResetSession } from 'src/util/event'
 import { playerIsAwakening } from 'src/util/message'
 import guardAi from 'src/util/guard'
+import PlayerCommand from 'src/command/commands/player'
 
 
 function dat() {
@@ -195,6 +196,10 @@ export class PlayerFilter extends BaseMessageFilter {
             cacheList: [],
             maintenanceCount: 0
           }
+          return [ false, "" ]
+        } else {
+          const command = new PlayerCommand()
+          command.execute(sender, [ 'help' ])
           return [ false, "" ]
         }
       }
