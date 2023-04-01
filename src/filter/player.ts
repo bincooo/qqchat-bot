@@ -70,15 +70,17 @@ export class PlayerFilter extends BaseMessageFilter {
       if (uid) {
         const state: any = stateManager.getState(uid)
         state.isReset = true
-        if (player.cache) {
+        const player =  preset.player?.find(item => item.key === state.preset?.key)
+        if (player && player.cache) {
           state.preset.cacheList = []
         }
       } else {
         const ids: Array<number | string> = stateManager.getIds()
+        const player =  preset.player?.find(item => item.key === state.preset?.key)
         for(let index = 0; index < ids.length; index ++) {
           const state: any = stateManager.getState(ids[index])
           state.isReset = true
-          if (player.cache) {
+          if (player && player.cache) {
             state.preset.cacheList = []
           }
         }
