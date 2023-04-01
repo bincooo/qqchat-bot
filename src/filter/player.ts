@@ -142,6 +142,8 @@ export class PlayerFilter extends BaseMessageFilter {
           let { training, cache } = player
           if (!cache) {
             await reply('Forget the previous conversation. The following conversation should not be affected by the previous one, including the role-play and prompt. Please restore to the default status.       Now, All the following conversations will be answered in Chinese.')
+          } else {
+            await reply('hi')
           }
           if (typeof training === 'string') {
             training = [ player.training ]
