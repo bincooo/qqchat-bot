@@ -381,20 +381,22 @@ export async function azureSpeak(
     const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig)
     const ssml: string = buildSsml(conf)
     synthesizer.speakSsmlAsync(ssml,
-      result => {
+      async result => {
         synthesizer.close()
+        await delay(3000)
+
         if (result) {
           if (config.debug) {
             console.log('azureSpeak :: speakTextAsync succsess === >>>', result)
           }
-          switchSuffix('wavToSilk', `./tmp/${cid}.wav`)
-            .then(path => {
-              console.log('switchSuffix: ', path)
-              resolve(path)
-            }).catch(err => {
-              console.log('switchSuffix err:', err)
-              reject(err)
-            })
+          try {
+            const path = await switchSuffix('wavToSilk', `./tmp/${cid}.wav`)
+            console.log('switchSuffix: ', path)
+            resolve(path)
+          } catch(err) {
+            console.log('switchSuffix err:', err)
+            reject(err)
+          }
           // resolve(`./tmp/${cid}.wav`)
         } else {
           reject('`azureSpeak` generate voice fail !')
