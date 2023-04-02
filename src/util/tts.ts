@@ -392,15 +392,12 @@ export async function azureSpeak(
             console.log('azureSpeak :: speakTextAsync succsess === >>>', result)
           }
           // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
-          await delay(1200)
-
+          await delay(800)
           try {
             resolve((await switchSuffix('wavToSilk', `./tmp/${cid}.wav`)))
           } catch(err) {
             reject(err)
           }
-
-          
           // resolve(`./tmp/${cid}.wav`)
         } else {
           reject('`azureSpeak` generate voice fail !')

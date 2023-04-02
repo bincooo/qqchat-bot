@@ -122,6 +122,7 @@ export const onMessage = async (data: any, sender: Sender) => {
         try {
           await sender.reply([{ type: 'Plain', value: r18UnicodeParser.filter(message) }], true)
           if (isDone()) {
+            delay(800)
             await stateManager.recallLoading(sender.id)
           } else {
             stateManager.sendLoading(sender)
