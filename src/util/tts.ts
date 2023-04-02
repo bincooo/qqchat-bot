@@ -382,23 +382,24 @@ export async function azureSpeak(
     const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig)
     const ssml: string = buildSsml(conf)
     synthesizer.speakSsmlAsync(ssml,
-      async result => {
+      result => {
         synthesizer.close()
-        // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
-        await delay(800)
-
         if (result) {
           if (config.debug) {
             console.log('azureSpeak :: speakTextAsync succsess === >>>', result)
           }
-          try {
-            const path = await switchSuffix('wavToSilk', `./tmp/${cid}.wav`)
-            console.log('switchSuffix: ', path)
-            resolve(path)
-          } catch(err) {
-            console.log('switchSuffix err:', err)
-            reject(err)
+          
+          const switchPromice = () => {
+            switchSuffix('wavToSilk', `./tmp/${cid}.wav`)
+              .then(path => {
+                resolve(path)
+              }).catch(err => {
+                reject(err)
+              })
           }
+
+          // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
+          delay(800).then(switchPromice())
           // resolve(`./tmp/${cid}.wav`)
         } else {
           reject('`azureSpeak` generate voice fail !')
