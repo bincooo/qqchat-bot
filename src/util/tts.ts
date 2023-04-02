@@ -14,20 +14,19 @@ const ffmpegPath = (() => {
 
 let ip = IP()
 let voice = null
-function mp3Totmp(filepath, outputDir = './tmp') {
-  fs.mkdirSync(outputDir, { recursive: true })
+function mp3ToAmr(filepath, outputDir = './tmp') {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
-    const cmdStr = `${ffmpegPath} -y -i ${filepath} -ac 1 -ar 8000 ${outputDir}/${filename}.tmp`
+    const cmdStr = `${ffmpegPath} -y -i ${filepath} -ac 1 -ar 8000 ${outputDir}/${filename}.amr`
     const executor = util.promisify(execcmd.exec)
     
     executor(cmdStr, (err, stdout, stderr) => {
       if (err) {
         reject('error:' + stderr)
       } else {
-        resolve(`${outputDir}/${filename}.tmp`)
+        resolve(`${outputDir}/${filename}.amr`)
       }
       fs.unlinkSync(filepath)
     })
@@ -35,7 +34,6 @@ function mp3Totmp(filepath, outputDir = './tmp') {
 }
 
 function mp3ToSilk(filepath, outputDir = './tmp') {
-  fs.mkdirSync(outputDir, { recursive: true })
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
@@ -54,7 +52,9 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
 
 async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<string> {
   const cid = genCid()
-  fs.mkdirSync('./tmp', { recursive: true })
+  if (!fs.existsSync('./tmp')) {
+    fs.mkdirSync('./tmp', { recursive: true })
+  }
   return new Promise((resolve, reject) => {
     fs.writeFile(`./tmp/${cid}.tmp`, buffer, (err) => {
       if (err) {
@@ -75,8 +75,8 @@ async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<strin
       case 'mp3':
       case 'pcm':
         return rename(path, vt)
-      case 'mp3Totmp':
-        return mp3Totmp(rename(path, 'mp3'))
+      case 'mp3ToAmr':
+        return mp3ToAmr(rename(path, 'mp3'))
       case 'mp3ToSilk':
       default:
         return mp3ToSilk(rename(path, 'mp3'))
@@ -273,7 +273,7 @@ function buildSsml(config: Config) {
 // https://azure.microsoft.com/zh-cn/products/cognitive-services/text-to-speech/#features
 async function speak(
   conf: Config,
-  type: string = 'audio-48khz-192kbitrate-mono-mp3',
+  type: string = 'audio-48khz-96kbitrate-mono-mp3',
   vt: string = 'mp3ToSilk'
 ) {
 

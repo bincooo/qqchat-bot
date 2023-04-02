@@ -301,7 +301,8 @@ export class ChatGPTHandler extends BaseMessageHandler {
       // 429 1hours 限制, 换号处理. 三次后触发
       // if (++count429 < 3) return
       // count429 = 0
-      this._emailPool.next()
+      const account = this._emailPool.next()
+      this._api.accessToken = account.accessToken
 
     } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)

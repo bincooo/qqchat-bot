@@ -61,6 +61,7 @@
     "esbuild": "^0.16.10",
     "ffmpeg-static": "^4.4.1",
     "inquirer": "^9.1.4",
+    "microsoft-cognitiveservices-speech-sdk": "^1.26.0",
     "mirai-ts": "^2.4.4",
     "node-schedule": "^2.1.1",
     "oicq": "^2.3.1",
