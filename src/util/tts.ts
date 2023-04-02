@@ -362,7 +362,7 @@ speak.close = () => {
 
 export default speak
 
-
+const speechConfig = SpeechConfig.fromSubscription(config.azureSdk.key, config.azureSdk.region)
 
 export async function azureSpeak(
   conf: Config,
@@ -371,9 +371,8 @@ export async function azureSpeak(
   if (!fs.existsSync('./tmp')) {
     fs.mkdirSync('./tmp', { recursive: true })
   }
-  
+
   const cid = genCid()
-  const speechConfig = SpeechConfig.fromSubscription(config.azureSdk.key, config.azureSdk.region)
   const audioConfig = AudioConfig.fromAudioFileOutput(`./tmp/${cid}.wav`)
   return new Promise<string>((resolve, reject) => {
     const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig)
@@ -386,7 +385,13 @@ export async function azureSpeak(
             console.log('azureSpeak :: speakTextAsync succsess === >>>', result)
           }
           switchSuffix('wavToSilk', `./tmp/${cid}.wav`)
-            .then(resolve)
+            .then(path => {
+              console.log('switchSuffix: ', path)
+              resolve(path)
+            }).catch(err => {
+              console.log('switchSuffix err:', err)
+              reject(err)
+            })
           // resolve(`./tmp/${cid}.wav`)
         } else {
           reject('`azureSpeak` generate voice fail !')
