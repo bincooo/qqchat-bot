@@ -28,7 +28,7 @@ function mp3ToAmr(filepath, outputDir = './tmp') {
       } else {
         resolve(`${outputDir}/${filename}.amr`)
       }
-      fs.unlinkSync(filepath)
+      // fs.unlinkSync(filepath)
     })
   })
 }
@@ -45,7 +45,7 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
       } else {
         reject('mp3 convert to silk Error !!!')
       }
-      fs.unlinkSync(filepath)
+      // fs.unlinkSync(filepath)
     })
   })
 }
