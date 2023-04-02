@@ -7,8 +7,10 @@ import { CodeFilter } from './code'
 import { PlayerMaintenanceFilter } from './player-maintenance'
 import { DANmodelFilter } from './dan-model'
 import { DefaultFilter } from './default'
+import { BanFilter } from './ban'
 
 const messageFilters = [
+  new BanFilter(),
   new SymbolFilter(),
   new NovelAiFilter(),
   new OnlineFilter(),
