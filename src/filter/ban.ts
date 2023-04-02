@@ -1,19 +1,16 @@
 import { BaseMessageFilter, MessageFilter } from 'src/types'
+import { loadConfig, writeConfig } from 'src/util/config'
 import { config } from 'src/config'
 import getClient from 'src/core'
-
-const replaceMapping = {
-  '，': ',',
-  '！': '!',
-  '。': '.',
-  '？': '?'
-}
 
 export class BanFilter extends BaseMessageFilter {
   protected _banList: (number | string)[] = []
   constructor() {
     super()
     this.type = 0
+    const configFile = process.cwd() + '/conf/ban.json'
+    const ban: (number | string)[] = loadConfig(configFile)
+    this._banList = ban
   }
 
   handle = async (content: string, sender?: Sender) => {
