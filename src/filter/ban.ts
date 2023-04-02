@@ -24,11 +24,11 @@ export class BanFilter extends BaseMessageFilter {
       const e: any = sender.getEvent()
       switch(config.type) {
       case 'mirai':
-        const info = getClient()
+        const info = await getClient()
           .target
           .api
           .memberInfo(e.sender.group.id, e.sender.id)
-        console.log(info)
+        console.log('ban test: ', info)
         break
       default:
         break
