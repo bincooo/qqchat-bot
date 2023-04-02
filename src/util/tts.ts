@@ -8,6 +8,7 @@ import fs from 'fs'
 import WxVoice from 'wx-voice'
 import ffmpeg from 'ffmpeg-static'
 import { config } from 'src/config'
+import delay from 'delay'
 
 const ffmpegPath = (() => {
   return (typeof ffmpeg === 'string') ? ffmpeg : ffmpeg.path
