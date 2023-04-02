@@ -3,6 +3,14 @@ import { loadConfig, writeConfig } from 'src/util/config'
 import { config } from 'src/config'
 import getClient from 'src/core'
 
+function IsNumber(val: string | number) {
+ if (typeof val === 'number') {
+  return true
+ }
+ const num = parseInt(val)
+ return !Object.is(num, NaN)
+}
+
 export class BanFilter extends BaseMessageFilter {
   protected _banList: (number | string)[] = []
   constructor() {
@@ -19,15 +27,20 @@ export class BanFilter extends BaseMessageFilter {
         sender.reply('你没有权限使用该命令~', true)
         return [ false,  "" ]
       }
-      const args = content.trim()
-        .split(' ')
+      const qq = content.trim()
+        .split(' ')[1]
+      if (IsNumber(qq)) {
+        sender.reply('请输入正确的QQ号~', true)
+        return [ false,  "" ]
+      }
+
       const e: any = sender.getEvent()
       switch(config.type) {
       case 'mirai':
         const info = await getClient()
           .target
           .api
-          .memberInfo(e.sender.group.id, e.sender.id)
+          .memberInfo(e.sender.group.id, parseInt(QQ))
         console.log('ban test: ', info)
         break
       default:
