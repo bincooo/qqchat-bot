@@ -256,7 +256,10 @@ export class ChatGPTHandler extends BaseMessageHandler {
           parentMessageId: result.id
         })
         if (onProgress) {
-          await onProgress(result)
+          await onProgress({
+            ...result,
+            text: '[DONE]'
+          })
         }
         await delay(timeoutMs)
         return result
@@ -272,10 +275,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
       if (config.debug) {
         console.log('chatgpt web 1 ======>>>>>', result)
       }
-      await onProgress({
-        ...result,
-        text: '[DONE]'
-      })
     }
   }
 
