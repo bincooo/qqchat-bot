@@ -58,7 +58,7 @@ async function main() {
   const path = await speak({
     text,
     vname: isJapan() ? 'ja-JP-AoiNeural' : undefined
-  }, 'audio-48khz-192kbitrate-mono-mp3', 'mp3')
+  }, 'audio-48khz-192kbitrate-mono-mp3')
   console.log('转化成功: ' + path)
 }
 

@@ -117,10 +117,10 @@ function genCid() {
 
 function IP() {
   return (
-    Math.floor(Math.random() * (10 - 255) + 255) +
-    '.' +
-    Math.floor(Math.random() * (10 - 255) + 255) +
-    '.' +
+    // Math.floor(Math.random() * (10 - 255) + 255) +
+    '54.' +
+    // Math.floor(Math.random() * (10 - 255) + 255) +
+    '68.' +
     Math.floor(Math.random() * (10 - 255) + 255) +
     '.' +
     Math.floor(Math.random() * (10 - 255) + 255)
@@ -135,7 +135,7 @@ async function conn(): Promise<WebSocket> {
       host: 'eastus.api.speech.microsoft.com',
       origin: 'https://azure.microsoft.com',
       headers: {
-        // 'X-real-ip': ip,
+        'X-real-ip': ip,
         'X-Forwarded-For': ip,
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.41',
       }
