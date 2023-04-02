@@ -268,7 +268,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       } else {
         result = await message.call(undefined, reply, onProgress)
       }
-      
+
       if (config.debug) {
         console.log('chatgpt web 1 ======>>>>>', result)
       }
@@ -280,7 +280,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   async messageErrorHandler(sender: Sender, err: any) {
-    // console.log('[chatgpt.ts] 158 messageErrorHandler', err)
+    console.log('[chatgpt.ts] messageErrorHandler', err)
     stateManager.sendLoading(sender, { init: true, isEnd: true })
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
