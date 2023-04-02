@@ -29,7 +29,7 @@ export class BanFilter extends BaseMessageFilter {
       }
       const qq = content.trim()
         .split(' ')[1]
-      if (IsNumber(qq)) {
+      if (!IsNumber(qq)) {
         sender.reply('请输入正确的QQ号~', true)
         return [ false,  "" ]
       }
