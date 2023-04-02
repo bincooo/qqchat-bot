@@ -241,12 +241,12 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       const reply = async (
         str: string,
-        onProgress?: (partialResponse: ChatMessage) => Promise<void>,
+        on?: (partialResponse: ChatMessage) => Promise<void>,
         timeoutMs: number = 500
       ): Promise<ChatMessage> => {
         const result = await this._api.sendMessage(str, {
           ... this._emailPool.getArgs(sender.id),
-          onProgress
+          onProgress: on
         })
         if (result.error) {
           return result
@@ -255,12 +255,10 @@ export class ChatGPTHandler extends BaseMessageHandler {
           conversationId: result.conversationId,
           parentMessageId: result.id
         })
-        if (onProgress) {
-          await onProgress({
-            ...result,
-            text: '[DONE]'
-          })
+        if (on) {
+          await on({ ...result, text: '[DONE]' })
         }
+        console.log("12322323231312312")
         await delay(timeoutMs)
         return result
       }
