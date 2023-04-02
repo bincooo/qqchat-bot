@@ -40,7 +40,7 @@ export class BanFilter extends BaseMessageFilter {
         const info = await getClient()
           .target
           .api
-          .memberInfo(e.sender.group.id, parseInt(QQ))
+          .memberInfo(e.sender.group.id, parseInt(qq))
         console.log('ban test: ', info)
         break
       default:
