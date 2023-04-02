@@ -399,7 +399,7 @@ export async function azureSpeak(
           }
 
           // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
-          delay(800).then(switchPromice())
+          delay(1200).then(switchPromice())
           // resolve(`./tmp/${cid}.wav`)
         } else {
           reject('`azureSpeak` generate voice fail !')
