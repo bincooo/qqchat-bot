@@ -73,8 +73,9 @@ export const onMessage = async (data: any, sender: Sender) => {
 
   if (data.text) {
     const filters = messageHandler.filter(item => item.type === 1)
+    const text = data.text
+    const isDone = () => (text === '[DONE]')
     let message: string | null = globalParser.resolve(data)
-    const isDone = () => (data.text === '[DONE]')
     
     if (!!message || isDone()) {
       message = await _filterTokens(message??'', filters, sender, isDone())
