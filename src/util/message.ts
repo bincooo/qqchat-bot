@@ -69,7 +69,7 @@ function initParser() {
 
 export const onMessage = async (data: any, sender: Sender) => {
   initParser()
-  console.log('onMessage ===>>', data)
+  // console.log('onMessage ===>>', data)
 
   if (data.text) {
     const filters = messageHandler.filter(item => item.type === 1)
