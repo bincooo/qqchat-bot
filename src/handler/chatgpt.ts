@@ -223,7 +223,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       this._iswait = true
       stateManager.sendLoading(sender, { init: true, isEnd: false })
       // console.log('sendMessage', message)
-      this._manager.push(this.buildExecutor(sender, message, async (res: ChatMessage) => onMessage(res, sender)))
+      this._manager.push(this.buildExecutor(sender, message, async (res: ChatMessage) => await onMessage(res, sender)))
     } catch (err) {
       await this.messageErrorHandler(sender, err)
     }
