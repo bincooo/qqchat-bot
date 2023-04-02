@@ -19,6 +19,7 @@ class GlobalStateManager {
 
   constructor() {
     this._globalTimer = setInterval(() => {
+      console.log('GlobalStateManager_globalTimer', this._ids)
       this._ids.forEach(uid => {
         const state = this[uid]
         if (config.debug)
