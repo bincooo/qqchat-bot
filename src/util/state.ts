@@ -65,9 +65,9 @@ class GlobalStateManager {
     do {
       target = state.loading?.shift()
       if(target) {
-        // if (config.debug) {
-        //   console.log('state.recallLoading ====>>> ', target)
-        // }
+        if (config.debug) {
+          console.log('state.recallLoading ====>>> ', target)
+        }
         try {
           await getClient().recall(target)
         } catch(err) {

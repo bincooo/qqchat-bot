@@ -248,6 +248,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
           ... this._emailPool.getArgs(sender.id),
           onProgress: on
         })
+        console.log("12322323231312312", result)
         if (result.error) {
           return result
         }
@@ -258,7 +259,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
         if (on) {
           await on({ ...result, text: '[DONE]' })
         }
-        console.log("12322323231312312")
         await delay(timeoutMs)
         return result
       }
