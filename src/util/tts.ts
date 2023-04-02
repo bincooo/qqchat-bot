@@ -384,7 +384,8 @@ export async function azureSpeak(
     synthesizer.speakSsmlAsync(ssml,
       async result => {
         synthesizer.close()
-        await delay(3000)
+        // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
+        await delay(800)
 
         if (result) {
           if (config.debug) {
