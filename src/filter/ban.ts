@@ -24,7 +24,8 @@ export class BanFilter extends BaseMessageFilter {
     super()
     this.type = 0
     const ban: (number | string)[] = loadConfig(configFile)
-    this._banList = ban
+    console.log('BanFilter:: constructor', ban)
+    this._banList = ban ?? []
   }
 
   handle = async (content: string, sender?: Sender) => {
@@ -48,6 +49,7 @@ export class BanFilter extends BaseMessageFilter {
           .api
           .memberInfo(e.sender.group.id, parseInt(qq))
         if (info && info.id == qq) {
+          console.log('_banList', this._banList)
           this._banList.push(qq)
           await saveConfig(this._banList)
           sender.reply(`【${info.memberName}】\n已加入黑名单 ~`, true)
