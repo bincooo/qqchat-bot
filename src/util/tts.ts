@@ -53,9 +53,6 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
 
 async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<string> {
   const cid = genCid()
-  if (!fs.existsSync('./tmp')) {
-    fs.mkdirSync('./tmp', { recursive: true })
-  }
   return new Promise((resolve, reject) => {
     fs.writeFile(`./tmp/${cid}.tmp`, buffer, (err) => {
       if (err) {
@@ -288,6 +285,10 @@ async function speak(
   vt: string = 'mp3ToSilk'
 ) {
 
+  if (!fs.existsSync('./tmp')) {
+    fs.mkdirSync('./tmp', { recursive: true })
+  }
+
   if (!_ws || _ws.readyState !== WebSocket.OPEN) {
     _ws = await conn()
   }
@@ -367,6 +368,10 @@ export async function azureSpeak(
   conf: Config,
   vt: string = 'mp3ToSilk'
 ) {
+  if (!fs.existsSync('./tmp')) {
+    fs.mkdirSync('./tmp', { recursive: true })
+  }
+  
   const cid = genCid()
   const speechConfig = SpeechConfig.fromSubscription(config.azureSdk.key, config.azureSdk.region)
   const audioConfig = AudioConfig.fromAudioFileOutput(`./tmp/${cid}.wav`)
