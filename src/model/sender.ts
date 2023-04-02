@@ -4,6 +4,7 @@ import { md2jpg, genTemplate } from 'src/util/browser'
 import delay from 'delay'
 import { Sendable } from 'oicq'
 import getClient from 'src/core'
+import stateManager from 'src/util/state'
 
 /**
  * 消息对象的封装
@@ -26,13 +27,14 @@ export class Sender {
 
 
   constructor (e: any) {
+    this._event = e
+    stateManager.getState(this.id)
     const info = getClient().information(e)
-    this.isAdmin = info.isAdmin
     this.group = info.group
+    this.isAdmin = info.isAdmin
     this.nickname = info.nickname
     this.textMessage = info.textMessage
     this._userId = info.userId
-    this._event = e
   }
 
   getEvent(): any {
