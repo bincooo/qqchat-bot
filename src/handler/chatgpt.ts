@@ -246,7 +246,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       ): Promise<ChatMessage> => {
         const result = await this._api.sendMessage(str, {
           ... this._emailPool.getArgs(sender.id),
-          onProgress: on
+          // onProgress: on
         })
         console.log("12322323231312312", result)
         if (result.error) {
