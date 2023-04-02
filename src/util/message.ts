@@ -2,7 +2,7 @@ import { segment, Sendable } from 'oicq'
 import logger from 'src/util/log'
 import { config, preset } from '../config'
 import { Sender } from 'src/model/sender'
-import speak from './tts'
+import speak, { azureSpeak } from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { QueueReply } from 'cgpt'
@@ -102,7 +102,8 @@ export const onMessage = async (data: any, sender: Sender) => {
 
         if (state.tts) {
           try {
-            const path = await retry(() => speak({
+            const speakSdk = config.azureSdk.enable ? azureSpeak : speak
+            const path = await retry(() => speakSdk({
               text: speakUnicodeParser.filter(message.trim()),
               ...parserJapen(state, message)
             }),
