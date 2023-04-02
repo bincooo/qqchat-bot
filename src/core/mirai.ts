@@ -101,6 +101,7 @@ class MiraiImpl extends types.TalkWrapper {
   } & Record<string, (number | string)> {
     const result = {
     }
+    result.userId = e.sender?.id
     result.isAdmin = e.sender?.id == config.adminQQ
     result.nickname = (e.sender?.memberName ?? e.sender?.nickname ?? e.sender?.id) + ''
     result.group = (e.type === 'GroupMessage' ? e.sender.group : undefined)

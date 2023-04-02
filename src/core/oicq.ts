@@ -212,6 +212,7 @@ class OicqImpl extends types.TalkWrapper {
     result.group = e.group
     result.nickname = e.sender?.nickname ?? e.nickname
     const userId = e.user_id ?? e.sender?.user_id
+    result.userId = userId
     result.isAdmin = ( userId == config.adminQQ )
     result.textMessage = e.message?.filter(item => item.type === 'text').map(item => item.text).join().trim()
     if (!e.atme && !!config.botNickname) {

@@ -22,6 +22,8 @@ export class Sender {
 
   public group?: any
 
+  protected _userId?: number
+
 
   constructor (e: any) {
     const info = getClient().information(e)
@@ -29,6 +31,7 @@ export class Sender {
     this.group = info.group
     this.nickname = info.nickname
     this.textMessage = info.textMessage
+    this._userId = info.userId
     this._event = e
   }
 
@@ -38,6 +41,10 @@ export class Sender {
 
   get id(): number {
     return getClient().sessionId(this._event)
+  }
+
+  get userId(): number {
+    return this._userId
   }
 
   async reply(content: (TalkChain[] | string), quote?: boolean): [boolean, any] {
