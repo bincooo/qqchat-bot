@@ -261,6 +261,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
         await delay(timeoutMs)
         return result
       }
+
       let result
       if (typeof message === 'string') {
         result = await reply(message, onProgress)
