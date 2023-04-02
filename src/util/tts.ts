@@ -40,7 +40,10 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
-    const voice = new WxVoice('./tmp', ffmpegPath)
+    if(!voice) {
+      voice = new WxVoice('./tmp', ffmpegPath)
+      voice.on("error", (err) => console.log('WxVoice Error: ', err))
+    }
     voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
       if (path) {
         resolve(path)
@@ -389,7 +392,7 @@ export async function azureSpeak(
             console.log('azureSpeak :: speakTextAsync succsess === >>>', result)
           }
           // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
-          delay(1200)
+          await delay(1200)
 
           try {
             resolve((await switchSuffix('wavToSilk', `./tmp/${cid}.wav`)))
