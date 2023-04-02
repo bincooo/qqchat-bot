@@ -3,6 +3,9 @@ import { loadConfig, writeConfig } from 'src/util/config'
 import { config } from 'src/config'
 import getClient from 'src/core'
 
+
+const configFile = process.cwd() + '/conf/ban.json'
+
 function IsNumber(val: string | number) {
  if (typeof val === 'number') {
   return true
@@ -11,12 +14,15 @@ function IsNumber(val: string | number) {
  return !Object.is(num, NaN)
 }
 
+async function saveConfig(banList: (number | string)[]) {
+  await writeConfig(banList, configFile)
+}
+
 export class BanFilter extends BaseMessageFilter {
   protected _banList: (number | string)[] = []
   constructor() {
     super()
     this.type = 0
-    const configFile = process.cwd() + '/conf/ban.json'
     const ban: (number | string)[] = loadConfig(configFile)
     this._banList = ban
   }
@@ -24,13 +30,13 @@ export class BanFilter extends BaseMessageFilter {
   handle = async (content: string, sender?: Sender) => {
     if (content?.trim().startsWith('ban ') /*&& sender.group*/) {
       if (!sender.isAdmin) {
-        sender.reply('你没有权限使用该命令~', true)
+        sender.reply('你没有权限使用该命令 ~', true)
         return [ false,  "" ]
       }
       const qq = content.trim()
         .split(' ')[1]
       if (!IsNumber(qq)) {
-        sender.reply('请输入正确的QQ号~', true)
+        sender.reply('请输入正确的QQ号 ~', true)
         return [ false,  "" ]
       }
 
@@ -41,11 +47,23 @@ export class BanFilter extends BaseMessageFilter {
           .target
           .api
           .memberInfo(e.sender.group.id, parseInt(qq))
-        console.log('ban test: ', info)
+        if (info && info.id == qq) {
+          this._banList.push(qq)
+          await saveConfig(this._banList)
+          sender.reply(`【${info.memberName}】\n已加入黑名单 ~`, true)
+          return [ false,  "" ]
+        } else {
+          sender.reply('请输入正确的QQ号 ~', true)
+          return [ false,  "" ]
+        }
         break
       default:
         break
       }
+    }
+
+    if (this._banList.find(it => it == sender.userId)) {
+      return [ false, "" ]
     }
     return [ true, content ]
   }

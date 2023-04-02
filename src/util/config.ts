@@ -23,10 +23,10 @@ export function existsConfig (config?: string) {
 //   }
 // }
 
-export async function writeConfig (config: object) {
+export async function writeConfig (config: object, target?: string) {
   const content = JSON.stringify(config, null, 2)
-  await writeFile(configFile, content)
-  logger.info(chalk.green(`config.json 创建成功！${configFile}`))
+  await writeFile(target ?? configFile, content)
+  logger.info(chalk.green(`config.json 创建成功！${target ?? configFile}`))
 }
 
 export async function loadPresets(config?: string) {
