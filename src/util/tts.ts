@@ -362,7 +362,7 @@ speak.close = () => {
 
 export default speak
 
-const speechConfig = null
+let speechConfig = null
 
 export async function azureSpeak(
   conf: Config,
