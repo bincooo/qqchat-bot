@@ -362,7 +362,7 @@ speak.close = () => {
 
 export default speak
 
-const speechConfig = SpeechConfig.fromSubscription(config.azureSdk.key, config.azureSdk.region)
+const speechConfig = null
 
 export async function azureSpeak(
   conf: Config,
@@ -374,6 +374,9 @@ export async function azureSpeak(
 
   const cid = genCid()
   const audioConfig = AudioConfig.fromAudioFileOutput(`./tmp/${cid}.wav`)
+  if (!speechConfig) {
+    speechConfig = SpeechConfig.fromSubscription(config.azureSdk.key, config.azureSdk.region)
+  }
   return new Promise<string>((resolve, reject) => {
     const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig)
     const ssml: string = buildSsml(conf)
