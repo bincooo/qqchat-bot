@@ -109,8 +109,8 @@ export const onMessage = async (data: any, sender: Sender) => {
             }),
             3,
             300)
-
-           const base64 = fs.readFileSync(path)
+            console.log('speak path: ', path)
+            const base64 = fs.readFileSync(path)
               .toString('base64')
             await sender.reply([{ type: 'Voice', value: base64 }], true)
           } catch(err) {
