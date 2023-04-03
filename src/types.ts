@@ -35,7 +35,7 @@ export abstract class BaseMessageHandler {
  */
 export type QueueReply =
   | string
-  | ((reply: (s: string, on: (partialResponse: ChatMessage) => Promise<void> ) => Promise<ChatResponse>, onProgress: (partialResponse: ChatMessage) => Promise<void> ) => Promise<string>)
+  | ((reply: (s: string, on: (partialResponse: ChatMessage) => void ) => Promise<ChatResponse>, onProgress: (partialResponse: ChatMessage) => void) => Promise<string>)
 
 
 // return [ boolean, (string | QueueReply)]
