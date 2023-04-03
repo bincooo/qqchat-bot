@@ -53,15 +53,17 @@ async function main() {
   }
   console.log('isJapan', isJapan(), count)
 
-  // const path = await speak({
-  //   text,
-  //   vname: isJapan() ? 'ja-JP-AoiNeural' : undefined
-  // }, 'audio-48khz-192kbitrate-mono-mp3')
-  const path = await azureSpeak({
+  let path = await speak({
     text,
     vname: isJapan() ? 'ja-JP-AoiNeural' : undefined
-  })
+  }, 'audio-48khz-192kbitrate-mono-mp3')
+
+  // let path = await azureSpeak({
+  //   text,
+  //   vname: isJapan() ? 'ja-JP-AoiNeural' : undefined
+  // })
   console.log('转化成功: ' + path)
+
 }
 
 main()

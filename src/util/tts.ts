@@ -66,7 +66,8 @@ async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<strin
       }
     })
   }).then(path => {
-    return switchSuffix(vt, path)
+    return delay(800)
+      .then(() => switchSuffix(vt, path))
   })
 }
 
