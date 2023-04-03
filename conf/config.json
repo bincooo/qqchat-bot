@@ -1,8 +1,8 @@
 {
   "debug": false,
   "docker": false,
-  "adminQQ": "xxx",
-  "botQQ": "xxx",
+  "adminQQ": "1263212092",
+  "botQQ": "260129150",
   "botPassword": "",
   "botNickname": "喵小爱",
   "type": "oicq",
@@ -35,7 +35,7 @@
       {
         "email": "xxx@outlook.com",
         "password": "xxx",
-        "accessToken": ""
+        "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1UaEVOVUpHTkVNMVFURTRNMEZCTWpkQ05UZzVNRFUxUlRVd1FVSkRNRU13UmtGRVFrRXpSZyJ9.eyJodHRwczovL2FwaS5vcGVuYWkuY29tL3Byb2ZpbGUiOnsiZW1haWwiOiJqdXJhc3NpY21vb2QwMzdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWV9LCJodHRwczovL2FwaS5vcGVuYWkuY29tL2F1dGgiOnsidXNlcl9pZCI6InVzZXItOEdGQjIwSkhqa2lFbDNJeUdSaWwyNldiIn0sImlzcyI6Imh0dHBzOi8vYXV0aDAub3BlbmFpLmNvbS8iLCJzdWIiOiJhdXRoMHw2M2E2YWQ1OGIxYjA5OTBhM2UyNmZhZGEiLCJhdWQiOlsiaHR0cHM6Ly9hcGkub3BlbmFpLmNvbS92MSIsImh0dHBzOi8vb3BlbmFpLm9wZW5haS5hdXRoMGFwcC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjgwMjAyMDg3LCJleHAiOjE2ODE0MTE2ODcsImF6cCI6IlRkSkljYmUxNldvVEh0Tjk1bnl5d2g1RTR5T282SXRHIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCBtb2RlbC5yZWFkIG1vZGVsLnJlcXVlc3Qgb3JnYW5pemF0aW9uLnJlYWQgb2ZmbGluZV9hY2Nlc3MifQ.cSO63GClEak61xP1XSfYIXP0g-kYGjxI-YZ696VfUr4aIKrqzi_iwl3n0EyqdcXbj02O2qqI4KECZJlmq-VvwxcJMuDq3xH2V1rsOMN9eBpIMhZYSSz9BGkCqeUali8mbt4Y7kRUHT9yAA-g-0QzgEzc14XGLHa2OetAPCv8V0cSZJk7OqNQLSMkdhWvMU-CsSqHTPZijYH8pdq0VP4Xoq7EPoGd0ibP1DQQ1RosyBmXm9aJ_ovXikcNNa8G3kqDmfubGdHG0U2OwUaC2Ppzjbw73DTnWDHvopF4U-9kPOWu-2T3YPjzfTDeU2hMafA0Y8JMQYSkILdAsjdnxbcPpw"
       }
     ]
   },

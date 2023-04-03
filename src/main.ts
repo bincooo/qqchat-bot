@@ -67,8 +67,9 @@ async function initChat() {
 
 main().catch(logger.error)
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error('unhandledRejection <<<<', reason)
-  promise?.catch(err => {
-    logger.error('unhandledRejection >>>>', err)
-  })
+  await promise
+  // logger.error('unhandledRejection <<<<', reason)
+  // promise?.catch(err => {
+  //   logger.error('unhandledRejection >>>>', err)
+  // })
 })
