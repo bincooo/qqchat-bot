@@ -22,8 +22,8 @@ class GlobalStateManager {
       // console.log('GlobalStateManager_globalTimer', this._ids)
       this._ids.forEach(uid => {
         const state = this[uid]
-        if (config.debug)
-            console.log('GlobalStateManager_globalTimer['+uid+']', state)
+        // if (config.debug)
+        //     console.log('GlobalStateManager_globalTimer['+uid+']', state)
         if (state?.isEnd) {
           this.recallLoading(uid)
         }
