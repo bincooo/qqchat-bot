@@ -227,7 +227,7 @@ export async function md2jpg(nickname: stirng, markdownText: string) {
     'content-type': 'application/json'
   })
   const result = JSON.parse(data)
-  console.log(result)
+  // console.log(result)
   if (result.statusCode === 200) {
     return result.data
   } else throw new Error('md2jpg error !')
