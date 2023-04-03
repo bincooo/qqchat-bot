@@ -122,7 +122,6 @@ export const onMessage = async (data: any, sender: Sender) => {
 
         try {
           await sender.reply([{ type: 'Plain', value: r18UnicodeParser.filter(message) }], true)
-          console.log('12323223232323222===')
           if (isDone()) {
             delay(800)
             stateManager.setIsEnd(sender, true)
