@@ -53,8 +53,8 @@ export class NovelAiFilter extends BaseMessageFilter {
           novelAiHelper.concat(content.substr(10))
         const result = await config.chatApi.sendMessage(resultMessage, { ...this.session })
         console.log('noval-ai [tag:draw] ===== >>>> ', result)
-        this.session.parentMessageId = result.id
-        this.session.conversationId = result.conversationId
+        this.session.parentMessageId = result?.id
+        this.session.conversationId = result?.conversationId
 
         const prompt = result.text
           .replaceAll('，', ',')

@@ -302,8 +302,8 @@ export class PlayerFilter extends BaseMessageFilter {
             }
             let result = await reply(val, onProgress)
             const condition = playerIsAwakening(state, result.text ?? '')
-            console.log('player.ts::handleReply[280]: condition = ', condition)
             if (condition) {
+              console.log('player.ts::handleReply[280]: condition = ', condition)
               if (player.cache) {
                 const cacheList = state.preset.cacheList
                 state.preset.cacheList = cacheList.splice(0, cacheList.length - 1)

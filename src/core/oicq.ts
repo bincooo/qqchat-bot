@@ -107,7 +107,7 @@ async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessage
   // qq频道
   const app = GuildApp.bind(client)
   app.on('message', e => {
-    const isAt = e.message.some(item => item.id === app.tiny_id)
+    const isAt = e.message.some(item => item?.id === app.tiny_id)
     if (isAt) {
       handleMessage(e)
     }

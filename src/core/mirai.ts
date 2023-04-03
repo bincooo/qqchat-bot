@@ -76,7 +76,7 @@ class MiraiImpl extends types.TalkWrapper {
     })
 
     mirai.on('MemberJoinEvent', async e => {
-      if (e.member.id == config.botQQ) {
+      if (e.member?.id == config.botQQ) {
         return
       }
 

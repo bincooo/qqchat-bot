@@ -48,7 +48,7 @@ export class BanFilter extends BaseMessageFilter {
         const info = await getClient()
           .target
           .api
-          .memberInfo(e.sender.group.id, parseInt(qq))
+          .memberInfo(e.sender.group?.id, parseInt(qq))
         if (info && info.id == qq) {
           this._banList.push(qq)
           await saveConfig(this._banList)
