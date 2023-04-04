@@ -116,7 +116,8 @@ class MiraiImpl extends types.TalkWrapper {
    * 会话Id
    */
   sessionId(e: any): number {
-    return (e.type === 'GroupMessage') ? e.sender.group.id : e.sender.id
+    console.log('[119] mirai::sessionId ===>>>', e)
+    return (e.type === 'GroupMessage') ? e.sender.group.id : e.sender?.id
   }
 
   /**
