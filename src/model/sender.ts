@@ -25,6 +25,8 @@ export class Sender {
 
   protected _userId?: number
 
+  protected _sessionId?: number
+
 
   constructor (e: any) {
     this._event = e
@@ -42,7 +44,9 @@ export class Sender {
   }
 
   get id(): number {
-    return getClient().sessionId(this._event)
+    if (!this._sessionId)
+      this._sessionId = getClient().sessionId(this._event)
+    return this._sessionId
   }
 
   get userId(): number {
