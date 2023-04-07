@@ -2,7 +2,7 @@ import { segment, Sendable } from 'oicq'
 import logger from 'src/util/log'
 import { config, preset } from '../config'
 import { Sender } from 'src/model/sender'
-import speak, { azureSpeak } from './tts'
+import { azureSpeak } from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { QueueReply } from 'cgpt'
@@ -102,21 +102,24 @@ export const onMessage = async (data: any, sender: Sender) => {
         const state = stateManager.getState(sender.id)
 
         if (state.tts) {
-          try {
-            const speakSdk = config.azureSdk.enable ? azureSpeak : speak
-            const path = await retry(() => speakSdk({
-              text: speakUnicodeParser.filter(message.trim()),
-              ...parserJapen(state, message)
-            }),
-            3,
-            300)
-            console.log('speak path: ', path)
-            const base64 = fs.readFileSync(path)
-              .toString('base64')
-            await sender.reply([{ type: 'Voice', value: base64 }], true)
-          } catch(err) {
-            console.log("语音发生错误", err)
-            sender.reply(`语音发生错误\n${err.message??err}`)
+          if (!config.azureSdk.enable) {
+            sender.reply(`语音发生错误: 请先配置 azureSdk !`)
+          } else {
+            try {
+              const path = await retry(() => azureSpeak({
+                text: speakUnicodeParser.filter(message.trim()),
+                ...parserJapen(state, message)
+              }),
+              3,
+              300)
+              console.log('speak path: ', path)
+              const base64 = fs.readFileSync(path)
+                .toString('base64')
+              await sender.reply([{ type: 'Voice', value: base64 }], true)
+            } catch(err) {
+              console.log("语音发生错误", err)
+              sender.reply(`语音发生错误\n${err.message??err}`)
+            }
           }
         }
 
