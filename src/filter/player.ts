@@ -184,12 +184,14 @@ export class PlayerFilter extends BaseMessageFilter {
 
   presetEnabled(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
     if (content?.trim().startsWith("开启 ")) {
-      // if (!sender.isAdmin) {
-      //   sender?.reply('你没有权限使用该命令~', true)
-      //   return [ false, "" ]
-      // }
       const message = content.trim()
         .split(" ")[1]
+
+      if (["R18"].includes(message) !sender.isAdmin) {
+        sender?.reply('你没有权限使用该命令~', true)
+        return [ false, "" ]
+      }
+      
       if (message) {
         const obj = preset.player?.find(item => item.key === message)
         if (obj) {
@@ -247,16 +249,6 @@ export class PlayerFilter extends BaseMessageFilter {
             }
           }
 
-          // let resultMessage = player.maintenance?.training
-          // const cacheList = state.preset.cacheList
-          
-          // if (player.cache && resultMessage?.includes('[!!cache!!]')) {
-          //   resultMessage = resultMessage.replace('[!!cache!!]', cacheList?.join('\n'))
-          // }
-
-          // if (resultMessage?.includes('[!!content!!]')) {
-          //   return replyMessage("", resultMessage.replace('[!!content!!]', content), sender)
-          // }
           const [ playerMessage, resultMessage ] = this.transformGuardContent(content, player, state, sender)
           if (!resultMessage) {
             return playerMessage

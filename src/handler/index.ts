@@ -3,6 +3,7 @@ import { commandHandler } from './command'
 import { emptyHandler } from './empty'
 import { helpHandler } from './help'
 import { NovelAiHandler } from './novel-ai'
+import { ignoreHandler } from './ignore'
 
 
 const messageHandlers = [
@@ -10,6 +11,7 @@ const messageHandlers = [
   emptyHandler,
   commandHandler,
   new NovelAiHandler(),
+  ignoreHandler,
   new ChatGPTHandler(),
 ]
 
