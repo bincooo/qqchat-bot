@@ -187,7 +187,7 @@ export class PlayerFilter extends BaseMessageFilter {
       const message = content.trim()
         .split(" ")[1]
 
-      if (["R18"].includes(message) || !sender?.isAdmin) {
+      if (["R18"].includes(message) && !sender?.isAdmin) {
         sender.reply('你没有权限使用该命令~', true)
         return [ false, "" ]
       }
