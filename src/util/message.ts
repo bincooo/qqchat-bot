@@ -106,16 +106,18 @@ export const onMessage = async (data: any, sender: Sender) => {
             sender.reply(`语音发生错误: 请先配置 azureSdk !`)
           } else {
             try {
-              const path = await retry(() => azureSpeak({
-                text: speakUnicodeParser.filter(message.trim()),
-                ...parserJapen(state, message)
-              }),
-              3,
-              300)
-              console.log('speak path: ', path)
-              const base64 = fs.readFileSync(path)
-                .toString('base64')
-              await sender.reply([{ type: 'Voice', value: base64 }], true)
+              const text = speakUnicodeParser.filter(message.trim())
+              // 过滤一些字符后如果没有文字就不用生成语音了
+              if (text) {
+                const path = await retry(() => azureSpeak({
+                  ...parserJapen(state, message),
+                  text
+                }),
+                3,
+                300)
+                const base64 = fs.readFileSync(path).toString('base64')
+                await sender.reply([{ type: 'Voice', value: base64 }], true)
+              }
             } catch(err) {
               console.log("语音发生错误", err)
               sender.reply(`语音发生错误\n${err.message??err}`)
