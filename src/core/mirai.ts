@@ -137,19 +137,28 @@ class MiraiImpl extends types.TalkWrapper {
       }
     })
     let result = await e.reply(content, quote)
-    let count = 3
+    let count = 5
     while (count > 0 && result.code == 500) {
       count --
       await delay(5000)
-      result = await e.reply(content, quote)
+      result = await e.reply(`- retry ${count} -\n\n${content}`, quote)
       if (config.debug)
         console.log('reply result code[500], retry ' + (3 - count) + ' ...', chain, result)
       if (result.code == 0)
         break
     }
-    // if (config.debug) {
-    //   console.log('mirai reply ======>>>>', content, result)
-    // }
+    // 发送错误，尝试转发消息发送
+    if(result.code == 500) {
+      const { nickname } = this.information(e)
+      result = await e.reply([{
+        title: `${nickname}的聊天记录`,
+        brief: '[聊天记录]',
+        type: 'Forward',
+        nodeList: content
+      }])
+      if (config.debug)
+        console.log('reply result code[500], Forward: ', chain, result)
+    }
     return [ (result.code == 0), { messageId: result.messageId, target: this.sessionId(e) } ]
   }
 

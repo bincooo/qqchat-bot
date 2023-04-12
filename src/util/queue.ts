@@ -1,5 +1,5 @@
 import delay from 'delay'
-
+import type * as types from 'chatgpt'
 const TIMEOUT_MS = 500
 
 export default class FunctionManager {

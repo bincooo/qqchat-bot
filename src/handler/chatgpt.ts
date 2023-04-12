@@ -87,7 +87,7 @@ class EmailPool {
     })
   }
 
-  next(): string {
+  next(): Email {
     const size = this._pool.length
     this._currentIndex ++
     if (this._currentIndex >= size)
@@ -309,6 +309,9 @@ export class ChatGPTHandler extends BaseMessageHandler {
       // ignore error
     } else if (err.message?.includes('Not signed in')) {
       sender.reply(`发生错误\n${err} ${append}`)
+
+    } else if (err.message?.includes('Unexpected token')) {
+      sender.reply(`发生错误\nParse JSON error! ${append}`)
 
     } else {
       sender.reply(`发生错误\n${err} ${append}`)
