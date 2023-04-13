@@ -142,7 +142,7 @@ class MiraiImpl extends types.TalkWrapper {
       count --
       await delay(3000)
       // 尝试添加一个字符串id干扰腾讯判断
-      result = await e.reply([{ type: 'Plain', text: base64(`retry ${count}`) + "\n\n" }, ...content], quote)
+      result = await e.reply([{ type: 'Plain', text: btoa(`retry ${count}`) + '\n\n' }, ...content], quote)
       if (config.debug)
         console.log('reply result code[500], retry ' + (3 - count) + ' ...', chain, result)
       if (result.code == 0)
