@@ -22,9 +22,10 @@
           "尊重他人"
         ],
         "warning": "condition warning: ([!!condition!!])\n------\n\n犯迷糊了~   ( ；´Д｀)",
-        "training": "path:sha-wu/guard.txt"
+        "training": "path:sha-wu/guard.txt",
+        "guard": "path:check.txt"
       },
-      "prefix": "和泉正宗: [!!content!!]\n纱雾:"
+      "prefix": "[!!name!!]: [!!content!!]"
     },
     {
       "key": "桐谷绫",
