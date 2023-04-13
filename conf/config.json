@@ -26,7 +26,7 @@
     ]
   },
   "openaiWebAPI": {
-    "enable": true,
+    "enable": false,
     "endpoint": {
       "auth": "http://114.132.201.94:8082/openai/api/auth",
       "conversation": "https://bypass.churchless.tech/api/conversation"

@@ -12,6 +12,7 @@ import { openAIAuth } from 'src/util/request'
 import { loadConfig, writeConfig } from 'src/util/config'
 import schedule from 'node-schedule'
 import delay from 'delay'
+import getClient from 'src/core'
 
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 5
@@ -78,6 +79,19 @@ class EmailPool {
             it.expires = dat() + 1000 * 120 * 12 * 28
             it.accessToken = accessToken
             needSave = true
+          } else {
+            switch(config.type) {
+            case "mirai":
+              getClient()
+                .target
+                .api
+                .sendFriendMessage(`${it.email}刷新token失败!`, config.adminQQ)
+              break
+            default:
+              getClient()
+                .target
+                .sendPrivateMsg(config.adminQQ, `${it.email}刷新token失败!`)
+            }
           }
         }
       }
@@ -136,8 +150,8 @@ async function login(email: string, passwd: string) {
 async function saveConfig(pool: Array<Email>) {
   const configFile = process.cwd() + '/conf/config.json'
   const jsonObject = await loadConfig(configFile)
-  if (jsonObject?.api?.account) {
-    jsonObject.api.account = pool.map(it => {
+  if (jsonObject?.openaiWebAPI?.account) {
+    jsonObject.openaiWebAPI.account = pool.map(it => {
       const result = {...it}
       delete result.session
       return result
@@ -169,7 +183,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     let needSave = false
     for(let index = 0, length = account.length; index < length; index ++) {
       const it = account[index]
-      if (it.accessToken) {
+      if (it.accessToken && (!it.expires || it.expires < dat())) {
         continue
       }
       const accessToken = await login(it.email, it.password)
