@@ -51,12 +51,12 @@ function replyMessage(prefix: string = "", content: string, sender?: Sender) {
   }
   return (prefix.includes('[!!content!!]')
     ?
-    prefix.replace('[!!content!!]', content)
+    prefix.replaceAll('[!!content!!]', content)
     :
     prefix.concat(content))
 
-  .replace('[!!date!!]', datFmt())
-  .replace('[!!name!!]', nickname)
+  .replaceAll('[!!date!!]', datFmt())
+  .replaceAll('[!!name!!]', nickname)
 }
 
 const MAX_COUNT = 15
@@ -154,7 +154,7 @@ export class PlayerFilter extends BaseMessageFilter {
           for(let index = 0; index < training?.length; index++) {
             const message = training[index]
             if (index === training.length - 1 && message?.includes('[!!content!!]')) {
-              resultMessage = message.replace('[!!content!!]', content)
+              resultMessage = message.replaceAll('[!!content!!]', content)
               break
             }
             const res = await reply(message)
@@ -223,7 +223,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!!player) {
         
         if (player.maintenance?.warning) {
-          sender.reply(player.maintenance.warning.replace('[!!condition!!]', state.preset.maintenanceCondition))
+          sender.reply(player.maintenance.warning.replaceAll('[!!condition!!]', state.preset.maintenanceCondition))
         }
 
         // 开启周期
@@ -328,10 +328,10 @@ export class PlayerFilter extends BaseMessageFilter {
     let resultMessage = player.maintenance?.training
     const cacheList = state.preset.cacheList
     if (player.cache && resultMessage?.includes('[!!cache!!]')) {
-      resultMessage = resultMessage.replace('[!!cache!!]', cacheList?.join('\n'))
+      resultMessage = resultMessage.replaceAll('[!!cache!!]', cacheList?.join('\n'))
     }
     if (resultMessage?.includes('[!!content!!]')) {
-      return [ replyMessage("", resultMessage.replace('[!!content!!]', content), sender), null ]
+      return [ replyMessage("", resultMessage.replaceAll('[!!content!!]', content), sender), null ]
     }
     return [ resultMessage, replyMessage(player.prefix, content, sender) ]
   }

@@ -40,7 +40,7 @@ export class NovelAiFilter extends BaseMessageFilter {
     if (content.startsWith('[tag]')) {
       if (novelAiHelper) {
         resultMessage = novelAiHelper.indexOf('[!!content!!]') >= 0 ? 
-          novelAiHelper.replace('[!!content!!]', content.substr(5)) :
+          novelAiHelper.replaceAll('[!!content!!]', content.substr(5)) :
           novelAiHelper.concat(content.substr(5))
       } else resultMessage = content.substr(5)
       return [ false, resultMessage.trim() ]
@@ -49,7 +49,7 @@ export class NovelAiFilter extends BaseMessageFilter {
     if (content.startsWith('[tag:draw]')) {
       if (novelAiHelper) {
         resultMessage = novelAiHelper.indexOf('[!!content!!]') >= 0 ? 
-          novelAiHelper.replace('[!!content!!]', content.substr(10)) :
+          novelAiHelper.replaceAll('[!!content!!]', content.substr(10)) :
           novelAiHelper.concat(content.substr(10))
         const result = await config.chatApi.sendMessage(resultMessage, { ...this.session })
         console.log('noval-ai [tag:draw] ===== >>>> ', result)
