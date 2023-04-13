@@ -183,7 +183,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
     let needSave = false
     for(let index = 0, length = account.length; index < length; index ++) {
       const it = account[index]
-      if (it.accessToken && (!it.expires || it.expires < dat())) {
+      if (it.accessToken && (!it.expires || it.expires > dat())) {
         continue
       }
       const accessToken = await login(it.email, it.password)
