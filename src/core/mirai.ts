@@ -140,8 +140,9 @@ class MiraiImpl extends types.TalkWrapper {
     let count = 5
     while (count > 0 && result.code == 500) {
       count --
-      await delay(5000)
-      result = await e.reply([{ type: 'Plain', text: `- retry ${count} -` }, ...content], quote)
+      await delay(3000)
+      // 尝试添加一个随机id干扰腾讯判断
+      result = await e.reply([{ type: 'Plain', text: `${base64(`retry ${count}`)}\n\n` }, ...content], quote)
       if (config.debug)
         console.log('reply result code[500], retry ' + (3 - count) + ' ...', chain, result)
       if (result.code == 0)
