@@ -33,6 +33,6 @@ Review-Area(The review area holds the ChatGPT response from your last interactio
 "action": "speak",
 "target"："玩家-劳德",
 "mood": "conflicted",
-"message"'："[!!name!!]，你好！是的，我还在忙着完成这100只弓箭的订单。虽然我很想和你一起去城里玩，但我必须先完成这个任务。告诉我一下城里的活动吧，我很好奇。"
+"message"'："劳德，你好！是的，我还在忙着完成这100只弓箭的订单。虽然我很想和你一起去城里玩，但我必须先完成这个任务。告诉我一下城里的活动吧，我很好奇。"
 }
 }
