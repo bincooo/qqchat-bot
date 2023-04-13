@@ -86,7 +86,7 @@
         "training": "path:game/guard.txt",
         "guard": "path:check.txt"
       },
-      "prefix": "玩家 - [!!name!!]: [!!content!!]"
+      "prefix": "[!!content!!]"
     },
     {
       "key": "bad-ai",
