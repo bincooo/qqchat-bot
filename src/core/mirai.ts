@@ -141,7 +141,7 @@ class MiraiImpl extends types.TalkWrapper {
     while (count > 0 && result.code == 500) {
       count --
       await delay(5000)
-      result = await e.reply(`- retry ${count} -\n\n${content}`, quote)
+      result = await e.reply([{ type: 'Plain', text: `- retry ${count} -` }, ...content], quote)
       if (config.debug)
         console.log('reply result code[500], retry ' + (3 - count) + ' ...', chain, result)
       if (result.code == 0)
