@@ -16,6 +16,7 @@ import getClient from 'src/core'
 
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 5
+const DAY_MS = 1000 * 60 * 60 * 24
 let countNotSigned = 0
 // let count429 = 0
 
@@ -76,7 +77,7 @@ class EmailPool {
           const accessToken = await login(it.email, it.password)
           if (accessToken) {
             // 存留28天
-            it.expires = dat() + 1000 * 120 * 12 * 28
+            it.expires = dat() + DAY_MS * 28
             it.accessToken = accessToken
             needSave = true
           } else {
@@ -189,7 +190,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       const accessToken = await login(it.email, it.password)
       if (accessToken) {
         // 存留28天
-        it.expires = dat() + 1000 * 120 * 12 * 28
+        it.expires = dat() + DAY_MS * 28
         it.accessToken = accessToken
         needSave = true
       }
