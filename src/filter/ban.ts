@@ -72,6 +72,7 @@ export class BanFilter extends BaseMessageFilter {
         sender.reply(qq + ' 不在黑名单列表中 ~', true)
         return [ false,  "" ]
       }
+      const e: any = sender.getEvent()
       const index = this._banList.indexOf(qq)
       this._banList.splice(index, 1)
       await saveConfig(this._banList)
