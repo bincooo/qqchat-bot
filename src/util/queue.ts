@@ -1,5 +1,5 @@
 import delay from 'delay'
-import type * as types from 'chatgpt'
+import { ChatGPTError } from 'chatgpt'
 const TIMEOUT_MS = 500
 
 export default class FunctionManager {
@@ -41,7 +41,7 @@ export default class FunctionManager {
     }
     const len = this._array.length
     if (len >= this._maximum) {
-      const error = new types.ChatGPTError('queue maximum is full: ' + len)
+      const error = new ChatGPTError('queue maximum is full: ' + len)
       error.statusCode = 5001
       error.statusText = 'Error 5001'
       throw error
