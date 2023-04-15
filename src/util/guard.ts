@@ -64,7 +64,7 @@ class GuardAi {
         }
 
         const findRes1 = conditions.find(item => value.includes(item))
-        if (!findRes1) {
+        if (!findRes1 && value.length < 500) {
           return true
         }
 
