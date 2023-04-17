@@ -7,6 +7,7 @@ import { cgptOnResetSession } from 'src/util/event'
 import { playerIsAwakening } from 'src/util/message'
 import guardAi from 'src/util/guard'
 import PlayerCommand from 'src/command/commands/player'
+import { nowAi } from 'src/util/config'
 
 
 function dat() {
@@ -191,9 +192,10 @@ export class PlayerFilter extends BaseMessageFilter {
         sender.reply('你没有权限使用该命令~', true)
         return [ false, "" ]
       }
-      
+
       if (message) {
-        const obj = preset.player?.find(item => item.key === message)
+        const ai = nowAi()
+        const obj = preset.player?.find(item => item.key === message && item.type.includes(ai))
         if (obj) {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {

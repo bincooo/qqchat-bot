@@ -1,7 +1,7 @@
 import logger from 'src/util/log'
 import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
-import { preset as globalPreset } from 'src/config'
+import { config as globalConfig, preset as globalPreset } from 'src/config'
 import chalk from 'chalk'
 
 const configFile = process.cwd() + '/conf/config.json'
@@ -76,6 +76,20 @@ export async function loadPresets(config?: string) {
   Object.assign(globalPreset, preset)
 }
 
+const AI = [ "WebGPT", "Claude" ]
+
+export function nowAi() {
+  let ai = '_undef___'
+  for (let index = 0, length = AI.length; index < length; index++) {
+    const value = AI[index]
+    if (globalConfig[value]?.enable) {
+      ai = value
+      break
+    }
+  }
+  return ai
+}
+
 /**
  * ignore error stask, and return default object.
  * @cb callback function
@@ -87,3 +101,4 @@ async function NonErr(cb: () => any, def?: any): any {
   } catch(err) {}
   return def
 }
+
