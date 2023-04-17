@@ -13,6 +13,7 @@ import stateManager from 'src/util/state'
 import retry from 'src/util/retry'
 import delay from 'delay'
 import fs from 'fs'
+import { nowAi } from 'src/util/config'
 
 
 /**
@@ -145,7 +146,8 @@ export const onMessage = async (data: any, sender: Sender) => {
 
 export function playerIsAwakening(state: any, content: string): string {
   if (!!state.preset?.key) {
-    const player = preset.player.filter(item => item.key === state.preset.key)[0]
+    const ai = nowAi()
+    const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
     if (!!player && !!player.maintenance) {
       return (player.maintenance.condition??[])
         .find(item => content.toLocaleLowerCase().indexOf(item) >= 0)

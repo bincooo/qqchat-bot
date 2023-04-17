@@ -3,6 +3,7 @@ import { preset } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
 import { playerIsAwakening } from 'src/util/message'
+import { nowAi } from 'src/util/config'
 
 export class PlayerMaintenanceFilter extends BaseMessageFilter {
   
@@ -16,7 +17,8 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
   handle = async (content: string, sender?: Sender, done?: boolean) => {
     const state: any = stateManager.getState(sender.id)
     if (!!state.preset?.key) {
-      const player = preset.player.filter(item => item.key === state.preset.key)[0]
+      const ai = nowAi()
+      const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
       const condition = playerIsAwakening(state, content)
       if (condition) {
         state.preset.maintenance = !!condition

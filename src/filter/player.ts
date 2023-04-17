@@ -221,7 +221,8 @@ export class PlayerFilter extends BaseMessageFilter {
   handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[]  | null {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       state.preset.maintenance = false
-      const player = preset.player.filter(item => item.key === state.preset.key)[0]
+      const ai = nowAi()
+      const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
       if (!!player) {
         
         if (player.maintenance?.warning) {
@@ -270,7 +271,8 @@ export class PlayerFilter extends BaseMessageFilter {
   handleReply(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       if (!state.preset.maintenance) {
-        const player = preset.player.filter(item => item.key === state.preset.key)[0]
+        const ai = nowAi()
+        const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
         const cacheMessage = (message: string) => {
           if (player.cache) {
             const cacheList = state.preset.cacheList
