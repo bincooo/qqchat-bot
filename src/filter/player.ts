@@ -195,7 +195,7 @@ export class PlayerFilter extends BaseMessageFilter {
 
       if (message) {
         const ai = nowAi()
-        const obj = preset.player?.find(item => item.key === message && item.type.includes(ai))
+        const obj = preset.player?.find(item => item.key === message && item.type.find(it => it === ai))
         if (obj) {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
           state.preset = {

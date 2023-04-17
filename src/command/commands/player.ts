@@ -7,7 +7,7 @@ import { nowAi } from 'src/util/config'
 export function buildHelpMessage () {
   const player = preset.player??[]
   const ai = nowAi()
-  return [ ...player.filter(item => item.type.includes(ai)).map((item, index) => `${index+1}. ${item.key}`) ]
+  return [ ...player.filter(item => item.type.find(it => it === ai)).map((item, index) => `${index+1}. ${item.key}`) ]
 }
 
 class PlayerCommand extends BaseCommand {
