@@ -25,7 +25,7 @@
       "AI"
     ]
   },
-  "openaiWebAPI": {
+  "WebGPT": {
     "enable": false,
     "endpoint": {
       "auth": "http://114.132.201.94:8082/openai/api/auth",
@@ -38,6 +38,11 @@
         "accessToken": "xxxx"
       }
     ]
+  },
+  "Claude": {
+    "enable": false,
+    "bot": "U05xxx",
+    "token": "xoxp-51122xxxx"
   },
   "html2jpg": "http://114.132.201.94:8082/openai/api/html2jpg",
   "proxyServer": "http://master.io:7890",

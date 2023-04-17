@@ -52,7 +52,7 @@ export async function run (): Promise<{}> {
       message: '选择API源:',
       type: 'list',
       choices: [
-        { name: 'openai webAPI', value: 'openaiWebAPI' },
+        { name: 'openai webAPI', value: 'WebGPT' },
         { name: 'openai officialAPI', value: 'openaiOfficialAPI' }
       ]
     }

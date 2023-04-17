@@ -12,6 +12,8 @@ const filters = [
     "python",
     "c#",
     "excel",
+    "定时任务",
+    "正则表达式",
     "人工智能"
   ]
 

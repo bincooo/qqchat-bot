@@ -31,7 +31,7 @@ const _globalThis: {
 }
 
 export async function openAIAuth(email: string, passwd: string): Promise<any> {
-  const { auth } = config.openaiWebAPI.endpoint ?? {}
+  const { auth } = config.WebGPT.endpoint ?? {}
   if (!auth) throw new Error('The server address from which the accessToken was obtained did not exist !')
   const { data } = await sendPost(auth, str({ email, passwd }), {
     'content-type': 'application/json'

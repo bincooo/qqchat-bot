@@ -30,12 +30,17 @@ export abstract class BaseMessageHandler {
   handle: MessageHandler
 }
 
+export type ChatMessage = Record<string, any> & {
+  text: string
+  conversationId: string
+}
+
 /**
  * 队列执行类型
  */
 export type QueueReply =
   | string
-  | ((reply: (s: string, on: (partialResponse: ChatMessage) => void ) => Promise<ChatResponse>, onProgress: (partialResponse: ChatMessage) => void) => Promise<string>)
+  | ((reply: (s: string, on: (partialResponse: ChatMessage) => void ) => Promise<ChatMessage>, onProgress: (partialResponse: ChatMessage) => void) => Promise<string>)
 
 
 // return [ boolean, (string | QueueReply)]

@@ -11,7 +11,7 @@ import chalk from 'chalk'
 /**
  * 触发handler load钩子
  */
-async function loadHandlerConfig () {
+export async function loadHandlerConfig () {
   for (let i = 0; i < MessageHandlers.length; i++) {
     if (MessageHandlers[i] instanceof BaseMessageHandler) {
       await (MessageHandlers[i] as BaseMessageHandler).load()

@@ -151,8 +151,8 @@ async function login(email: string, passwd: string) {
 async function saveConfig(pool: Array<Email>) {
   const configFile = process.cwd() + '/conf/config.json'
   const jsonObject = await loadConfig(configFile)
-  if (jsonObject?.openaiWebAPI?.account) {
-    jsonObject.openaiWebAPI.account = pool.map(it => {
+  if (jsonObject?.WebGPT?.account) {
+    jsonObject.WebGPT.account = pool.map(it => {
       const result = {...it}
       delete result.session
       return result
@@ -174,13 +174,13 @@ export class ChatGPTHandler extends BaseMessageHandler {
   protected _manager: FunctionManager = new FunctionManager()
 
   async load () {
-    if (!config.openaiWebAPI.enable) return
+    if (!config.WebGPT.enable) return
     await this.initChatGPT()
   }
 
   async initChatGPT () {
-    if (!config.openaiWebAPI.enable) return
-    const { endpoint, account } = config.openaiWebAPI
+    if (!config.WebGPT.enable) return
+    const { endpoint, account } = config.WebGPT
     let needSave = false
     for(let index = 0, length = account.length; index < length; index ++) {
       const it = account[index]
@@ -214,7 +214,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
   }
 
   handle = async (sender: Sender) => {
-    if (!config.openaiWebAPI.enable) return true
+    if (!config.WebGPT.enable) return true
     try {
 
       if (sender.textMessage?.trim() === '!reset') {
@@ -237,7 +237,6 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       this._iswait = true
       stateManager.sendLoading(sender, { init: true, isEnd: false })
-      // console.log('sendMessage', message)
       this._manager.push(this.buildExecutor(sender, message, (res: ChatMessage) => { onMessage(res, sender) }))
     } catch (err) {
       await this.messageErrorHandler(sender, err)

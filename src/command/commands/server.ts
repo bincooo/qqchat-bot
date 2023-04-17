@@ -6,6 +6,7 @@ import messageHandlers from './../../handler'
 import { config, preset } from '../../config'
 import { existsConfig, loadConfig, loadPresets } from 'src/util/config'
 import path from 'path'
+import { loadHandlerConfig } from 'src/main'
 
 class ServerCommand extends BaseCommand {
   label = 'server'
@@ -14,7 +15,8 @@ class ServerCommand extends BaseCommand {
     `status   ${this.sp(9)}服务器状态`,
     // `draw:on/off  ${this.sp(6)}开/关画质增强`,
     `debug:on/off ${this.sp(6)}开/关调试模式`,
-    'load:preset  加载预设'
+    'load:preset  加载预设',
+    'switch:WebGPT/... 切换Ai'
   ]
 
   requiredAdministrator = true
@@ -36,15 +38,6 @@ class ServerCommand extends BaseCommand {
       case 'status':
         sender.reply(JSON.stringify(process.memoryUsage()), true)
         break
-      // case 'draw':
-      // case 'draw:on':
-      //   config.api.betterPic = true
-      //   sender.reply([ { type: 'Plain', value: '已开启画质增强~' } ])
-      //   break
-      // case 'draw:off':
-      //   config.api.betterPic = false
-      //   sender.reply([ { type: 'Plain', value: '已关闭画质增强~' } ])
-      //   break
       case 'debug':
       case 'debug:on':
         config.debug = true
@@ -61,9 +54,28 @@ class ServerCommand extends BaseCommand {
           sender.reply([ { type: 'Plain', value: '加载预设完成~' } ])
         } else sender.reply([ { type: 'Plain', value: '加载预设失败~' } ])
         break
+      case 'switch:WebGPT':
+        await this.switchAI('WebGPT', sender)
+        break
+      case 'switch:Claude':
+        await this.switchAI('Claude', sender)
+        break
       default:
         sender.reply([ { type: 'Plain', value: this.helpDoc } ], true)
         break
+    }
+  }
+
+  async switchAI(type, sender) {
+    const map = { WebGPT: 'WebGPT', Claude: 'Claude' }
+    const value = map[type]
+    if (value) {
+      Object.keys(map).forEach(key => config[key].enable = false)
+      config[value].enable = true
+      await loadHandlerConfig()
+      sender.reply([ { type: 'Plain', value: 'Ai切换已完成~' } ])
+    } else {
+      sender.reply([ { type: 'Plain', value: '错误的Ai类型~\nUsed:\n\nWebGPT\nClaude' } ])
     }
   }
 }

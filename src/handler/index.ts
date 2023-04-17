@@ -4,6 +4,7 @@ import { emptyHandler } from './empty'
 import { helpHandler } from './help'
 import { NovelAiHandler } from './novel-ai'
 import { ignoreHandler } from './ignore'
+import { ClaudeHandler } from './claude'
 
 
 const messageHandlers = [
@@ -13,6 +14,7 @@ const messageHandlers = [
   new NovelAiHandler(),
   ignoreHandler,
   new ChatGPTHandler(),
+  new ClaudeHandler(),
 ]
 
 export default messageHandlers

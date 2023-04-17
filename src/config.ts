@@ -26,7 +26,7 @@ export const config = {
     temperature: 0.9,
     stop: ['Humen', 'AI']
   },
-  openaiWebAPI: {
+  WebGPT: {
 
     enable: true,
     email: '',
