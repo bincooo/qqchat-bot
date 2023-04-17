@@ -71,13 +71,15 @@ export class PlayerFilter extends BaseMessageFilter {
       if (uid) {
         const state: any = stateManager.getState(uid)
         state.isReset = true
-        const player =  preset.player?.find(item => item.key === state.preset?.key)
+        const ai = nowAi()
+        const player =  preset.player?.find(item => item.key === state.preset?.key && item.type.includes(ai))
         if (player && player.cache) {
           state.preset.cacheList = []
         }
       } else {
+        const ai = nowAi()
         const ids: Array<number | string> = stateManager.getIds()
-        const player =  preset.player?.find(item => item.key === state.preset?.key)
+        const player =  preset.player?.find(item => item.key === state.preset?.key && item.type.includes(ai))
         for(let index = 0; index < ids.length; index ++) {
           const state: any = stateManager.getState(ids[index])
           state.isReset = true
@@ -95,7 +97,8 @@ export class PlayerFilter extends BaseMessageFilter {
     if (hResult) return hResult
 
     if (!!state.preset?.key) {
-      const player =  preset.player?.find(item => item.key === state.preset.key)
+      const ai = nowAi()
+      const player =  preset.player?.find(item => item.key === state.preset.key && item.type.includes(ai))
 
       if (player.cycle ?? true) {
         state.preset.count++
