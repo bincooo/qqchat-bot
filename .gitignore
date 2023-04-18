@@ -4,6 +4,7 @@ node_modules
 tmp
 src/data
 data
+yarn.lock
 package-lock.json
 
 log

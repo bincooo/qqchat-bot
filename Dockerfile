@@ -1,5 +1,5 @@
 #FROM bincooo/chrome-vnc:latest
-FROM bincooo/qqchat-bot:v0.0.1
+FROM bincooo/qqchat-bot:v0.0.2
 WORKDIR /app
 
 ADD . /app
@@ -13,7 +13,7 @@ ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 #  && apt-get install -y make gcc g++ \
 #  && rm -rf /var/lib/apt/lists/*
 
-RUN npm i
+RUN yarn install
 #ENTRYPOINT ["tail","-f","/dev/null"]
 ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]
 # Xvfb :99 -ac & export DISPLAY=:99
