@@ -8,7 +8,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { QueueReply } from 'cgpt'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
-import { japaneseUnicodeParser, speakUnicodeParser, r18UnicodeParser } from 'src/util/lang'
+import { japaneseUnicodeParser, speakUnicodeParser, r18UnicodeParser, emojiParser } from 'src/util/lang'
 import stateManager from 'src/util/state'
 import retry from 'src/util/retry'
 import delay from 'delay'
@@ -101,6 +101,7 @@ export const onMessage = async (data: any, sender: Sender) => {
       
       if (!!message?.trim()) {
         const state = stateManager.getState(sender.id)
+        message = emojiParser.filter(message.trim())
 
         if (state.tts) {
           if (!config.azureSdk.enable) {
