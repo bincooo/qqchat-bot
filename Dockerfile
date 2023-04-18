@@ -14,7 +14,6 @@ ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 #  && rm -rf /var/lib/apt/lists/*
 
 RUN yarn install
-RUN apt-get install make 
 #ENTRYPOINT ["tail","-f","/dev/null"]
 ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]
 # Xvfb :99 -ac & export DISPLAY=:99
