@@ -48,7 +48,7 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
       if (path) {
         resolve(path)
       } else {
-        reject('mp3 convert to silk Error !!!')
+        reject('mp3 convert to silk Error !!! : ' + path)
       }
       // fs.unlinkSync(filepath)
     })
