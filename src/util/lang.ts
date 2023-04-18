@@ -73,6 +73,8 @@ class EmojiParser extends AbstractUnicodeParser {
         result = result.replace(`:${emoji}:`, EMOJI_ENTRY[emoji])
       } else if (EMOJI_ENTRY[emoji + "_face"]) {
         result = result.replace(`:${emoji}:`, EMOJI_ENTRY[emoji + "_face"])
+      } else {
+        result = result.replace(`:${emoji}:`, '')
       }
     }
     return result
