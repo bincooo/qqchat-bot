@@ -68,7 +68,7 @@ class EmojiParser extends AbstractUnicodeParser {
     const list = str.match(regex) ?? []
     let result = str
     for(let index = 0, length = list.length; index < length; index ++) {
-      const emoji = list[index]
+      const emoji = list[index].substr(1, list[index].length - 2)
       if (EMOJI_ENTRY[emoji]) {
         result = result.replace(`:${emoji}:`, EMOJI_ENTRY[emoji])
       }
