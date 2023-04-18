@@ -7,7 +7,7 @@ import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
 import { randomBytes } from 'crypto'
 import FunctionManager from 'src/util/queue'
-import { cgptEmitResetSession, cgptEmitChangeAccount } from 'src/util/event'
+import { aiEmitResetSession } from 'src/util/event'
 import { openAIAuth } from 'src/util/request'
 import { loadConfig, writeConfig } from 'src/util/config'
 import schedule from 'node-schedule'
@@ -220,7 +220,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
       if (sender.textMessage?.trim() === '!reset') {
         this._emailPool.setArgs(sender.id, {})
         sender.reply('当前会话已重置 ~')
-        cgptEmitResetSession(sender.id)
+        aiEmitResetSession(sender.id)
         return false
       }
 

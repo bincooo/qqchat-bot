@@ -9,7 +9,7 @@ import { randomBytes } from 'crypto'
 import { GroupFunctionManager } from 'src/util/queue'
 import delay from 'delay'
 import getClient from 'src/core'
-
+import { aiEmitResetSession } from 'src/util/event'
 
 function genUid(): string {
   return 'uid-' + randomBytes(16)
@@ -49,6 +49,12 @@ export class ClaudeHandler extends BaseMessageHandler {
     this.load()
   }
 
+  destroy(uid: number) {
+    if (this._conversationMapper.has(uid)) {
+      this._conversationMapper.delete(uid)
+    }
+  }
+
   handle = async (sender: Sender) => {
     if (!config.Claude.enable) return true
 
@@ -58,6 +64,13 @@ export class ClaudeHandler extends BaseMessageHandler {
       return false
     }
     try {
+
+      if (sender.textMessage?.trim() === '!reset') {
+        this.destroy(sender.id)
+        sender.reply('当前会话已重置 ~')
+        aiEmitResetSession(sender.id)
+        return false
+      }
 
       const message = await filterTokens(sender.textMessage, sender)
       if (!message) {
@@ -128,6 +141,7 @@ export class ClaudeHandler extends BaseMessageHandler {
 
 
   async messageErrorHandler(sender: Sender, err: Error) {
+    stateManager.sendLoading(sender, { init: true, isEnd: true })
     if (err.statusCode === 5001) {
       sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ...', true)
     } else {

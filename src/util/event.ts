@@ -18,19 +18,19 @@ export function globalEventRemove(event: string, cb: (...args: any) => void) {
   emit.removeListener(event, cb)
 }
 
-export function cgptEmitResetSession(...args: any) {
-  globalEventEmit('cgpt:resetSession', ...args)
+export function aiEmitResetSession(...args: any) {
+  globalEventEmit('ai:resetSession', ...args)
 }
 
-export function cgptOnResetSession(cb: (...args: any) => void) {
-  globalEventRegist('cgpt:resetSession', cb)
+export function aiOnResetSession(cb: (...args: any) => void) {
+  globalEventRegist('ai:resetSession', cb)
 }
 
 
 export function cgptEmitChangeAccount(...args: any) {
-  globalEventEmit('cgpt:resetSession', ...args)
+  globalEventEmit('cgpt:changeSession', ...args)
 }
 
 export function cgptOnChangeAccount(cb: (...args: any) => void) {
-  globalEventRegist('cgpt:resetSession', cb)
+  globalEventRegist('cgpt:changeSession', cb)
 }

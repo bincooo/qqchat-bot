@@ -3,7 +3,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { config, preset } from 'src/config'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
-import { cgptOnResetSession } from 'src/util/event'
+import { aiOnResetSession } from 'src/util/event'
 import { playerIsAwakening } from 'src/util/message'
 import guardAi from 'src/util/guard'
 import PlayerCommand from 'src/command/commands/player'
@@ -66,7 +66,7 @@ export class PlayerFilter extends BaseMessageFilter {
   constructor() {
     super()
     this.type = 0
-    cgptOnResetSession((...args: any) => {
+    aiOnResetSession((...args: any) => {
       const uid: number | string = args[0]
       if (uid) {
         const state: any = stateManager.getState(uid)
