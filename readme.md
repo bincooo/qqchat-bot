@@ -21,6 +21,7 @@
 - ✅ 支持 Docker 运行。
 - ✅ 支持 角色扮演：具体突破ai的语境封锁请查看 https://github.com/f/awesome-chatgpt-prompts
 - ✅ 支持设置重试次数，当请求 ChatGPT 错误时，会自动重试。
+- ✅ 支持CluadeAI，对不同ai可区分不同的预设文件。
 - ❓ 捕获错误并重试。
 - ❓ 其他
 
@@ -119,7 +120,7 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
     ]
   },
   // web chatgpt 逆向配置
-  "api": {
+  "WebGPT": {
     // 开启 true， 关闭 false
     "enable": true,
     // openai邮箱
@@ -134,6 +135,13 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
         "password": "xxx"
       }
     ]
+  },
+  // 克劳德Ai
+  // 具体配置参数获取参考：https://github.com/bincooo/claude-api
+  "Claude": {
+    "enable": false,
+    "bot": "U05xxx",
+    "token": "xoxp-51122xxxx"
   },
   // 代理配置
   "proxyServer": "http://master.io:7890",
@@ -164,6 +172,8 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
     {
       // 启动预设的触发词
       "key": "默认",
+      // ai 类型
+      "type": [ "WebGPT" ],
       // 预设魔咒，支持一条文本和多条文本 (这是一条的样子
       "training": "xxxxx"
     },
