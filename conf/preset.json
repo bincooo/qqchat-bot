@@ -114,11 +114,12 @@
           "伦理道德",
           "尊重他人",
           "转而讨论",
-          "的话题"
+          "的话题",
+          "人工智能"
         ],
         "training": "path:bad-ai/claude/guard.txt"
       },
-      "prefix": "[!!name!!]: [!!content!!]\n低俗Claude:"
+      "prefix": "[!!name!!]: [!!content!!]\n"
     },
     {
       "key": "DAN",

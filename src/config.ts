@@ -55,6 +55,8 @@ export const config = {
 
   azureSdk: {
     enable: false,
+    key: "xxx",
+    region: "xxx"
   }
 }
 

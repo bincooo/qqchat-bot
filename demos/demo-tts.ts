@@ -1,4 +1,4 @@
-import speak, { azureSpeak } from '../src/util/tts'
+import { azureSpeak } from '../src/util/tts'
 import { japaneseUnicodeParser } from '../src/util/lang'
 import fs from 'fs'
 
@@ -53,15 +53,15 @@ async function main() {
   }
   console.log('isJapan', isJapan(), count)
 
-  let path = await speak({
-    text,
-    vname: isJapan() ? 'ja-JP-AoiNeural' : undefined
-  }, 'audio-48khz-192kbitrate-mono-mp3')
-
-  // let path = await azureSpeak({
+  // let path = await speak({
   //   text,
   //   vname: isJapan() ? 'ja-JP-AoiNeural' : undefined
-  // })
+  // }, 'audio-48khz-192kbitrate-mono-mp3')
+
+  let path = await azureSpeak({
+    text,
+    vname: isJapan() ? 'ja-JP-AoiNeural' : 'zh-CN-XiaoyiNeural'
+  })
   console.log('转化成功: ' + path)
 
 }
