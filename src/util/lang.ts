@@ -71,6 +71,8 @@ class EmojiParser extends AbstractUnicodeParser {
       const emoji = list[index].substr(1, list[index].length - 2)
       if (EMOJI_ENTRY[emoji]) {
         result = result.replace(`:${emoji}:`, EMOJI_ENTRY[emoji])
+      } else if (EMOJI_ENTRY[emoji + "_face"]) {
+        result = result.replace(`:${emoji}:`, EMOJI_ENTRY[emoji + "_face"])
       }
     }
     return result
@@ -151,6 +153,7 @@ const EMOJI_ENTRY = {
   "face_savoring_food":"😋",
   "face_with_tongue":"😛",
   "winking_face_with_tongue":"😜",
+  "stuck_out_tongue_winking_eye": "😜",
   "zany_face":"🤪",
   "squinting_face_with_tongue":"😝",
   "money-mouth_face":"🤑",
@@ -206,6 +209,7 @@ const EMOJI_ENTRY = {
   "face_with_open_mouth":"😮",
   "hushed_face":"😯",
   "astonished_face":"😲",
+  "flushed": "😳",
   "flushed_face":"😳",
   "pleading_face":"🥺",
   "face_holding_back_tears":"🥹",
@@ -224,6 +228,7 @@ const EMOJI_ENTRY = {
   "weary_face":"😩",
   "tired_face":"😫",
   "yawning_face":"🥱",
+  "triumph": "😤",
   "face_with_steam_from_nose":"😤",
   "rage": "😡",
   "enraged_face":"😡",
@@ -1377,6 +1382,7 @@ const EMOJI_ENTRY = {
   "bookmark_tabs":"📑",
   "bookmark":"🔖",
   "label":"🏷",
+  "money_mouth_face": "💰",
   "money_bag":"💰",
   "coin":"🪙",
   "yen_banknote":"💴",
