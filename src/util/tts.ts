@@ -44,14 +44,20 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
       voice = new WxVoice('./tmp', ffmpegPath)
       voice.on("error", (err) => console.log('WxVoice Error: ', err))
     }
-    voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
-      if (path) {
-        resolve(path)
-      } else {
-        reject('mp3 convert to silk Error !!! : ' + path)
-      }
-      // fs.unlinkSync(filepath)
-    })
+    const enSilk = (retry: number = 5) => {
+      voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
+        if (path) {
+          resolve(path)
+        } else {
+          if (retry >= 0) {
+            enSilk(retry - 1)
+          }
+          else reject('mp3 convert to silk Error !!! : ' + path)
+        }
+        // fs.unlinkSync(filepath)
+      })
+    }
+    enSilk()
   })
 }
 
@@ -196,8 +202,6 @@ export async function azureSpeak(
           if (config.debug) {
             console.log('azureSpeak :: speakTextAsync succsess === >>>', result)
           }
-          // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
-          await delay(1000)
           try {
             resolve((await switchSuffix('wavToSilk', `./tmp/${cid}.wav`)))
           } catch(err) {
