@@ -80,6 +80,13 @@ async function switchSuffix(vt: string, path: string): Promise<string> {
     } else return v1
   }
 
+  let count = 10
+  while (count-- > 0) { // 阻塞一会，检查下文件生成没有
+    if(fs.existsSync(path))
+      break
+    await delay(500)
+  }
+
   switch(vt) {
     case 'wav':
     case 'mp3':
@@ -190,7 +197,7 @@ export async function azureSpeak(
             console.log('azureSpeak :: speakTextAsync succsess === >>>', result)
           }
           // 啥玩意?? 搞不懂这里为什么要等待一下，但确实有效解决问题
-          await delay(800)
+          await delay(1000)
           try {
             resolve((await switchSuffix('wavToSilk', `./tmp/${cid}.wav`)))
           } catch(err) {

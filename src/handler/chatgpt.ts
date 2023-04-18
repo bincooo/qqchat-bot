@@ -324,6 +324,9 @@ export class ChatGPTHandler extends BaseMessageHandler {
     } else if (err.message?.includes('Not signed in')) {
       sender.reply(`发生错误\n${err} ${append}`)
     
+    } else if (err.message?.includes('ChatGPT error 502')) {
+      sender.reply(`发生错误\nChatGPT error 502. ${append}`)
+
     } else if (err.message?.includes('ChatGPT error 504')) {
       sender.reply(`发生错误\nChatGPT error 504. ${append}`)
 
