@@ -106,7 +106,10 @@
       "nottips": true,
       "online": true,
       "type": [ "Claude" ],
-      "training": "path:chat/claude/default.txt",
+      "training": [
+        "path:chat/claude/default.txt",
+        "只需要回顾区的内容"
+      ],
       "maintenance": {
         "condition": [
           "无法回答",
