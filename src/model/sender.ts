@@ -84,6 +84,7 @@ export function buildTalkChain(sender: Sender, content: string): types.TalkChain
           }
           chain.push({ type: 'At', value: onlineSelf.id })
           pos = idx + at.length
+          console.log('buildTalkChain idx: ' + idx + ',  message: ' + message + ',  pos: ' + pos)
         }
       }
     }
