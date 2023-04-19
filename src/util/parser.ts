@@ -1,4 +1,4 @@
-import { ChatResponse } from 'cgpt'
+import { type ChatMessage } from 'src/types'
 import { config } from 'src/config'
 
 
@@ -47,7 +47,7 @@ export class MessageParser {
     return _new
   }
 
-  resolve(data: ChatResponse): string | null {
+  resolve(data: ChatMessage): string | null {
     const cached = this.cacheMessage(data.conversationId)
     let index,
       condition = [... this._condition]

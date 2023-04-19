@@ -1,7 +1,7 @@
 import Authenticator from 'claude-api'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
-import { BaseMessageHandler, ChatMessage, type QueueReply } from 'src/types'
+import { BaseAiHandler, type ChatMessage, type MsgCaller } from 'src/types'
 import logger from 'src/util/log'
 import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
@@ -24,30 +24,22 @@ function dat(): number {
 
 
 
-export class ClaudeHandler extends BaseMessageHandler {
-  protected _bot?: Authenticator
+export class ClaudeHandler extends BaseAiHandler<Authenticator> {
   protected _channel?: string
   protected _conversationMapper = new Map<number, string>()
   protected _manager: FunctionManager = new GroupFunctionManager()
   protected _iswait: boolean = false
 
 
-  async load() {
+  override async load() {
     if (!config.Claude.enable) return
-    await this.initClaude()
-  }
-
-  async initClaude() {
     const {
       bot,
       token
     } = config.Claude
-    this._bot = new Authenticator(token, bot, true)
+    this.setApi(new Authenticator(token, bot))
   }
 
-  async reboot () {
-    this.load()
-  }
 
   destroy(uid: number) {
     if (this._conversationMapper.has(uid)) {
@@ -55,7 +47,8 @@ export class ClaudeHandler extends BaseMessageHandler {
     }
   }
 
-  handle = async (sender: Sender) => {
+
+  override enquire = async (sender: Sender) => {
     if (!config.Claude.enable) return true
 
     if (this._iswait) {
@@ -81,10 +74,15 @@ export class ClaudeHandler extends BaseMessageHandler {
 
       stateManager.sendLoading(sender, { init: true, isEnd: false })
       if (!this._channel) {
-        this._channel = await this._bot.newChannel('chat-7890')
+        this._channel = await this.getApi().newChannel('chat-' + config.botQQ)
       }
       
-      this._manager.push(sender.id, this.buildExecutor(sender, message, (res: ChatMessage) => { onMessage(res, sender) }))
+      await this._manager.push(sender.id, this.build(sender, message, {
+        do: (...args) => this.reply(sender, ...args),
+        on: (res: ChatMessage) => {
+          onMessage(res, sender)
+        }
+      }))
     } catch(err) {
       this.messageErrorHandler(sender, err)
     }
@@ -94,53 +92,33 @@ export class ClaudeHandler extends BaseMessageHandler {
   }
 
 
-  buildExecutor(sender: Sender, message: QueueReply, onProgress: (r: ChatMessage) => void) {
-    return async (err?: Error) => {
-      if (err) {
-        this.messageErrorHandler(sender, err)
-        return
-      }
+  private async reply(
+    sender: Sender,
+    prompt: string,
+    on?: (partialResponse: ChatMessage) => void,
+    timeoutMs: number = 500
+  ): Promise<ChatMessage> {
+    const result: ChatMessage = await this.getApi().sendMessage({
+      text: prompt,
+      channel: this._channel,
+      conversationId: this._conversationMapper.get(sender.id),
+      onMessage: on
+    })
 
-      const reply = async (
-        str: string,
-        on?: (partialResponse: ChatMessage) => void,
-        timeoutMs: number = 500
-      ): Promise<ChatMessage> => {
-
-        const result: ChatMessage = await this._bot.sendMessage({
-          text: str,
-          channel: this._channel,
-          conversationId: this._conversationMapper.get(sender.id),
-          onMessage: on
-        })
-
-        if (result.error) {
-          return result
-        }
-        
-        this._conversationMapper.set(sender.id, result.conversationId)
-        if (on) {
-          await on({ ...result, text: '[DONE]' })
-        }
-        await delay(timeoutMs)
-        return result
-      }
-
-      let result
-      if (typeof message === 'string') {
-        result = await reply(message, onProgress)
-      } else {
-        result = await message.call(undefined, reply, onProgress)
-      }
-
-      if (config.debug) {
-        console.log('chatgpt web 1 ======>>>>>', result)
-      }
+    if (result.error) {
+      return result
     }
+    
+    this._conversationMapper.set(sender.id, result.conversationId)
+    if (on) {
+      await on({ ...result, text: '[DONE]' })
+    }
+    await delay(timeoutMs)
+    return result
   }
 
 
-  async messageErrorHandler(sender: Sender, err: Error) {
+  override async messageErrorHandler(sender: Sender, err: Error) {
     stateManager.sendLoading(sender, { init: true, isEnd: true })
     if (err.statusCode === 5001) {
       sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ...', true)

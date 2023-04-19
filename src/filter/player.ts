@@ -1,5 +1,4 @@
-import { QueueReply } from 'cgpt'
-import { BaseMessageFilter, MessageFilter } from 'src/types'
+import { BaseMessageFilter, MessageFilter, MsgCaller } from 'src/types'
 import { config, preset } from 'src/config'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
@@ -119,7 +118,7 @@ export class PlayerFilter extends BaseMessageFilter {
       if (!!player) {
         preset.maintenance = false
         
-        const result: QueueReply = async (reply, onProgress) => {
+        const result: MsgCaller = async (reply, onProgress) => {
           if (player.maintenance?.guard) {
             const checkResult = await guardAi.check(content, sender)
             if (!checkResult) {
@@ -186,7 +185,7 @@ export class PlayerFilter extends BaseMessageFilter {
     return [ true, content ]
   }
 
-  presetEnabled(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
+  presetEnabled(content: string, sender?: Sender, state: any): (boolean | MsgCaller)[] | null {
     if (content?.trim().startsWith("开启 ")) {
       const message = content.trim()
         .split(" ")[1]
@@ -221,7 +220,7 @@ export class PlayerFilter extends BaseMessageFilter {
   /**
    * 处理预设守护功能，当触发辨识词条就会发送守护预设
    */
-  handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | QueueReply)[]  | null {
+  handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | MsgCaller)[]  | null {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       state.preset.maintenance = false
       const ai = nowAi()
@@ -271,7 +270,7 @@ export class PlayerFilter extends BaseMessageFilter {
   /**
    * 处理应答消息
    */
-  handleReply(content: string, sender?: Sender, state: any): (boolean | QueueReply)[] | null {
+  handleReply(content: string, sender?: Sender, state: any): (boolean | MsgCaller)[] | null {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       if (!state.preset.maintenance) {
         const ai = nowAi()

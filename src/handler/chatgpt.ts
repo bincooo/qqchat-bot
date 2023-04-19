@@ -1,7 +1,7 @@
-import { ChatGPTUnofficialProxyAPI, ChatMessage } from 'chatgpt'
+import { ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
-import { BaseMessageHandler, type QueueReply } from 'src/types'
+import { BaseAiHandler, type MsgCaller, type ChatMessage } from 'src/types'
 import logger from 'src/util/log'
 import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
@@ -162,8 +162,7 @@ async function saveConfig(pool: Array<Email>) {
 }
 
 
-export class ChatGPTHandler extends BaseMessageHandler {
-  protected _api: ChatGPTAPIBrowser
+export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
 
   protected _iswait: boolean = false
 
@@ -173,12 +172,7 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
   protected _manager: FunctionManager = new FunctionManager()
 
-  async load () {
-    if (!config.WebGPT.enable) return
-    await this.initChatGPT()
-  }
-
-  async initChatGPT () {
+  override async load () {
     if (!config.WebGPT.enable) return
     const { endpoint, account } = config.WebGPT
     let needSave = false
@@ -201,19 +195,14 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     this._emailPool = new EmailPool([...account])
     const { accessToken } = this._emailPool.next()
-    this._api = new ChatGPTUnofficialProxyAPI({
+    this.setApi(new ChatGPTUnofficialProxyAPI({
       apiReverseProxyUrl: endpoint.conversation,
       accessToken
-    })
-    config.chatApi = this._api
+    }))
     console.log('chatgpt - execute initChatGPT method success.')
   }
 
-  async reboot () {
-    this.load()
-  }
-
-  handle = async (sender: Sender) => {
+  override enquire = async (sender: Sender) => {
     if (!config.WebGPT.enable) return true
     try {
 
@@ -237,7 +226,13 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
       this._iswait = true
       stateManager.sendLoading(sender, { init: true, isEnd: false })
-      this._manager.push(this.buildExecutor(sender, message, (res: ChatMessage) => { onMessage(res, sender) }))
+      // this._manager.push(this.buildExecutor(sender, message, (res: ChatMessage) => { onMessage(res, sender) }))
+      await this._manager.push(this.build(sender, message, {
+        do: (...args) => this.reply(sender, ...args),
+        on: (res: ChatMessage) => {
+          onMessage(res, sender)
+        }
+      }))
     } catch (err) {
       await this.messageErrorHandler(sender, err)
     }
@@ -246,51 +241,34 @@ export class ChatGPTHandler extends BaseMessageHandler {
     return false
   }
 
-  buildExecutor(sender: Sender, message: QueueReply, onProgress: (r: ChatMessage) => void) {
-    return async (err?: Error) => {
-      if (err) {
-        this.messageErrorHandler(sender, err)
-        return
-      }
 
-      const reply = async (
-        str: string,
-        on?: (partialResponse: ChatMessage) => void,
-        timeoutMs: number = 500
-      ): Promise<ChatMessage> => {
-        const result = await this._api.sendMessage(str, {
-          ... this._emailPool.getArgs(sender.id),
-          onProgress: on
-        })
-        if (result.error) {
-          return result
-        }
-        this._emailPool.setArgs(sender.id, {
-          conversationId: result.conversationId,
-          parentMessageId: result.id
-        })
-        if (on) {
-          await on({ ...result, text: '[DONE]' })
-        }
-        await delay(timeoutMs)
-        return result
-      }
-
-      let result
-      if (typeof message === 'string') {
-        result = await reply(message, onProgress)
-      } else {
-        result = await message.call(undefined, reply, onProgress)
-      }
-
-      if (config.debug) {
-        console.log('chatgpt web 1 ======>>>>>', result)
-      }
+  private async reply(
+    sender: Sender,
+    prompt: string,
+    on?: (partialResponse: ChatMessage) => void,
+    timeoutMs: number = 500
+  ): Promise<ChatMessage> {
+    const result = await this.getApi().sendMessage(prompt, {
+      ... this._emailPool.getArgs(sender.id),
+      onProgress: on
+    })
+    if (result.error) {
+      return result
     }
+    this._emailPool.setArgs(sender.id, {
+      conversationId: result.conversationId,
+      parentMessageId: result.id
+    })
+    if (on) {
+      await on({ ...result, text: '[DONE]' })
+    }
+    await delay(timeoutMs)
+    return result
   }
 
-  async messageErrorHandler(sender: Sender, err: any) {
-    console.log('[chatgpt.ts] messageErrorHandler', err)
+
+  override async messageErrorHandler(sender: Sender, err: any) {
+    logger.error(err)
     stateManager.sendLoading(sender, { init: true, isEnd: true })
     const currentTimeIsBusy = () => {
       const hour: number = new Date()
@@ -310,11 +288,14 @@ export class ChatGPTHandler extends BaseMessageHandler {
 
     } else if (err.statusCode === 429) {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 稍后再来吧 ...' + append, true)
-      // 429 1hours 限制, 换号处理. 三次后触发
-      // if (++count429 < 3) return
-      // count429 = 0
+      // 429 1hours 限制, 换号处理.
       const account = this._emailPool.next()
-      this._api.accessToken = account.accessToken
+      const { endpoint } = config.WebGPT
+      this.setApi(new ChatGPTUnofficialProxyAPI({
+        apiReverseProxyUrl: endpoint.conversation,
+        accessToken: account.accessToken
+      }))
+      aiEmitResetSession(sender.id)
 
     } else if (err.statusCode === 403) {
       sender.reply('——————————————\nError: 403\n脑瓜子嗡嗡的, 让我缓缓 ...' + append, true)
@@ -324,6 +305,9 @@ export class ChatGPTHandler extends BaseMessageHandler {
     } else if (err.message?.includes('Not signed in')) {
       sender.reply(`发生错误\n${err} ${append}`)
     
+    } else if (err.message?.includes('ChatGPT error 500')) {
+      sender.reply(`发生错误\nChatGPT error 500. ${append}`)
+
     } else if (err.message?.includes('ChatGPT error 502')) {
       sender.reply(`发生错误\nChatGPT error 502. ${append}`)
 

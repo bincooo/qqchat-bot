@@ -1,5 +1,5 @@
-import { QueueReply } from 'cgpt'
 import { Sender } from './model/sender'
+import { config } from 'src/config'
 //https://www.typescriptlang.org/play?#code
 
 
@@ -30,6 +30,55 @@ export abstract class BaseMessageHandler {
   handle: MessageHandler
 }
 
+
+export abstract class BaseAiHandler<T> extends BaseMessageHandler {
+  protected _api?: T
+
+  override async reboot() {
+    await this.load()
+  }
+
+  override handle = (sender: Sender) => {
+    config.chatApi = this.getApi()
+    return this.enquire(sender)
+  }
+
+  enquire: MessageHandler
+  
+  build = (sender: Sender, message: MsgCaller, reply: {
+    do: (
+      str: string,
+      onProgress?: (partialResponse: ChatMessage) => void,
+      timeoutMs?: number
+    ) => Promise<ChatMessage>
+    on: (r: ChatMessage) => Promise<void>
+  }): Promise<(e?: Error) => void> => {
+    return async (err?: Error) => {
+      if (err) {
+        this.messageErrorHandler(sender, err)
+        return
+      }
+
+      let result
+      if (typeof message === 'string') {
+        result = await reply.do(message, reply.on)
+      } else {
+        result = await message.call(undefined, reply.do, reply.on)
+      }
+    }
+  }
+
+  protected abstract messageErrorHandler(sender: Sender, err: Error): void
+
+  protected setApi(api: T) {
+    this._api = api
+  }
+
+  protected getApi(): T {
+    return this._api
+  }
+}
+
 export type ChatMessage = Record<string, any> & {
   text: string
   conversationId: string
@@ -38,14 +87,14 @@ export type ChatMessage = Record<string, any> & {
 /**
  * 队列执行类型
  */
-export type QueueReply =
+export type MsgCaller =
   | string
   | ((reply: (s: string, on: (partialResponse: ChatMessage) => void ) => Promise<ChatMessage>, onProgress: (partialResponse: ChatMessage) => void) => Promise<string>)
 
 
-// return [ boolean, (string | QueueReply)]
+// return [ boolean, (string | MsgCaller)]
 // boolean: 是否继续拦截 true 是 false 否
-export type MessageFilter = (content: string, sender?: Sender, done?: boolean) => (boolean | string | QueueReply)[] | Promise<(boolean | string | QueueReply)[]>
+export type MessageFilter = (content: string, sender?: Sender, done?: boolean) => (boolean | string | MsgCaller)[] | Promise<(boolean | string | MsgCaller)[]>
 
 export abstract class BaseMessageFilter {
   /**

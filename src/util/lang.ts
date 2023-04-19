@@ -64,7 +64,7 @@ class R18UnicodeParser extends AbstractUnicodeParser {
 
 class EmojiParser extends AbstractUnicodeParser {
   filter(str: string) {
-    const regex = /:([a-zA-Z_]{1,}):/g
+    const regex = /:([a-zA-Z_-]{3,}):/g
     const list = str.match(regex) ?? []
     let result = str
     for(let index = 0, length = list.length; index < length; index ++) {

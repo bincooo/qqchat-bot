@@ -1,5 +1,4 @@
-import { BaseMessageFilter, MessageFilter } from 'src/types'
-import { QueueReply } from 'cgpt'
+import { BaseMessageFilter, MessageFilter, MsgCaller } from 'src/types'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
 import { preset } from 'src/config'
@@ -46,7 +45,7 @@ export class CodeFilter extends BaseMessageFilter {
 
       // console.log("CodeFilter ===> search images", content, content.match(/来[0-9]?张[^图片]{0,}图片/g))
       if (content.match(/来[0-9]?张[^图片]{0,}图片/g)) {
-        const result: QueueReply = async (reply, onProgress) => {
+        const result: MsgCaller = async (reply, onProgress) => {
           await reply('从现在起, 当你想发送一张照片时，请使用 Markdown ,并且 不要有反斜线, 不要用代码块。使用 Unsplash API (https://source.unsplash.com/1280x720/? < PUT YOUR QUERY HERE >)。如果你明白了，请回复“明白”')
           return reply( resultMessage.trim(), onProgress )
         }

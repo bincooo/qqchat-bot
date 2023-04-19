@@ -4,8 +4,7 @@ import { config, preset } from '../config'
 import { Sender } from 'src/model/sender'
 import { azureSpeak } from './tts'
 import messageHandler from 'src/filter'
-import { BaseMessageFilter, MessageFilter } from 'src/types'
-import { QueueReply } from 'cgpt'
+import { BaseMessageFilter, MessageFilter, MsgCaller, type ChatMessage } from 'src/types'
 import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
 import { japaneseUnicodeParser, speakUnicodeParser, r18UnicodeParser, emojiParser } from 'src/util/lang'
@@ -29,7 +28,7 @@ export async function filterTokens (content: string, sender?: Sender) {
 
 async function _filterTokens(content: string, filters: Array<BaseMessageFilter>, sender?: Sender, done?: boolean) {
   if (filters.length === 0) return content?.trim()
-  let resultMessage: QueueReply = ''
+  let resultMessage: MsgCaller = ''
 
   try {
     for (let i = 0; i < filters.length; i++) {
@@ -68,7 +67,7 @@ function initParser() {
   globalParser = new parser.MessageParser({ condition })
 }
 
-export const onMessage = async (data: any, sender: Sender) => {
+export const onMessage = async (data: ChatMessage, sender: Sender) => {
   initParser()
   // console.log('onMessage ===>>', data)
 

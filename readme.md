@@ -79,6 +79,7 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
 ## 配置说明
 
 ```
+// 复制/conf/config.example.json文件，更名config.json
 // config.json
 
 {
