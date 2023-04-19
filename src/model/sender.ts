@@ -66,10 +66,10 @@ export function buildTalkChain(sender: Sender, content: string): types.TalkChain
   const ai = nowAi()
   const player =  preset.player?.find(item => item.key === state?.preset?.key && item.type.includes(ai))
   let resultMessage = content.trim()
+  const chain: types.TalkChain = []
   if (resultMessage) {
     const ats = resultMessage.match(this.regex) ?? []
     let pos = 0
-    const chain: types.TalkChain = []
     for (let index = 0, length = ats.length; index < length; index ++) {
       const at = ats[index]
       const onlineList = state?.preset?.onlineList ?? []
