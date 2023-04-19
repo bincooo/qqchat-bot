@@ -49,9 +49,12 @@ export class MessageParser {
 
   resolve(data: ChatMessage): string | null {
     const cached = this.cacheMessage(data.conversationId)
+    const IsDONE = (data.text === '[DONE]')
+
     let index,
       condition = [... this._condition]
     for (let i in condition) {
+      if (IsDONE) break
       let condit = condition[i]
       if (typeof(condit) == 'string') {
         const len = (condit.match(/([0-9]+):.+/)??[])[1]
@@ -71,7 +74,6 @@ export class MessageParser {
       }
     }
 
-    const IsDONE = (data.text === '[DONE]')
     const assert = (c: Cached) => {
       const _index = IsDONE ? c.message?.length : index
       return (c.index !== c.old?.index && c.index < _index)
