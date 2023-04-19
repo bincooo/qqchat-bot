@@ -73,6 +73,6 @@ export class GroupFunctionManager {
       manager = new FunctionManager(this._maximum)
       this._manager.set(uid, manager)
     }
-    manager.push(element)
+    await manager.push(element)
   }
 }

@@ -69,6 +69,10 @@ class MiraiImpl extends types.TalkWrapper {
     
     mirai.on('message', e => {
       if ([ 'FriendMessage', 'TempMessage' ].includes(e.type) || (e.type === 'GroupMessage' && IsAt(e.messageChain))) {
+        // 自己的消息???
+        if (e.sender.id == config.botQQ) {
+          return
+        }
         if (e.sender?.memberName !== 'Q群管家') {
           handleMessage(e)
         }
