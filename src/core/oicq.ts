@@ -232,7 +232,7 @@ class OicqImpl extends types.TalkWrapper {
    * 回复消息
    */
   async reply(e: any, chain: types.TalkChain[], quote?: boolean = false): [boolean, any] {
-    const content = chain.map(it => {
+    const content = chain?.map(it => {
       switch(it.type) {
       case 'Plain':
         return segment.text(it.value)
@@ -246,6 +246,7 @@ class OicqImpl extends types.TalkWrapper {
         throw new Error('oicq reply error: unknown type `' + it.type + '`.')
       }
     })
+    if (!content) return [ true, -1 ]
     const result = await e.reply(content, quote)
     return [ true, result.message_id ]
   }

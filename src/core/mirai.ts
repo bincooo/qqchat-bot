@@ -128,7 +128,7 @@ class MiraiImpl extends types.TalkWrapper {
    * 回复消息
    */
   async reply(e: any, chain: types.TalkChain[], quote?: boolean = false): [ boolean, any ] {
-    const content = chain.map(it => {
+    const content = chain?.map(it => {
       switch(it.type) {
       case 'Plain':
         return { type: 'Plain', text: it.value }
@@ -142,6 +142,7 @@ class MiraiImpl extends types.TalkWrapper {
         throw new Error('oicq reply error: unknown type `' + it.type + '`.')
       }
     })
+    if (!content) return [ true, {messageId: -1, target: -1 }]
     let result = await e.reply(content, quote)
     let count = 5
     while (count > 0 && result.code == 500) {

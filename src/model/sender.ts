@@ -64,7 +64,7 @@ export class Sender {
 export function buildTalkChain(sender: Sender, content: string): types.TalkChain {
   const state: any = stateManager.getState(sender.id)
   const ai = nowAi()
-  const player =  preset.player?.find(item => item.key === state.preset.key && item.type.includes(ai))
+  const player =  preset.player?.find(item => item.key === state?.preset?.key && item.type.includes(ai))
   let resultMessage = content.trim()
   if (resultMessage) {
     const ats = resultMessage.match(this.regex) ?? []
@@ -72,7 +72,7 @@ export function buildTalkChain(sender: Sender, content: string): types.TalkChain
     const chain: types.TalkChain = []
     for (let index = 0, length = ats.length; index < length; index ++) {
       const at = ats[index]
-      const onlineList = state.preset.onlineList ?? []
+      const onlineList = state?.preset?.onlineList ?? []
       // 存在在线列表中...
       const onlineSelf = onlineList.find(it => it.id == at || it.name == at.substr(2, at.length - 3))
       if (onlineSelf) {
