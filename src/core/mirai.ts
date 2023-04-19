@@ -42,7 +42,7 @@ function IsAt(chain: MessageType.MessageChain & {
 }) {
   if (chain.find(item => (
     (item.type === 'At' && item.target == config.botQQ) || 
-    (item.type === 'Plain' && item.text.indexOf('@' + (config.botNickname??'_undef___')) >= 0))
+    (item.type === 'Plain' && item.text.indexOf((config.botNickname ?? '_undef___')) >= 0))
   )) {
     return true
   }
