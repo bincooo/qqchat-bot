@@ -119,6 +119,7 @@ export class ClaudeHandler extends BaseAiHandler<Authenticator> {
 
 
   override async messageErrorHandler(sender: Sender, err: Error) {
+    logger.error(err)
     stateManager.sendLoading(sender, { init: true, isEnd: true })
     if (err.statusCode === 5001) {
       sender.reply('——————————————\nError: 5001\n讲的太快了, 休息一下吧 ...', true)
