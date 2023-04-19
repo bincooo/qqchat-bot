@@ -58,7 +58,7 @@ async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessage
         handleMessage(e)
       }
     } else if(!!config.botNickname) {
-      if (e.raw_message.indexOf('@' + config.botNickname) >= 0) {
+      if (e.raw_message.indexOf(config.botNickname) >= 0) {
         handleMessage(e)
       }
     }

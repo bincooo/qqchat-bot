@@ -106,8 +106,8 @@ class MiraiImpl extends types.TalkWrapper {
     result.nickname = (e.sender?.memberName ?? e.sender?.nickname ?? e.sender?.id) + ''
     result.group = (e.type === 'GroupMessage' ? e.sender.group : undefined)
     result.textMessage = e.messageChain?.filter(item => item.type === 'Plain').map(item => item.text).join().trim()??''
-    if (!(e.isAt && e.isAt()) && !!config.botNickname) {
-      result.textMessage = result.textMessage?.replaceAll('@' + config.botNickname, '')?.trim()??''
+    if (!IsAt(e.messageChain) && !!config.botNickname) {
+      result.textMessage = result.textMessage?.replaceAll(config.botNickname, '')?.trim()??''
     }
     return result
   }
