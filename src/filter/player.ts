@@ -107,11 +107,14 @@ export class PlayerFilter extends BaseMessageFilter {
       }
 
       if (player.online) {
-        state.preset.onlineList.push({
-          name: sender.nickname,
-          id: sender.userId
-        })
-        state.preset.onlineList = state.preset.onlineList.splice(0, 50)
+        const online = state.preset.onlineList.find(it => it.name == sender.nickname)
+        if (!online) {
+          state.preset.onlineList.push({
+            name: sender.nickname,
+            id: sender.userId
+          })
+          state.preset.onlineList = state.preset.onlineList.splice(0, 50)
+        }
       }
 
       hResult = this.handleReply(content, sender, state)
