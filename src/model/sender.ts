@@ -70,13 +70,14 @@ export function buildTalkChain(sender: Sender, content: string): types.TalkChain
   if (resultMessage) {
     const regex = /\[@([0-9]{5,})\]/g
     const ats = resultMessage.match(regex) ?? []
-    console.log('buildTalkChain ats:', ats, resultMessage)
+    console.log('buildTalkChain ats:', ats)
     let pos = 0
     for (let index = 0, length = ats.length; index < length; index ++) {
       const at = ats[index]
       const onlineList = state?.preset?.onlineList ?? []
       // 存在在线列表中...
       const onlineSelf = onlineList.find(it => it.id == at || it.name == at.substr(2, at.length - 3))
+      console.log('buildTalkChain online:', onlineList)
       if (onlineSelf) {
         const idx = resultMessage.indexOf(at, pos)
         if (idx >= 0) {

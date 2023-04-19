@@ -128,7 +128,7 @@ export const onMessage = async (data: ChatMessage, sender: Sender) => {
 
         try {
           const chain = buildTalkChain(sender, r18UnicodeParser.filter(message))
-          await sender.reply(chain, true)
+          await sender.reply([{ type: 'Plain', value: r18UnicodeParser.filter(message) }], true)
           if (isDone()) {
             delay(800)
             stateManager.setIsEnd(sender, true)
