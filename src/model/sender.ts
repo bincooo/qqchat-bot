@@ -76,7 +76,8 @@ export function buildTalkChain(sender: Sender, content: string): types.TalkChain
       const at = ats[index]
       const onlineList = state?.preset?.onlineList ?? []
       // 存在在线列表中...
-      const onlineSelf = onlineList.find(it => it.id == at || it.name == at.substr(2, at.length - 3))
+      const _at = at.substr(2, at.length - 3)
+      const onlineSelf = onlineList.find(it => it.id == _at || it.name == _at)
       console.log('buildTalkChain online:', onlineList)
       if (onlineSelf) {
         const idx = resultMessage.indexOf(at, pos)
