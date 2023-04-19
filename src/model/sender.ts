@@ -1,10 +1,8 @@
-import { config } from 'src/config'
-import { GuildMessage } from 'oicq-guild/lib/message'
-import { md2jpg, genTemplate } from 'src/util/browser'
-import delay from 'delay'
-import { Sendable } from 'oicq'
+import { preset, config } from 'src/config'
 import getClient from 'src/core'
+import * as types from 'src/types'
 import stateManager from 'src/util/state'
+import { nowAi } from 'src/util/config'
 
 /**
  * 消息对象的封装
@@ -53,11 +51,48 @@ export class Sender {
     return this._userId
   }
 
-  async reply(content: (TalkChain[] | string), quote?: boolean): [boolean, any] {
+  async reply(content: (types.TalkChain[] | string), quote?: boolean): [boolean, any] {
     return getClient().reply(this._event, (typeof content == 'string') ? [{ type: 'Plain', value: content }] : content, quote)
   }
 
   async recall(target: any): any {
     return await getClient().recall(target)
   }
+}
+
+
+export function buildTalkChain(sender: Sender, content: string): types.TalkChain {
+  const state: any = stateManager.getState(sender.id)
+  const ai = nowAi()
+  const player =  preset.player?.find(item => item.key === state.preset.key && item.type.includes(ai))
+  let resultMessage = content.trim()
+  if (resultMessage) {
+    const ats = resultMessage.match(this.regex) ?? []
+    let pos = 0
+    const chain: types.TalkChain = []
+    for (let index = 0, length = ats.length; index < length; index ++) {
+      const at = ats[index]
+      const onlineList = state.preset.onlineList ?? []
+      // 存在在线列表中...
+      const onlineSelf = onlineList.find(it => it.id == at || it.name == at.substr(2, at.length - 3))
+      if (onlineSelf) {
+        const idx = resultMessage.indexOf(at, pos)
+        if (idx >= 0) {
+          const message = resultMessage.substr(pos, idx)
+          if (message) {
+            chain.push({ type: 'Plain', value: message })
+          }
+          chain.push({ type: 'At', value: onlineSelf.id })
+          pos = idx + at.length
+        }
+      }
+    }
+
+    if (pos < resultMessage.length) {
+      const message = resultMessage.substr(pos)
+      chain.push({ type: 'Plain', value: message })
+    }
+  }
+
+  return chain
 }

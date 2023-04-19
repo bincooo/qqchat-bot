@@ -1,7 +1,7 @@
 import { segment, Sendable } from 'oicq'
 import logger from 'src/util/log'
 import { config, preset } from '../config'
-import { Sender } from 'src/model/sender'
+import { Sender, buildTalkChain } from 'src/model/sender'
 import { azureSpeak } from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter, MsgCaller, type ChatMessage } from 'src/types'
@@ -127,7 +127,8 @@ export const onMessage = async (data: ChatMessage, sender: Sender) => {
         }
 
         try {
-          await sender.reply([{ type: 'Plain', value: r18UnicodeParser.filter(message) }], true)
+          const chain = buildTalkChain(sender, r18UnicodeParser.filter(message))
+          await sender.reply(chain, true)
           if (isDone()) {
             delay(800)
             stateManager.setIsEnd(sender, true)
