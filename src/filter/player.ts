@@ -171,7 +171,7 @@ export class PlayerFilter extends BaseMessageFilter {
               resultMessage = message.replaceAll('[!!content!!]', content)
               break
             }
-            const res = await reply(message)
+            const res = await reply(replyMessage(message, content, sender))
           }
 
           if (state.preset.key === '默认') {
