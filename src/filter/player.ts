@@ -39,7 +39,7 @@ function datFmt() {
   return `${y}-${fmt(m)}-${fmt(d)} ${fmt(h)}:${fmt(mm)}:${fmt(s)}`
 }
 
-function replyMessage(prefix: string = "", content: string, sender?: Sender) {
+function replyMessage(prefix: string = "", content: string, sender?: Sender, append: boolean = true) {
   const state: any = stateManager.getState(sender.id)
   // emoji 过滤
   const regex = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/g
@@ -55,7 +55,7 @@ function replyMessage(prefix: string = "", content: string, sender?: Sender) {
     ?
     prefix.replaceAll('[!!content!!]', content)
     :
-    prefix.concat(content))
+    append ? prefix.concat(content) : prefix)
 
   .replaceAll('[!!date!!]', datFmt())
   .replaceAll('[!!name!!]', nickname)
@@ -168,10 +168,10 @@ export class PlayerFilter extends BaseMessageFilter {
           for(let index = 0; index < training?.length; index++) {
             const message = training[index]
             if (index === training.length - 1 && message?.includes('[!!content!!]')) {
-              resultMessage = message.replaceAll('[!!content!!]', content)
+              resultMessage = replyMessage(message, content, sender)
               break
             }
-            const res = await reply(replyMessage(message, content, sender))
+            const res = await reply(replyMessage(message, content, sender, false))
           }
 
           if (state.preset.key === '默认') {
@@ -184,7 +184,7 @@ export class PlayerFilter extends BaseMessageFilter {
           }
 
           if (resultMessage !== content) {
-            return await reply( replyMessage("", resultMessage, sender), onProgress )
+            return await reply( resultMessage, onProgress )
           }
 
           return await reply( replyMessage(player.prefix, resultMessage, sender), onProgress )
