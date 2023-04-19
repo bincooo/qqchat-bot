@@ -68,7 +68,8 @@ export function buildTalkChain(sender: Sender, content: string): types.TalkChain
   let resultMessage = content.trim()
   const chain: types.TalkChain = []
   if (resultMessage) {
-    const ats = resultMessage.match(this.regex) ?? []
+    const regex = /\[@([0-9]{5,})\]/g
+    const ats = resultMessage.match(regex) ?? []
     let pos = 0
     for (let index = 0, length = ats.length; index < length; index ++) {
       const at = ats[index]
