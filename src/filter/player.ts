@@ -40,6 +40,7 @@ function datFmt() {
 }
 
 function replyMessage(prefix: string = "", content: string, sender?: Sender) {
+  const state: any = stateManager.getState(uid)
   // emoji 过滤
   const regex = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/g
   let nickname = sender.nickname
@@ -49,6 +50,7 @@ function replyMessage(prefix: string = "", content: string, sender?: Sender) {
   if (IsEmpty(nickname)) {
     nickname = '陆仁贾'
   }
+  const online = (state.preset.onlineList??[]).map(it => `{name:"${it.name}",id:"${it.id}"}`).join(', ')
   return (prefix.includes('[!!content!!]')
     ?
     prefix.replaceAll('[!!content!!]', content)
@@ -57,6 +59,7 @@ function replyMessage(prefix: string = "", content: string, sender?: Sender) {
 
   .replaceAll('[!!date!!]', datFmt())
   .replaceAll('[!!name!!]', nickname)
+  .replaceAll('[!!online!!]', `[ ${online} ]`)
 }
 
 const MAX_COUNT = 15
@@ -101,6 +104,14 @@ export class PlayerFilter extends BaseMessageFilter {
 
       if (player.cycle ?? true) {
         state.preset.count++
+      }
+
+      if (player.online) {
+        state.preset.onlineList.push({
+          name: sender.nickname,
+          id: sender.userId
+        })
+        state.preset.onlineList = state.preset.onlineList.splice(0, 50)
       }
 
       hResult = this.handleReply(content, sender, state)
@@ -203,6 +214,7 @@ export class PlayerFilter extends BaseMessageFilter {
           state.preset = {
             key: obj.key,
             count: MAX_COUNT + 1,
+            onlineList: [],
             cacheList: [],
             maintenanceCount: 0
           }
