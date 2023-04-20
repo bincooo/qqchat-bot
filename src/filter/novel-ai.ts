@@ -7,11 +7,6 @@ import { NowAI } from 'src/util/config'
 
 const DRAW: string = '/draw'
 
-function dat(): number {
-  return new Date()
-    .getTime()
-}
-
 export class NovelAiFilter extends BaseMessageFilter {
   protected session: {
     conversationId?: string
@@ -63,7 +58,7 @@ export class NovelAiFilter extends BaseMessageFilter {
         switch(AI) {
         case "Claude":
           if (!this.session.channel)
-            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ + '_' + dat())
+            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
           result = await config.chatApi.sendMessage({ text: resultMessage, ...this.session })
           this.session.conversationId = result?.conversationId
           break

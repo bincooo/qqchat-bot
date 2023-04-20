@@ -14,9 +14,6 @@ export default class FunctionManager {
 
     let inProgress = false
     this._timer = setInterval(async () => {
-      if (config.debug) {
-        console.log('FunctionManager timer > inProgress: ' + inProgress, this.array)
-      }
       if (inProgress) return
       inProgress = true
 

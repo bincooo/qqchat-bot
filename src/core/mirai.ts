@@ -147,7 +147,7 @@ class MiraiImpl extends types.TalkWrapper {
     let count = 3
     while (count > 0 && result.code == 500) {
       count --
-      await delay(1000)
+      await delay(2000)
       // 尝试添加一个字符串id干扰腾讯判断
       result = await e.reply([{ type: 'Plain', text: btoa(`retry ${count}`) + '\n——————\n\n' }, ...content], quote)
       if (config.debug)

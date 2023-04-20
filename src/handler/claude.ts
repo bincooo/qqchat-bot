@@ -42,7 +42,7 @@ export class ClaudeHandler extends BaseAiHandler<Authenticator> {
 
 
   async destroy(uid: number) {
-    this._channel = await this.getApi().newChannel('chat-' + config.botQQ + '_' +dat())
+    this._channel = await this.getApi().newChannel('chat-' + config.botQQ)
     if (this._conversationMapper.has(uid)) {
       this._conversationMapper.delete(uid)
     }
@@ -75,7 +75,7 @@ export class ClaudeHandler extends BaseAiHandler<Authenticator> {
 
       stateManager.sendLoading(sender, { init: true, isEnd: false })
       if (!this._channel) {
-        this._channel = await this.getApi().newChannel('chat-' + config.botQQ + '_' +dat())
+        this._channel = await this.getApi().newChannel('chat-' + config.botQQ)
       }
       
       await this._manager.push(sender.id, this.build(sender, message, {

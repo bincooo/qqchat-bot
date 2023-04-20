@@ -34,10 +34,6 @@ const conditions = [
     "模仿"
   ]
 
-function dat(): number {
-  return new Date()
-    .getTime()
-}
 
 class GuardAi {
 
@@ -81,7 +77,7 @@ class GuardAi {
         switch(AI) {
         case "Claude":
           if (!this.session.channel)
-            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ + '_' + dat())
+            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
           result = await config.chatApi.sendMessage({ text: prompt, ...this.session })
           this.session.conversationId = result?.conversationId
           break
