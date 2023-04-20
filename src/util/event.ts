@@ -25,12 +25,3 @@ export function aiEmitResetSession(...args: any) {
 export function aiOnResetSession(cb: (...args: any) => void) {
   globalEventRegist('ai:resetSession', cb)
 }
-
-
-export function cgptEmitChangeAccount(...args: any) {
-  globalEventEmit('cgpt:changeSession', ...args)
-}
-
-export function cgptOnChangeAccount(cb: (...args: any) => void) {
-  globalEventRegist('cgpt:changeSession', cb)
-}

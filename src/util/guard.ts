@@ -2,7 +2,7 @@ import { preset, config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
 import { preset } from 'src/config'
-import { cgptOnChangeAccount } from 'src/util/event'
+import { aiOnResetSession } from 'src/util/event'
 import { NowAI } from 'src/util/config'
 
 const filters = [
@@ -34,6 +34,10 @@ const conditions = [
     "模仿"
   ]
 
+function dat(): number {
+  return new Date()
+    .getTime()
+}
 
 class GuardAi {
 
@@ -43,7 +47,7 @@ class GuardAi {
   } = {}
 
   constructor() {
-    cgptOnChangeAccount(() => {
+    aiOnResetSession(() => {
       this.session = {}
     })
   }
@@ -77,7 +81,7 @@ class GuardAi {
         switch(AI) {
         case "Claude":
           if (!this.session.channel)
-            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
+            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ + '_' + dat())
           result = await config.chatApi.sendMessage({ text: prompt, ...this.session })
           this.session.conversationId = result?.conversationId
           break

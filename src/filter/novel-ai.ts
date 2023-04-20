@@ -2,10 +2,16 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { config, preset } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
-import { cgptOnChangeAccount } from 'src/util/event'
+import { aiOnResetSession } from 'src/util/event'
 import { NowAI } from 'src/util/config'
 
 const DRAW: string = '/draw'
+
+function dat(): number {
+  return new Date()
+    .getTime()
+}
+
 export class NovelAiFilter extends BaseMessageFilter {
   protected session: {
     conversationId?: string
@@ -15,7 +21,7 @@ export class NovelAiFilter extends BaseMessageFilter {
   constructor() {
     super()
     this.type = 0
-    cgptOnChangeAccount(() => {
+    aiOnResetSession(() => {
       this.session = {}
     })
   }
@@ -57,7 +63,7 @@ export class NovelAiFilter extends BaseMessageFilter {
         switch(AI) {
         case "Claude":
           if (!this.session.channel)
-            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
+            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ + '_' + dat())
           result = await config.chatApi.sendMessage({ text: resultMessage, ...this.session })
           this.session.conversationId = result?.conversationId
           break
