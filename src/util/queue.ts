@@ -1,5 +1,6 @@
 import delay from 'delay'
 import { ChatGPTError } from 'chatgpt'
+import { config } from 'src/config'
 const TIMEOUT_MS = 800
 
 export default class FunctionManager {
@@ -13,6 +14,9 @@ export default class FunctionManager {
 
     let inProgress = false
     this._timer = setInterval(async () => {
+      if (config.debug) {
+        console.log('FunctionManager timer > inProgress: ' + inProgress, this.array)
+      }
       if (inProgress) return
       inProgress = true
 
