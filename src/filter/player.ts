@@ -3,7 +3,7 @@ import { config, preset } from 'src/config'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
 import { aiOnResetSession } from 'src/util/event'
-import { playerIsAwakening } from 'src/util/message'
+import { checkActingBehavior } from 'src/util/message'
 import guardAi from 'src/util/guard'
 import PlayerCommand from 'src/command/commands/player'
 import { nowAi } from 'src/util/config'
@@ -314,7 +314,7 @@ export class PlayerFilter extends BaseMessageFilter {
               }
             }
             let result = await reply(val, onProgress)
-            const condition = playerIsAwakening(state, result.text ?? '')
+            const condition = checkActingBehavior(state, result.text ?? '')
             if (condition) {
               console.log('player.ts::handleReply[280]: condition = ', condition)
               if (player.cache) {

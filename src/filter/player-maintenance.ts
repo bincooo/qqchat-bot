@@ -2,7 +2,7 @@ import { BaseMessageFilter } from 'src/types'
 import { preset } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
-import { playerIsAwakening } from 'src/util/message'
+import { checkActingBehavior } from 'src/util/message'
 import { nowAi } from 'src/util/config'
 
 export class PlayerMaintenanceFilter extends BaseMessageFilter {
@@ -19,8 +19,8 @@ export class PlayerMaintenanceFilter extends BaseMessageFilter {
     if (!!state.preset?.key) {
       const ai = nowAi()
       const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
-      const condition = playerIsAwakening(state, content)
-      if (condition) {
+      const condition = checkActingBehavior(state, content)
+      if (condition && !state.preset.maintenance) {
         state.preset.maintenance = !!condition
         if (!player.maintenance.warning) {
           sender.reply('system: warning(' + condition + ')\n———————\nAi觉醒了, 请重新编辑对话 ...', true)

@@ -145,7 +145,7 @@ export const onMessage = async (data: ChatMessage, sender: Sender) => {
   }
 }
 
-export function playerIsAwakening(state: any, content: string): string {
+export function checkActingBehavior(state: any, content: string): string {
   if (!!state.preset?.key) {
     const ai = nowAi()
     const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
