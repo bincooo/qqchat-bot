@@ -44,7 +44,7 @@ export abstract class BaseAiHandler<T> extends BaseMessageHandler {
   }
 
   enquire: MessageHandler
-  
+
   build = (sender: Sender, message: MsgCaller, reply: {
     do: (
       str: string,
@@ -52,20 +52,24 @@ export abstract class BaseAiHandler<T> extends BaseMessageHandler {
       timeoutMs?: number
     ) => Promise<ChatMessage>
     on: (r: ChatMessage) => Promise<void>
-  }): Promise<(e?: Error) => void> => {
+  }): ((e?: Error) => Promise<void>) => {
     return async (err?: Error) => {
       if (err) {
         this.messageErrorHandler(sender, err)
         return
       }
-
-      let result
-      if (typeof message === 'string') {
-        result = await reply.do(message, reply.on)
-      } else {
-        result = await message.call(undefined, reply.do, reply.on)
+      try {
+        let result
+        if (typeof message === 'string') {
+          result = await reply.do(message, reply.on)
+        } else {
+          result = await message.call(undefined, reply.do, reply.on)
+        }
+      } catch (error) {
+        this.messageErrorHandler(sender, error)
       }
     }
+
   }
 
   protected abstract messageErrorHandler(sender: Sender, err: Error): void
@@ -75,7 +79,7 @@ export abstract class BaseAiHandler<T> extends BaseMessageHandler {
   }
 
   protected getApi(): T {
-    return this._api
+    return this._api as T
   }
 }
 
@@ -114,7 +118,7 @@ export abstract class TalkWrapper {
   /**
    * 初始化处理器
    */
-  abstract async initHandlers(initMessageHandler?: (MessageHandler | BaseMessageHandler)[]): void
+  async initHandlers(initMessageHandler?: (MessageHandler | BaseMessageHandler)[]) {}
 
   /**
    * 基础信息
@@ -134,12 +138,16 @@ export abstract class TalkWrapper {
   /**
    * 回复消息
    */
-  abstract async reply(e: any, chain: TalkChain[], quote?: boolean = false): [boolean, any]
+  async reply(e: any, chain: TalkChain[], quote: boolean = false): Promise<[boolean, any]> {
+    return [false, null]
+  }
 
   /**
    * 撤回消息
    */
-  abstract async recall(target: any): boolean
+  async recall(target: any): Promise<boolean> {
+    return false
+  }
 
 }
 
