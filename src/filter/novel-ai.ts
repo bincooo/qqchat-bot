@@ -56,8 +56,8 @@ export class NovelAiFilter extends BaseMessageFilter {
         const AI = NowAI()
         switch(AI) {
         case "Claude":
-          if (!this.session?.channel)
-            this.session?.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
+          if (!this.session.channel)
+            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
           result = await config.chatApi.sendMessage({ text: resultMessage, ...this.session })
           this.session.conversationId = result?.conversationId
           break
