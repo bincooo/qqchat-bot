@@ -228,9 +228,9 @@ export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
       stateManager.sendLoading(sender, { init: true, isEnd: false })
       // this._manager.push(this.buildExecutor(sender, message, (res: ChatMessage) => { onMessage(res, sender) }))
       await this._manager.push(this.build(sender, message, {
-        do: (...args) => this.reply(sender, ...args),
-        on: (res: ChatMessage) => {
-          onMessage(res, sender)
+        do: async (...args) => await this.reply(sender, ...args),
+        on: async (res: ChatMessage) => {
+          await onMessage(res, sender)
         }
       }))
     } catch (err) {

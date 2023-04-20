@@ -78,9 +78,9 @@ export class ClaudeHandler extends BaseAiHandler<Authenticator> {
       }
       
       await this._manager.push(sender.id, this.build(sender, message, {
-        do: (...args) => this.reply(sender, ...args),
-        on: (res: ChatMessage) => {
-          onMessage(res, sender)
+        do: async (...args) => await this.reply(sender, ...args),
+        on: async (res: ChatMessage) => {
+          await onMessage(res, sender)
         }
       }))
     } catch(err) {
