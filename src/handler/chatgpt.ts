@@ -15,7 +15,7 @@ import delay from 'delay'
 import getClient from 'src/core'
 
 
-const MESSAGE_TIMEOUT_MS = 1000 * 60 * 5
+const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
 const DAY_MS = 1000 * 60 * 60 * 24
 let countNotSigned = 0
 // let count429 = 0
@@ -250,7 +250,8 @@ export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
   ): Promise<ChatMessage> {
     const result = await this.getApi().sendMessage(prompt, {
       ... this._emailPool.getArgs(sender.id),
-      onProgress: on
+      onProgress: on,
+      timeoutMs: MESSAGE_TIMEOUT_MS
     })
     if (result.error) {
       return result
