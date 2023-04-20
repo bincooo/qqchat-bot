@@ -3,6 +3,7 @@ import { config, preset } from 'src/config'
 import stateManager from 'src/util/state'
 import { Sender } from 'src/model/sender'
 import { cgptOnChangeAccount } from 'src/util/event'
+import { NowAI } from 'src/util/config'
 
 const DRAW: string = '/draw'
 export class NovelAiFilter extends BaseMessageFilter {
@@ -51,10 +52,22 @@ export class NovelAiFilter extends BaseMessageFilter {
         resultMessage = novelAiHelper.indexOf('[!!content!!]') >= 0 ? 
           novelAiHelper.replaceAll('[!!content!!]', content.substr(10)) :
           novelAiHelper.concat(content.substr(10))
-        const result = await config.chatApi.sendMessage(resultMessage, { ...this.session })
+        let result = null
+        const AI = NowAI()
+        switch(AI) {
+        case "Claude":
+          if (!this.session?.channel)
+            this.session?.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
+          result = await config.chatApi.sendMessage({ text: resultMessage, ...this.session })
+          this.session.conversationId = result?.conversationId
+          break
+        default: // WebGPT
+          result = await config.chatApi.sendMessage(resultMessage, { ...this.session })
+          this.session.parentMessageId = result?.id
+          this.session.conversationId = result?.conversationId
+          break
+        }
         console.log('noval-ai [tag:draw] ===== >>>> ', result)
-        this.session.parentMessageId = result?.id
-        this.session.conversationId = result?.conversationId
 
         const prompt = result.text
           .replaceAll('，', ',')

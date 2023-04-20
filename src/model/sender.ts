@@ -2,7 +2,7 @@ import { preset, config } from 'src/config'
 import getClient from 'src/core'
 import * as types from 'src/types'
 import stateManager from 'src/util/state'
-import { nowAi } from 'src/util/config'
+import { NowAI } from 'src/util/config'
 
 /**
  * 消息对象的封装
@@ -63,7 +63,7 @@ export class Sender {
 
 export function buildTalkChain(sender: Sender, content: string): types.TalkChain {
   const state: any = stateManager.getState(sender.id)
-  const ai = nowAi()
+  const ai = NowAI()
   const player =  preset.player?.find(item => item.key === state?.preset?.key && item.type.includes(ai))
   let resultMessage = content.trim()
   const chain: types.TalkChain = []

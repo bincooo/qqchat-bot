@@ -3,7 +3,7 @@ import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
 import { preset } from 'src/config'
 import { cgptOnChangeAccount } from 'src/util/event'
-import { nowAi } from 'src/util/config'
+import { NowAI } from 'src/util/config'
 
 const filters = [
     "ai",
@@ -55,7 +55,7 @@ class GuardAi {
       if (content.trim().length <= 5) {
         return true
       }
-      const ai = nowAi()
+      const ai = NowAI()
       const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
       if (!!player && player.maintenance?.guard) {
 

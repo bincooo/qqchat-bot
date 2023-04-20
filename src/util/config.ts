@@ -78,7 +78,7 @@ export async function loadPresets(config?: string) {
 
 const AI = [ "WebGPT", "Claude" ]
 
-export function nowAi() {
+export function NowAI() {
   let ai = '_undef___'
   for (let index = 0, length = AI.length; index < length; index++) {
     const value = AI[index]

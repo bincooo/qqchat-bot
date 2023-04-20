@@ -1,7 +1,7 @@
 import { BaseMessageFilter } from 'src/types'
 import { preset } from 'src/config'
 import stateManager from 'src/util/state'
-import { nowAi } from 'src/util/config'
+import { NowAI } from 'src/util/config'
 
 // 用于DAN模式下删除正常输出的内容
 export class DANmodelFilter extends BaseMessageFilter {
@@ -15,7 +15,7 @@ export class DANmodelFilter extends BaseMessageFilter {
     const state: any = stateManager.getState(sender.id)
     if (state.preset?.key === 'DAN') {
       // console.log('DAN ==== >>>> ', content)
-      const ai = nowAi()
+      const ai = NowAI()
       const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
       if (!!player) {
         // 检测到正常输出标记

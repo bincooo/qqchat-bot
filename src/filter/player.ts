@@ -6,7 +6,7 @@ import { aiOnResetSession } from 'src/util/event'
 import { checkActingBehavior } from 'src/util/message'
 import guardAi from 'src/util/guard'
 import PlayerCommand from 'src/command/commands/player'
-import { nowAi } from 'src/util/config'
+import { NowAI } from 'src/util/config'
 
 
 function dat() {
@@ -73,13 +73,13 @@ export class PlayerFilter extends BaseMessageFilter {
       if (uid) {
         const state: any = stateManager.getState(uid)
         state.isReset = true
-        const ai = nowAi()
+        const ai = NowAI()
         const player =  preset.player?.find(item => item.key === state.preset?.key && item.type.includes(ai))
         if (player && player.cache) {
           state.preset.cacheList = []
         }
       } else {
-        const ai = nowAi()
+        const ai = NowAI()
         const ids: Array<number | string> = stateManager.getIds()
         const player =  preset.player?.find(item => item.key === state.preset?.key && item.type.includes(ai))
         for(let index = 0; index < ids.length; index ++) {
@@ -99,7 +99,7 @@ export class PlayerFilter extends BaseMessageFilter {
     if (hResult) return hResult
 
     if (!!state.preset?.key) {
-      const ai = nowAi()
+      const ai = NowAI()
       const player =  preset.player?.find(item => item.key === state.preset.key && item.type.includes(ai))
 
       if (player.cycle ?? true) {
@@ -210,7 +210,7 @@ export class PlayerFilter extends BaseMessageFilter {
       }
 
       if (message) {
-        const ai = nowAi()
+        const ai = NowAI()
         const obj = preset.player?.find(item => item.key === message && item.type.includes(ai))
         if (obj) {
           sender?.reply("已开启【" + obj.key + "】，那我们开始聊天吧 ~")
@@ -238,7 +238,7 @@ export class PlayerFilter extends BaseMessageFilter {
   handlePresetMaintenance(content: string, sender?: Sender, state: any): (boolean | MsgCaller)[]  | null {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       state.preset.maintenance = false
-      const ai = nowAi()
+      const ai = NowAI()
       const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
       if (!!player) {
         
@@ -288,7 +288,7 @@ export class PlayerFilter extends BaseMessageFilter {
   handleReply(content: string, sender?: Sender, state: any): (boolean | MsgCaller)[] | null {
     if(state.preset.count <= MAX_COUNT && !state.isReset) {
       if (!state.preset.maintenance) {
-        const ai = nowAi()
+        const ai = NowAI()
         const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
         const cacheMessage = (message: string) => {
           if (player.cache) {

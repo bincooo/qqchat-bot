@@ -12,7 +12,7 @@ import stateManager from 'src/util/state'
 import retry from 'src/util/retry'
 import delay from 'delay'
 import fs from 'fs'
-import { nowAi } from 'src/util/config'
+import { NowAI } from 'src/util/config'
 
 
 /**
@@ -147,7 +147,7 @@ export const onMessage = async (data: ChatMessage, sender: Sender) => {
 
 export function checkActingBehavior(state: any, content: string): string {
   if (!!state.preset?.key) {
-    const ai = nowAi()
+    const ai = NowAI()
     const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
     if (!!player && !!player.maintenance) {
       return (player.maintenance.condition??[])

@@ -1,12 +1,12 @@
 import { preset } from 'src/config'
 import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
-import { nowAi } from 'src/util/config'
+import { NowAI } from 'src/util/config'
 
 
 export function buildHelpMessage () {
   const player = preset.player??[]
-  const ai = nowAi()
+  const ai = NowAI()
   return [ ...player.filter(item => item.type.includes(ai)).map((item, index) => `${index+1}. ${item.key}`) ]
 }
 
