@@ -71,11 +71,23 @@ class GuardAi {
           return true
         }
 
+        let result = null
         const prompt = player.maintenance.guard.replace('[!!content!!]', content)
-        const result = await config.chatApi.sendMessage(prompt, { ...this.session })
+        const AI = NowAI()
+        switch(AI) {
+        case "Claude":
+          if (!this.session.channel)
+            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
+          result = await config.chatApi.sendMessage({ text: prompt, ...this.session })
+          this.session.conversationId = result?.conversationId
+          break
+        default: // WebGPT
+          result = await config.chatApi.sendMessage(prompt, { ...this.session })
+          this.session.parentMessageId = result?.id
+          this.session.conversationId = result?.conversationId
+          break
+        }
         console.log('GuardAi ===== >>>> ', result)
-        this.session.parentMessageId = result.id
-        this.session.conversationId = result.conversationId
         if (result.text && (result.text.toLocaleLowerCase().includes('yes'))) {
           sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
           stateManager.sendLoading(sender, { init: true, isEnd: true })

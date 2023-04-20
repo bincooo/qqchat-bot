@@ -1,6 +1,6 @@
 import delay from 'delay'
 import { ChatGPTError } from 'chatgpt'
-const TIMEOUT_MS = 500
+const TIMEOUT_MS = 800
 
 export default class FunctionManager {
   protected _maximum: number
