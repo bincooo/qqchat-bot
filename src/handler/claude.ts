@@ -104,10 +104,6 @@ export class ClaudeHandler extends BaseAiHandler<Authenticator> {
       conversationId: this._conversationMapper.get(sender.id),
       onMessage: on
     })
-
-    if (result.error) {
-      return result
-    }
     
     this._conversationMapper.set(sender.id, result.conversationId)
     if (on) {
