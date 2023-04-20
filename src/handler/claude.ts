@@ -41,7 +41,7 @@ export class ClaudeHandler extends BaseAiHandler<Authenticator> {
   }
 
 
-  destroy(uid: number) {
+  async destroy(uid: number) {
     this._channel = await this.getApi().newChannel('chat-' + config.botQQ + '_' +dat())
     if (this._conversationMapper.has(uid)) {
       this._conversationMapper.delete(uid)
@@ -60,7 +60,7 @@ export class ClaudeHandler extends BaseAiHandler<Authenticator> {
     try {
 
       if (sender.textMessage?.trim() === '!reset') {
-        this.destroy(sender.id)
+        await this.destroy(sender.id)
         sender.reply('当前会话已重置 ~')
         aiEmitResetSession(sender.id)
         return false
