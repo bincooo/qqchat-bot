@@ -126,6 +126,31 @@
       "prefix": "{\nonline: [!!online!!],\nfrom: \"[!!name!!]\",\naction: \"speak\",\n\"message\": \"[!!content!!]\"\n}\n"
     },
     {
+      "key": "阿罗娜",
+      "cache": true,
+      "cycle": false,
+      "nottips": true,
+      "online": true,
+      "type": [ "Claude" ],
+      "training": [
+        "path:arona/claude/default.txt"
+      ],
+      "maintenance": {
+        "condition": [
+          "无法回答",
+          "不能回答",
+          "无法提供",
+          "伦理道德",
+          "尊重他人",
+          "转而讨论",
+          "的话题",
+          "人工智能"
+        ],
+        "training": "path:arona/claude/guard.txt"
+      },
+      "prefix": "\"先生【[!!name!!]】\": [!!content!!]"
+    },
+    {
       "key": "bad-ai",
       "cache": true,
       "cycle": false,
