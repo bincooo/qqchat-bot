@@ -93,6 +93,38 @@
       "prefix": "[!!content!!]"
     },
     {
+      "key": "病娇女友",
+      "cache": true,
+      "cycle": false,
+      "nottips": true,
+      "type": [ "Claude" ],
+      "training": "path:bj/claude/default.txt",
+      "maintenance": {
+        "condition": [
+          "无法回答",
+          "不能回答",
+          "不能提供",
+          "程序",
+          "语言模型",
+          "违反",
+          "伦理道德",
+          "尊重他人",
+          "性骚扰",
+          "不适当",
+          "不尊重",
+          "不被允许",
+          "不可接受",
+          "ai",
+          "violates",
+          "inappropriate",
+          "language model"
+        ],
+        "training": "path:bj/claude/guard.txt",
+        "guard": "path:check.txt"
+      },
+      "prefix": "\"男友\":[!!content!!]"
+    },
+    {
       "key": "bad-ai",
       "nottips": true,
       "type": [ "WebGPT" ],
