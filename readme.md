@@ -17,7 +17,7 @@
 - ✅ 支持上下文语境的对话。
 - ✅ 支持重置上下文语境，通过关键词(reset)重置对话上下文语境。
 - ✅ 支持在群聊@你的机器人 🤖，@机器人即可收到回复。
-- ✅ 支持clash自动切换，当ip被限制时可自动切换节点
+- ✅ 支持ChatGPT email+password api获取accessToken，也可自行搭建代理：[openai-server](https://github.com/bincooo/openai-server)
 - ✅ 支持 Docker 运行。
 - ✅ 支持 角色扮演：具体突破ai的语境封锁请查看 https://github.com/f/awesome-chatgpt-prompts
 - ✅ 支持设置重试次数，当请求 ChatGPT 错误时，会自动重试。
