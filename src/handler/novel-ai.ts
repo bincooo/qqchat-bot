@@ -86,20 +86,20 @@ export class NovelAiHandler extends BaseMessageHandler {
 
 }
 
-const FINAL_NGV_PROMPT = "lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, bad hands, bad anatomy, {{{{{bare flesh}}}}}"
-const [ CFG_SCALE, STEPS, WIDTH, HEIGHT ] = [ 7, 25, 1024, 1280 ] //[ 7, 768, 1024 ]
+const FINAL_NGV_PROMPT = "nsfw, bad-image-v2-39000, bad-artist-anime, bad-hands-5, bad_prompt_version2, EasyNegative, ng_deepnegative_v1_75t, verybadimagenegative_v1.3, EasyNegativeV2, bad-artist"
+const [ CFG_SCALE, STEPS, WIDTH, HEIGHT ] = [ 20, 30, 512, 640 ]
 
 export const initParams2 = function(prompt: string): any {
   if (prompt.endsWith(',')) {
     prompt = prompt.substr(0, prompt.length - 1)
   }
   return {
-    "enable_hr": false,
+    "enable_hr": true,
     "denoising_strength": 0,
     "firstphase_width": 0,
     "firstphase_height": 0,
     "hr_scale": 2,
-    "hr_upscaler": null,
+    "hr_upscaler": "4x-UltraSharp",
     "hr_second_pass_steps": 0,
     "hr_resize_x": 0,
     "hr_resize_y": 0,
@@ -109,7 +109,7 @@ export const initParams2 = function(prompt: string): any {
     "subseed_strength": -1,
     "seed_resize_from_h": -1,
     "seed_resize_from_w": -1,
-    "sampler_name": "Euler a",
+    "sampler_name": "DPM++ 2M Karras",
     "batch_size": 1,
     "n_iter": 1,
     "steps": STEPS,
@@ -118,7 +118,7 @@ export const initParams2 = function(prompt: string): any {
     "height": HEIGHT,
     "restore_faces": false,
     "tiling": false,
-    "prompt": prompt,
+    "prompt": `<lora:detail-tweaker-lora:1>, ${prompt}`,
     "negative_prompt": FINAL_NGV_PROMPT,
     "eta": 0.667,
     "s_churn": 0,
@@ -128,7 +128,7 @@ export const initParams2 = function(prompt: string): any {
     "override_settings": {},
     "override_settings_restore_afterwards": true,
     "script_args": [],
-    "sampler_index": "Euler a",
+    "sampler_index": "DPM++ 2M Karras",
     "script_name": null
   }
 }
