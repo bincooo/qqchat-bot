@@ -103,6 +103,8 @@ export const initParams2 = function(prompt: string): any {
     "hr_second_pass_steps": 0,
     "hr_resize_x": 0,
     "hr_resize_y": 0,
+    "dynthres_enabled": true,
+    "dynthres_mimic_scale": 7,
     "styles": [ ],
     "seed": -1,
     "subseed": -1,
