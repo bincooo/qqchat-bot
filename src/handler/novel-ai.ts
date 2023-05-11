@@ -27,6 +27,22 @@ function genUid(len?: number = 11): string {
     .substr(0, len)
 }
 
+function datFmt() {
+  const ts = new Date()
+    .getTime()
+  const date = new Date(ts + 1000 * 60 * 60 * 7)
+  const y = date.getFullYear()
+  const m = date.getMonth()+1
+  const d = date.getDate()
+  const h = date.getHours()+1
+  const mm = date.getMinutes()
+  const s = date.getSeconds()
+  const fmt = (n: number) => {
+    return (n < 10 ? '0' + n : n)
+  }
+  return parseInt(`${y}${fmt(m)}${fmt(d)}${fmt(h)}${fmt(mm)}${fmt(s)}`)
+}
+
 export class NovelAiHandler extends BaseMessageHandler {
 
   protected _uuid?: string = genUid()
@@ -87,7 +103,7 @@ export class NovelAiHandler extends BaseMessageHandler {
 }
 
 const FINAL_NGV_PROMPT = "nsfw, bad-image-v2-39000, bad-artist-anime, bad-hands-5, bad_prompt_version2, EasyNegative, ng_deepnegative_v1_75t, verybadimagenegative_v1.3, EasyNegativeV2, bad-artist"
-const [ CFG_SCALE, STEPS, WIDTH, HEIGHT ] = [ 20, 30, 512, 640 ]
+const [ SAMPLER, CFG_SCALE, STEPS, WIDTH, HEIGHT ] = [ "DPM++ 2M Karras", 20, 30, 512, 640 ]
 
 export const initParams2 = function(prompt: string): any {
   if (prompt.endsWith(',')) {
@@ -95,23 +111,20 @@ export const initParams2 = function(prompt: string): any {
   }
   return {
     "enable_hr": true,
-    "denoising_strength": 0,
-    "firstphase_width": 0,
-    "firstphase_height": 0,
     "hr_scale": 2,
     "hr_upscaler": "4x-UltraSharp",
     "hr_second_pass_steps": 0,
     "hr_resize_x": 0,
     "hr_resize_y": 0,
-    "dynthres_enabled": true,
-    "dynthres_mimic_scale": 7,
+    "denoising_strength": 0.7,
     "styles": [ ],
-    "seed": -1,
-    "subseed": -1,
-    "subseed_strength": -1,
-    "seed_resize_from_h": -1,
-    "seed_resize_from_w": -1,
-    "sampler_name": "DPM++ 2M Karras",
+    "seed": dat(),
+    "subseed": datFmt(),
+    "subseed_strength": 0,
+    "seed_resize_from_h": 0,
+    "seed_resize_from_w": 0,
+    "sampler_name": SAMPLER,
+    "sampler_index": SAMPLER,
     "batch_size": 1,
     "n_iter": 1,
     "steps": STEPS,
@@ -122,15 +135,7 @@ export const initParams2 = function(prompt: string): any {
     "tiling": false,
     "prompt": `<lora:detail-tweaker-lora:1>, ${prompt}`,
     "negative_prompt": FINAL_NGV_PROMPT,
-    "eta": 0.667,
-    "s_churn": 0,
-    "s_tmax": 0,
-    "s_tmin": 0,
-    "s_noise": 1,
-    "override_settings": {},
-    "override_settings_restore_afterwards": true,
     "script_args": [],
-    "sampler_index": "DPM++ 2M Karras",
     "script_name": null
   }
 }
