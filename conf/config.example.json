@@ -46,6 +46,7 @@
   },
   "html2jpg": "http://114.132.201.94:8082/openai/api/html2jpg",
   "proxyServer": "http://master.io:7890",
+  "sdapi": "",
   "azureSdk": {
     "enable": false,
     "key": "xxx",

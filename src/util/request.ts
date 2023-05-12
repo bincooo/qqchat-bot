@@ -67,7 +67,8 @@ export function drawing(opts: {
   } = opts
 
   return new Promise<string>((resolve, reject) => {
-    sendPost(BASE_NOVEL_AI_PATH + '/sdapi/v1/txt2img', str(data), {
+    const baseURL = config.sdapi ?? BASE_NOVEL_AI_PATH
+    sendPost(baseURL + '/sdapi/v1/txt2img', str(data), {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       // 'X-Forwarded-For': ip,

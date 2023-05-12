@@ -4,6 +4,7 @@ import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import * as types from 'src/types'
 import logger from 'src/util/log'
+import { randomBytes } from 'crypto'
 import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
 import delay from 'delay'
@@ -18,6 +19,12 @@ let loginType: number = 2
 const dats = () => {
   return new Date()
     .getTime()
+}
+
+function genCid() {
+  return randomBytes(16)
+    .toString('hex')
+    .toLowerCase()
 }
 
 async function handleMessage (e) {
@@ -237,6 +244,12 @@ class OicqImpl extends types.TalkWrapper {
       case 'Plain':
         return segment.text(it.value)
       case 'Image':
+        if (config.oicq.platform === 3) {
+          const buffer = Buffer.from(it.value, 'base64')
+          const path = "tmp/" + genCid() + ".png"
+          fs.writeFileSync(path, buffer)
+          return segment.image(path)
+        }
         return segment.image('base64://' + it.value)
       case 'Voice':
         return segment.record('base64://' + it.value)

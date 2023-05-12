@@ -108,7 +108,7 @@ export class NovelAiHandler extends BaseMessageHandler {
 }
 
 const FINAL_NGV_PROMPT = "nsfw, bad-image-v2-39000, bad-artist-anime, bad-hands-5, bad_prompt_version2, EasyNegative, ng_deepnegative_v1_75t, verybadimagenegative_v1.3, EasyNegativeV2, bad-artist"
-const [ SAMPLER, CFG_SCALE, STEPS, WIDTH, HEIGHT ] = [ "DPM++ 2M Karras", 20, 30, 512, 640 ]
+const [ SAMPLER, CFG_SCALE, STEPS, WIDTH, HEIGHT ] = [ "DPM++ 2M Karras", 18, 35, 409, 512 ]
 
 export const initParams2 = function(prompt: string): any {
   if (prompt.endsWith(',')) {
@@ -117,11 +117,12 @@ export const initParams2 = function(prompt: string): any {
   return {
     "enable_hr": true,
     "hr_scale": 2,
-    "hr_upscaler": "4x-UltraSharp",
     "hr_second_pass_steps": 0,
+    "hr_upscaler": "R-ESRGAN 4x+ Anime6B",
+    //"hr_upscaler": "R-ESRGAN 4x+",
     "hr_resize_x": 0,
     "hr_resize_y": 0,
-    "denoising_strength": 0.7,
+    "denoising_strength": 0.5,
     "styles": [ ],
     "seed": dat(),
     "subseed": datFmt(),
