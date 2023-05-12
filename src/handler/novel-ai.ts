@@ -27,6 +27,11 @@ function genUid(len?: number = 11): string {
     .substr(0, len)
 }
 
+const dat = function() {
+  return new Date()
+    .getTime()
+}
+
 function datFmt() {
   const ts = new Date()
     .getTime()
@@ -247,18 +252,4 @@ export const initParams = function(prompt: string): Array<any> {
 
 const str = function(json: any) {
   return JSON.stringify(json)
-}
-
-const dat = function() {
-  const inst = new Date()
-  const y = inst.getFullYear()
-  const m = inst.getMonth()+1
-  const d = inst.getDate()
-  const h = inst.getHours()+1
-  const mm = inst.getMinutes()
-  const s = inst.getSeconds()
-  const fmt = (n: number) => {
-    return (n < 10 ? '0' + n : n)
-  }
-  return `${y}${fmt(m)}${fmt(d)}${fmt(h)}${fmt(mm)}${fmt(s)}00`
 }
