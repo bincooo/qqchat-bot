@@ -245,9 +245,9 @@ class OicqImpl extends types.TalkWrapper {
         return segment.text(it.value)
       case 'Image':
         if (config.oicq.platform === 3) {
-          const buffer = Buffer.from(it.value, 'base64')
+          const buffer = Buffer.from(it.value.replace("base64://", ""), 'base64')
           const path = "./tmp/" + genCid() + ".png"
-          fs.writeFileSync(path, buffer)
+          const err = fs.writeFileSync(path, buffer)
           return segment.image(path)
         }
         return segment.image('base64://' + it.value)
