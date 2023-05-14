@@ -78,26 +78,26 @@ async function initOicq (initMessageHandler?: Array<MessageHandler | BaseMessage
     }
     const ret = await client.sendPrivateMsg(config.adminQQ, '已上线~')
 
-    // const pingListener = async () => {
-    //   for(let key in config.groupList??{}) {
-    //     try {
-    //       const e: MessageEvent = config.groupList[key]
-    //       if (config.debug) {
-    //         console.log('ping group: ' + (e.group_name??e.group?.group_name))
-    //       }
-    //       const { message_id } = await e?.reply('Hi~')
-    //       await delay(500)
-    //       await client.deleteMsg(message_id)
-    //     } catch(err) {
-    //       console.log('pingListener Error!!', err)
-    //     }
-    //   }
-    // }
-    // if (config.groupPingMs > 0) {
-    //   pingListener()
-    //   // 一小时心跳一次
-    //   setInterval(pingListener, config.groupPingMs)
-    // }
+    const pingListener = async () => {
+      for(let key in config.groupList??{}) {
+        try {
+          const e: MessageEvent = config.groupList[key]
+          if (config.debug) {
+            console.log('ping group: ' + (e.group_name??e.group?.group_name))
+          }
+          const { message_id } = await e?.reply('Hi~')
+          await delay(500)
+          await client.deleteMsg(message_id)
+        } catch(err) {
+          console.log('pingListener Error!!', err)
+        }
+      }
+    }
+    if (config.oicq.platform === 3 && config.groupPingMs > 0) {
+      pingListener()
+      // 一小时心跳一次
+      setInterval(pingListener, config.groupPingMs)
+    }
   })
 
   let dat: number  = 0

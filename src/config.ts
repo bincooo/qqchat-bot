@@ -44,8 +44,8 @@ export const config = {
 
   // browserPath: '',
   proxyServer: 'http://master.io:7890',
-  // groupPingMs: 1000 * 60 * 60,
-  // groupList: { },
+  groupPingMs: 1000 * 60 * 60,
+  groupList: { },
   // clash: {
   //   enable: false
   // },
