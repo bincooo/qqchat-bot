@@ -35,6 +35,25 @@ function mp3ToAmr(filepath, outputDir = './tmp') {
   })
 }
 
+function cmd_wavToSilk(filepath, outputDir = "./tmp") {
+  return new Promise((resolve, reject) => {
+    const basename = path.basename(filepath)
+    const etc = basename.split('.').pop()
+    const filename = basename.replace('.' + etc , '')
+    const cmdStr = `wx-voice encode -i ${filepath} -o ${ffmpegPath}.silk -f silk_amr`
+    const executor = util.promisify(execcmd.exec)
+    
+    executor(cmdStr, (err, stdout, stderr) => {
+      if (err) {
+        reject('error:' + stderr)
+      } else {
+        resolve(`${ffmpegPath}.silk`)
+      }
+      // fs.unlinkSync(filepath)
+    })
+  })
+}
+
 function mp3ToSilk(filepath, outputDir = './tmp') {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
@@ -45,7 +64,7 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
       voice.on("error", (err) => console.log('WxVoice Error: ', err))
     }
     const enSilk = (retry: number = 5) => {
-      voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
+      voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk_amr'}, (path) => {
         if (path) {
           resolve(path)
         } else {
