@@ -40,7 +40,7 @@ function cmd_wavToSilk(filepath, outputDir = "./tmp") {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
-    const cmdStr = `wx-voice encode -i ${filepath} -o ${ffmpegPath}.silk -f silk_amr`
+    const cmdStr = `wx-voice encode -i ${filepath} -o ${ffmpegPath}.silk -f silk`
     const executor = util.promisify(execcmd.exec)
     
     executor(cmdStr, (err, stdout, stderr) => {
@@ -64,7 +64,7 @@ function mp3ToSilk(filepath, outputDir = './tmp') {
       voice.on("error", (err) => console.log('WxVoice Error: ', err))
     }
     const enSilk = (retry: number = 5) => {
-      voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk_amr'}, (path) => {
+      voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
         if (path) {
           resolve(path)
         } else {
