@@ -27,3 +27,7 @@ jobs:
     - run: npm i
     - run: npm run build
 
+    - uses: actions/upload-artifact@v3
+      with:
+        name: binary
+        path: build/*
