@@ -278,6 +278,10 @@ docker exec [container_name or container_id] Enter (你的手机短信码)
 
   // dev
   npm run dev -y
+  
+  // binary
+  // os: mac / linux / win.exe
+  ./qqchat-bot-[os]
 ```
 
 ## 👀效果
