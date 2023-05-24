@@ -11,7 +11,11 @@ import { config } from 'src/config'
 import delay from 'delay'
 
 const ffmpegPath = (() => {
-  return (typeof ffmpeg === 'string') ? ffmpeg : ffmpeg.path
+  var p = (typeof ffmpeg === 'string') ? ffmpeg : ffmpeg.path
+  if (!p) {
+    p = path.resolve(process.cwd(), "ffmpeg");
+  }
+  console.log("ffmpeg: " + p)
 })()
 
 let ip = IP()
