@@ -11,7 +11,6 @@ async function patch () {
   await writeFile(ffmpeg, ffmpegContent)
   await copyFolder('conf', 'build/conf')
   await copyFolder('node_modules/wx-voice/silk', 'build/silk')
-  await copyFile('node_modules/ffmpeg-static/ffmpeg', 'build/ffmpeg')
   await fs.mkdir('build/tmp', { recursive: true })
   await copyFile('loading.gif', 'build/loading.gif')
   await copyFile('mirai-setting.yml', 'build/mirai-setting.yml')
@@ -30,7 +29,6 @@ async function fix() {
    await writeFile('build/app.js', AppJS
     .replaceAll('resolve(__dirname, "silk", type2)', 'resolve(process.cwd(), "silk", type2)')
     .replaceAll('require("path").join(__dirname, "tiktoken_bg.wasm")', 'require("path").join(process.cwd(), "tiktoken_bg.wasm")')
-    .replaceAll('ff_path = typeof import_ffmpeg_static.default === "string" ? import_ffmpeg_static.default : import_ffmpeg_static.default.path;', 'ff_path = import_path.default.resolve(process.cwd(), "ffmpeg");')
   )
 }
 
