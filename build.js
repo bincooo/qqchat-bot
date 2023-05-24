@@ -30,7 +30,7 @@ async function fix() {
    await writeFile('build/app.js', AppJS
     .replaceAll('resolve(__dirname, "silk", type2)', 'resolve(process.cwd(), "silk", type2)')
     .replaceAll('require("path").join(__dirname, "tiktoken_bg.wasm")', 'require("path").join(process.cwd(), "tiktoken_bg.wasm")')
-    .replaceAll("ff_path = (typeof ffmpeg === 'string') ? ffmpeg : ffmpeg.path", 'ff_path = path.resolve(process.cwd(), "ffmpeg")')
+    .replaceAll('ff_path = typeof import_ffmpeg_static.default === "string" ? import_ffmpeg_static.default : import_ffmpeg_static.default.path;', 'ff_path = import_path.default.resolve(process.cwd(), "ffmpeg");')
   )
 }
 
