@@ -5,6 +5,7 @@ const path = require('path')
 
 async function patch () {
   await fs.mkdir('build', { recursive: true })
+  await fs.mkdir('build/tmp', { recursive: true })
   const ffmpeg = 'node_modules/fluent-ffmpeg/index.js'
   const ffmpegContent = `module.exports = ${process.env.FLUENTFFMPEG_COV ? "require('./lib-cov/fluent-ffmpeg');" : "require('./lib/fluent-ffmpeg');" }`
   await writeFile(ffmpeg, ffmpegContent)
