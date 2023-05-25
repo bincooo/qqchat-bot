@@ -21,14 +21,13 @@
 - ✅ 支持 Docker 运行。
 - ✅ 支持 角色扮演：具体突破ai的语境封锁请查看 https://github.com/f/awesome-chatgpt-prompts
 - ✅ 支持设置重试次数，当请求 ChatGPT 错误时，会自动重试。
-- ✅ 支持CluadeAI，对不同ai可区分不同的预设文件。
+- ✅ 支持CluadeAI，对不同ai可区分不同的预设文件。[配置教程](https://github.com/bincooo/claude-api)
 - ❓ 捕获错误并重试。
 - ❓ 其他
 
 
 
 
-`tips: web逆向最大一次可输入16349个字, 也许这也是tokens的最大值?`
 ## 用 Docker 运行
 
 ```
