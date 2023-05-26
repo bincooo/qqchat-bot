@@ -260,8 +260,13 @@ class OicqImpl extends types.TalkWrapper {
       }
     })
     if (!content) return [ true, -1 ]
-    const result = await e.reply(content, quote)
-    return [ true, result.message_id ]
+    try {
+      const result = await e.reply(content, quote)
+      return [ true, result.message_id ]
+    } catch(err) {
+      sender.reply(`发生错误: ${err}`)
+      if (!content) return [ true, -1 ]
+    }
   }
 
   /**
