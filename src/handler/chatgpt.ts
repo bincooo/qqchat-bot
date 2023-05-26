@@ -205,6 +205,11 @@ export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
   override enquire = async (sender: Sender) => {
     if (!config.WebGPT.enable) return true
     try {
+      const api = await this.getApi()
+      if (!api) {
+        sender.reply('WebGPT未被初始化 ~')
+        return false
+      }
 
       if (sender.textMessage?.trim() === '!reset') {
         this._emailPool.setArgs(sender.id, {})
