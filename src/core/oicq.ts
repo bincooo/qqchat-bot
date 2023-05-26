@@ -265,7 +265,7 @@ class OicqImpl extends types.TalkWrapper {
       return [ true, result.message_id ]
     } catch(err) {
       try {e.reply(`发生错误: ${err}`)} catch(e) {}
-      if (!content) return [ true, -1 ]
+      return [ true, -1 ]
     }
   }
 
