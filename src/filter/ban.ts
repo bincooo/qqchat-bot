@@ -2,6 +2,7 @@ import { BaseMessageFilter, MessageFilter } from 'src/types'
 import { loadConfig, writeConfig } from 'src/util/config'
 import { config } from 'src/config'
 import getClient from 'src/core'
+import { send } from 'process'
 
 
 const configFile = process.cwd() + '/conf/ban.json'
@@ -58,10 +59,17 @@ export class BanFilter extends BaseMessageFilter {
           sender.reply('请输入正确的QQ号 ~', true)
           return [ false,  "" ]
         }
-        break
       default:
-        // TODO oicq
-        break
+        const info1 = await getClient().target.getGroupMemberInfo(e.group_id, parseInt(qq))
+        if (info1 && info1.user_id == qq) {
+          this._banList.push(qq)
+          await saveConfig(this._banList)
+          sender.reply(`【${info.nickname}】已加入黑名单 ~`, true)
+          return [ false,  "" ]
+        } else {
+          sender.reply('请输入正确的QQ号 ~', true)
+          return [ false,  "" ]
+        }
       }
     }
 
@@ -89,10 +97,15 @@ export class BanFilter extends BaseMessageFilter {
           sender.reply(`【${qq}】已移除黑名单 ~`, true)
           return [ false,  "" ]
         }
-        break
       default:
-        // TODO oicq
-        break
+        const info1 = await getClient().target.getGroupMemberInfo(e.group_id, parseInt(qq))
+        if (info1 && info1.user_id == qq) {
+          sender.reply(`【${info.nickname}】已移除黑名单 ~`, true)
+          return [ false,  "" ]
+        } else {
+          sender.reply(`【${qq}】已移除黑名单 ~`, true)
+          return [ false,  "" ]
+        }
       }
     }
 
