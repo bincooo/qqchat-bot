@@ -217,7 +217,7 @@ class IcqqImpl extends types.TalkWrapper {
           const err = fs.writeFileSync(path, buffer)
           return segment.image(path)
         }
-        return segment.image('base64://' + it.value)
+        return segment.image(it.value as string)
       case 'Voice':
         return segment.record('base64://' + it.value)
       case 'At':
