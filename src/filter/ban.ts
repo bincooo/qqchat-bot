@@ -64,7 +64,7 @@ export class BanFilter extends BaseMessageFilter {
         if (info1 && info1.user_id == qq) {
           this._banList.push(qq)
           await saveConfig(this._banList)
-          sender.reply(`【${info.nickname}】已加入黑名单 ~`, true)
+          sender.reply(`【${info1.nickname}】已加入黑名单 ~`, true)
           return [ false,  "" ]
         } else {
           sender.reply('请输入正确的QQ号 ~', true)
@@ -100,7 +100,7 @@ export class BanFilter extends BaseMessageFilter {
       default:
         const info1 = await getClient().target.getGroupMemberInfo(e.group_id, parseInt(qq))
         if (info1 && info1.user_id == qq) {
-          sender.reply(`【${info.nickname}】已移除黑名单 ~`, true)
+          sender.reply(`【${info1.nickname}】已移除黑名单 ~`, true)
           return [ false,  "" ]
         } else {
           sender.reply(`【${qq}】已移除黑名单 ~`, true)
