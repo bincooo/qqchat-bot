@@ -2,7 +2,6 @@ import { Sender } from 'src/model/sender'
 import { BaseMessageHandler } from 'src/types'
 import { drawing } from 'src/util/request'
 import { filterTokens } from 'src/util/message'
-import { segment } from 'oicq'
 import retry from 'src/util/retry'
 import { randomBytes } from 'crypto'
 import { config } from 'src/config'
@@ -20,7 +19,7 @@ const hint = [
 ]
 
 
-function genUid(len?: number = 11): string {
+function genUid(len: number = 11): string {
   return randomBytes(16)
     .toString('hex')
     .toLowerCase()
@@ -58,15 +57,14 @@ export class NovelAiHandler extends BaseMessageHandler {
   handle = async (sender: Sender) => {
     const message = sender?.textMessage ?? ''
     if (message.startsWith(DRAW) || message.startsWith('[tag:draw]')) {
-      const idx = parseInt(Math.random() * hint.length, 10)
+      const idx = parseInt((Math.random() * hint.length) + "", 10)
       sender.reply(hint[idx], true)
 
       // const data = initParams(
       //   (await filterTokens(sender?.textMessage, sender))
       // )
-      const data = initParams2(
-        (await filterTokens(sender?.textMessage, sender))
-      )
+      const result = await filterTokens(sender?.textMessage, sender)
+      const data = initParams2(result as string)
       
       try {
         const b64 = await retry(
@@ -90,7 +88,7 @@ export class NovelAiHandler extends BaseMessageHandler {
         )
         switch (config.type) {
           case "mirai":
-            sender.reply([{ type: 'Image', value: b64 }], true)
+            sender.reply([{ type: 'Image', value: b64 ?? "" }], true)
             break
           default:
             sender.reply([{ type: 'Image', value: 'base64://' + b64 }], true)

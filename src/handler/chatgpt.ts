@@ -1,11 +1,10 @@
 import { ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
-import { BaseAiHandler, type MsgCaller, type ChatMessage } from 'src/types'
+import { BaseAiHandler, type ChatMessage } from 'src/types'
 import logger from 'src/util/log'
 import { filterTokens, onMessage } from 'src/util/message'
 import stateManager from 'src/util/state'
-import { randomBytes } from 'crypto'
 import FunctionManager from 'src/util/queue'
 import { aiEmitResetSession } from 'src/util/event'
 import { openAIAuth } from 'src/util/request'
@@ -17,14 +16,7 @@ import getClient from 'src/core'
 
 const MESSAGE_TIMEOUT_MS = 1000 * 60 * 3
 const DAY_MS = 1000 * 60 * 60 * 24
-let countNotSigned = 0
-// let count429 = 0
 
-function genUid(): string {
-  return 'uid-' + randomBytes(16)
-    .toString('hex')
-    .toLowerCase()
-}
 
 function dat(): number {
   return new Date()
@@ -39,6 +31,8 @@ declare type Email = {
     conversationId?: string
     parentMessageId?: string
   }>
+
+  expires?: number
 }
 
 class EmailPool {
@@ -115,7 +109,7 @@ class EmailPool {
     parentMessageId?: string
   } {
     const account = this._pool[this._currentIndex]
-    return account.session.get(uid) ?? {}
+    return account.session?.get(uid) ?? {}
   }
 
   setArgs(uid: number, args: {
@@ -123,13 +117,9 @@ class EmailPool {
     parentMessageId?: string
   }) {
     const account = this._pool[this._currentIndex]
-    account.session.set(uid, args)
+    account.session?.set(uid, args)
   }
 
-  delArgs(uid: number) {
-    const account = this._pool[this._currentIndex]
-    account.delete(uid)
-  }
 }
 
 async function login(email: string, passwd: string) {
@@ -174,7 +164,7 @@ export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
 
   override async load () {
     if (!config.WebGPT.enable) return
-    const { endpoint, account } = config.WebGPT
+    const { endpoint, account } = config.WebGPT as any
     let needSave = false
     for(let index = 0, length = account.length; index < length; index ++) {
       const it = account[index]
@@ -194,11 +184,8 @@ export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
     }
 
     this._emailPool = new EmailPool([...account])
-    const { accessToken } = this._emailPool.next()
-    this.setApi(new ChatGPTUnofficialProxyAPI({
-      apiReverseProxyUrl: endpoint.conversation,
-      accessToken
-    }))
+    const { accessToken = "" } = this._emailPool.next()
+    this.setApi(new ChatGPTUnofficialProxyAPI({apiReverseProxyUrl: endpoint.conversation, accessToken}))
     console.log('chatgpt - execute initChatGPT method success.')
   }
 
@@ -255,21 +242,25 @@ export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
   ): Promise<ChatMessage> {
     const result = await this.getApi().sendMessage(prompt, {
       ... this._emailPool.getArgs(sender.id),
-      onProgress: on,
+      onProgress:  (partialResponse) => {
+        if (on) on(partialResponse as ChatMessage)
+      },
       timeoutMs: MESSAGE_TIMEOUT_MS
     })
-    if (result.error) {
-      return result
-    }
+    // if (result.error) {
+    //   return result
+    // }
     this._emailPool.setArgs(sender.id, {
       conversationId: result.conversationId,
       parentMessageId: result.id
     })
+
+    const message = { ...result, text: '[DONE]' } as ChatMessage
     if (on) {
-      await on({ ...result, text: '[DONE]' })
+      await on(message)
     }
     await delay(timeoutMs)
-    return result
+    return message
   }
 
 
@@ -296,10 +287,10 @@ export class ChatGPTHandler extends BaseAiHandler<ChatGPTUnofficialProxyAPI> {
       sender.reply('——————————————\nError: 429\nemmm... 你好啰嗦吖, 稍后再来吧 ...' + append, true)
       // 429 1hours 限制, 换号处理.
       const account = this._emailPool.next()
-      const { endpoint } = config.WebGPT
+      const { endpoint } = config.WebGPT as any
       this.setApi(new ChatGPTUnofficialProxyAPI({
         apiReverseProxyUrl: endpoint.conversation,
-        accessToken: account.accessToken
+        accessToken: account.accessToken ?? ""
       }))
       aiEmitResetSession(sender.id)
 

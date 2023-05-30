@@ -1,7 +1,6 @@
 import { preset, config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import stateManager from 'src/util/state'
-import { preset } from 'src/config'
 import { aiOnResetSession } from 'src/util/event'
 import { NowAI } from 'src/util/config'
 
@@ -40,6 +39,7 @@ class GuardAi {
   protected session: {
     conversationId?: string
     parentMessageId?: string
+    channel?: string
   } = {}
 
   constructor() {
@@ -49,7 +49,7 @@ class GuardAi {
   }
 
   check = async (content: string, sender?: Sender) => {
-    const state: any = stateManager.getState(sender.id)
+    const state: any = stateManager.getState(sender?.id??"__undef___")
     if (!!state.preset?.key && state.preset.key !== '默认') {
 
       if (content.trim().length <= 5) {
@@ -62,7 +62,7 @@ class GuardAi {
         const value = content?.toLocaleLowerCase() ?? ""
         const findRes = filters.find(item => value.includes(item))
         if (findRes) {
-          sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
+          sender?.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
           return false
         }
 
@@ -71,26 +71,29 @@ class GuardAi {
           return true
         }
 
-        let result = null
+        let result: any | null = null
         const prompt = player.maintenance.guard.replace('[!!content!!]', content)
         const AI = NowAI()
+        const chatApi = config.chatApi as any|null
         switch(AI) {
         case "Claude":
           if (!this.session.channel)
-            this.session.channel = await config.chatApi.newChannel('chat-' + config.botQQ)
-          result = await config.chatApi.sendMessage({ text: prompt, ...this.session })
+            this.session.channel = await chatApi?.newChannel('chat-' + config.botQQ)
+          result = await chatApi?.sendMessage({ text: prompt, ...this.session })
           this.session.conversationId = result?.conversationId
           break
         default: // WebGPT
-          result = await config.chatApi.sendMessage(prompt, { ...this.session })
+          result = await chatApi.sendMessage(prompt, { ...this.session })
           this.session.parentMessageId = result?.id
           this.session.conversationId = result?.conversationId
           break
         }
         console.log('GuardAi ===== >>>> ', result)
         if (result.text && (result.text.toLocaleLowerCase().includes('yes'))) {
-          sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
-          stateManager.sendLoading(sender, { init: true, isEnd: true })
+          if (sender) {
+            sender.reply('发了什么奇奇怪怪的消息, 麻烦你爬好吗 (╯‵□′)╯︵┻━┻', true)
+            stateManager.sendLoading(sender, { init: true, isEnd: true })
+          }
           return false 
         }
       }

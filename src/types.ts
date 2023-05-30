@@ -39,7 +39,7 @@ export abstract class BaseAiHandler<T> extends BaseMessageHandler {
   }
 
   override handle = (sender: Sender) => {
-    config.chatApi = this.getApi()
+    (config as any).chatApi = this.getApi()
     return this.enquire(sender)
   }
 

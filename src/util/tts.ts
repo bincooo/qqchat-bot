@@ -1,6 +1,5 @@
 import { SpeechConfig, AudioConfig, SpeechSynthesizer } from 'microsoft-cognitiveservices-speech-sdk'
 import { randomBytes } from 'crypto'
-import { WebSocket } from 'ws'
 import util from 'util'
 import execcmd from 'child_process'
 import path from 'path'
@@ -16,9 +15,8 @@ const ffmpegPath = (() => {
   return ff_path
 })()
 
-let ip = IP()
 let voice = null
-function mp3ToAmr(filepath, outputDir = './tmp') {
+function mp3ToAmr(filepath: string, outputDir = './tmp'): Promise<string> {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
@@ -26,14 +24,9 @@ function mp3ToAmr(filepath, outputDir = './tmp') {
     const cmdStr = `${ffmpegPath} -y -i ${filepath} -ac 1 -ar 8000 ${outputDir}/${filename}.amr`
     const executor = util.promisify(execcmd.exec)
     
-    executor(cmdStr, (err, stdout, stderr) => {
-      if (err) {
-        reject('error:' + stderr)
-      } else {
-        resolve(`${outputDir}/${filename}.amr`)
-      }
-      // fs.unlinkSync(filepath)
-    })
+    executor(cmdStr)
+      .then(() => resolve(`${outputDir}/${filename}.amr`))
+      .catch(reject)
   })
 }
 
@@ -45,28 +38,23 @@ function cmd_wavToSilk(filepath, outputDir = "./tmp") {
     const cmdStr = `wx-voice encode -i ${filepath} -o ${ffmpegPath}.silk -f silk`
     const executor = util.promisify(execcmd.exec)
     
-    executor(cmdStr, (err, stdout, stderr) => {
-      if (err) {
-        reject('error:' + stderr)
-      } else {
-        resolve(`${ffmpegPath}.silk`)
-      }
-      // fs.unlinkSync(filepath)
-    })
+    executor(cmdStr)
+      .then(() => resolve(`${ffmpegPath}.silk`))
+      .catch(reject)
   })
 }
 
-function mp3ToSilk(filepath, outputDir = './tmp') {
+function mp3ToSilk(filepath, outputDir = './tmp'): Promise<string> {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
     const etc = basename.split('.').pop()
     const filename = basename.replace('.' + etc , '')
     if(!voice) {
       voice = new WxVoice('./tmp', ffmpegPath)
-      voice.on("error", (err) => console.log('WxVoice Error: ', err))
+      (voice as any).on("error", (err) => console.log('WxVoice Error: ', err))
     }
     const enSilk = (retry: number = 5) => {
-      voice.encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
+      (voice as any).encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
         if (path) {
           resolve(path)
         } else {
@@ -94,7 +82,7 @@ async function saveFile(buffer: Buffer, vt: string = 'mp3ToSilk'): Promise<strin
     })
   }).then(path => {
     return delay(800)
-      .then(() => switchSuffix(vt, path))
+      .then(() => switchSuffix(vt, path as string))
   })
 }
 
@@ -198,7 +186,7 @@ function buildSsml(config: Config) {
 
 // https://speech.microsoft.com/portal/9be764e411c24d96b5b5c0f068d4437f/voicegallery
 // https://azure.microsoft.com/zh-cn/products/cognitive-services/text-to-speech/#features
-let speechConfig = null
+let speechConfig
 
 export async function azureSpeak(
   conf: Config,

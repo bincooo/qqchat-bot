@@ -1,6 +1,5 @@
 import delay from 'delay'
 import { ChatGPTError } from 'chatgpt'
-import { config } from 'src/config'
 const TIMEOUT_MS = 800
 
 export default class FunctionManager {
@@ -51,13 +50,14 @@ export default class FunctionManager {
   }
 
   private shift(): (error?: Error) => void {
-    return this.array.shift()
+    const defaul = () => {}
+    return this.array.shift() ?? defaul
   }
 
 }
 
 
-export class GroupFunctionManager {
+class GroupFunctionManager {
   protected _manager = new Map<number, FunctionManager>()
   protected _maximum?: number
 
@@ -77,3 +77,5 @@ export class GroupFunctionManager {
     await manager.push(element)
   }
 }
+
+export { FunctionManager, GroupFunctionManager }

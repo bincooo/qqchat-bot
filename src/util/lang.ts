@@ -1,6 +1,6 @@
 
 abstract class AbstractUnicodeParser {
-  filter(str: string) : string
+  abstract filter(str: string) : string
 }
 
 class JapaneseUnicodeParser extends AbstractUnicodeParser {

@@ -1,7 +1,5 @@
 import { MessageHandler } from 'src/types'
-import { config } from 'src/config'
-import getClient from 'src/core'
-import { loadConfig, writeConfig } from 'src/util/config'
+import { loadConfig } from 'src/util/config'
 
 
 let filter = []
@@ -25,7 +23,7 @@ export const ignoreHandler: MessageHandler = function (sender) {
   if (sender.isAdmin) return true
   for (let index = 0, len = filter.length; index < len; index ++) {
     if (content && content.includes(filter[index])) {
-      const idx = parseInt(Math.random() * hint.length, 10)
+      const idx = parseInt((Math.random() * hint.length) + "", 10)
       sender.reply(hint[idx], true)
       return false
     }

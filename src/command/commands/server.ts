@@ -1,10 +1,9 @@
-import { initOicq } from 'src/core/oicq'
 import { BaseMessageHandler } from 'src/types'
 import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
 import messageHandlers from './../../handler'
-import { config, preset } from '../../config'
-import { existsConfig, loadConfig, loadPresets } from 'src/util/config'
+import { config } from '../../config'
+import { existsConfig, loadPresets } from 'src/util/config'
 import path from 'path'
 import { loadHandlerConfig } from 'src/main'
 

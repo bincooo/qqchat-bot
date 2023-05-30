@@ -59,7 +59,7 @@ class MiraiImpl extends types.TalkWrapper {
   /**
    * 初始化处理器
    */
-  async initHandlers(initMessageHandler?: (types.MessageHandler | types.BaseMessageHandler)[]): void {
+  async initHandlers(initMessageHandler?: (types.MessageHandler | types.BaseMessageHandler)[]) {
     messageHandler = initMessageHandler ?? messageHandler ?? []
     const { yaml: yamlConfig } = config.mirai
     const setting: MiraiApiHttpSetting = yaml.load(fs.readFileSync(yamlConfig, 'utf8'))
@@ -73,7 +73,7 @@ class MiraiImpl extends types.TalkWrapper {
         if (e.sender.id == config.botQQ) {
           return
         }
-        if (e.sender?.memberName !== 'Q群管家') {
+        if ((e.sender as any)?.memberName !== 'Q群管家') {
           handleMessage(e)
         }
       }
@@ -98,12 +98,13 @@ class MiraiImpl extends types.TalkWrapper {
   /**
    * 基础信息
    */
-  information(e: any): {
+  information(e: any): Record<string, (number | string)> & {
     textMessage: string
     nickname: string
+    isAdmin: boolean
     group?: string
-  } & Record<string, (number | string)> {
-    const result = {
+  } {
+    const result:any = {
     }
     result.userId = e.sender?.id
     result.isAdmin = e.sender?.id == config.adminQQ
@@ -127,7 +128,7 @@ class MiraiImpl extends types.TalkWrapper {
   /**
    * 回复消息
    */
-  async reply(e: any, chain: types.TalkChain[], quote?: boolean = false): [ boolean, any ] {
+  async reply(e: any, chain: types.TalkChain[], quote: boolean = false): Promise<[ boolean, any ]> {
     const content = chain?.map(it => {
       switch(it.type) {
       case 'Plain':
@@ -178,10 +179,12 @@ class MiraiImpl extends types.TalkWrapper {
   /**
    * 撤回消息
    */
-  async recall(target: any): boolean {
+  async recall(target: any): Promise<boolean> {
     if (config.debug)
       console.log('sender recall message: ', target)
-    this._mirai.api.recall(target)
+    if (this._mirai) {
+      this._mirai.api.recall(target)
+    }
     return true
   }
 }

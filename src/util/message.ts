@@ -5,7 +5,6 @@ import { Sender, buildTalkChain } from 'src/model/sender'
 import { azureSpeak } from './tts'
 import messageHandler from 'src/filter'
 import { BaseMessageFilter, MessageFilter, MsgCaller, type ChatMessage } from 'src/types'
-import { getClient } from 'src/core/oicq'
 import * as parser from './parser'
 import { japaneseUnicodeParser, speakUnicodeParser, r18UnicodeParser, emojiParser } from 'src/util/lang'
 import stateManager from 'src/util/state'
@@ -36,7 +35,7 @@ async function _filterTokens(content: string, filters: Array<BaseMessageFilter>,
       if (filters[i] instanceof BaseMessageFilter) {
         const [ stop, reply ] = await (filters[i] as BaseMessageFilter).handle(content, sender, done)
         isStop = !stop
-        resultMessage = reply
+        resultMessage = reply as MsgCaller
       }
       if (isStop) {
         break
@@ -75,10 +74,10 @@ export const onMessage = async (data: ChatMessage, sender: Sender) => {
     const filters = messageHandler.filter(item => item.type === 1)
     const text = data.text
     const isDone = () => (text === '[DONE]')
-    let message: string | null = globalParser.resolve(data)
+    let message: string | null | undefined = globalParser?.resolve(data)
     
     if (!!message || isDone()) {
-      message = await _filterTokens(message??'', filters, sender, isDone())
+      message = await _filterTokens(message??'', filters, sender, isDone()) as string
       if (config.debug) {
         console.log('response message ====== [' + isDone() + ']', message)
       }
@@ -111,12 +110,12 @@ export const onMessage = async (data: ChatMessage, sender: Sender) => {
               // 过滤一些字符后如果没有文字就不用生成语音了
               if (text) {
                 const path = await retry(() => azureSpeak({
-                  ...parserJapen(state, message),
+                  ...parserJapen(state, message??""),
                   text
                 }),
                 3,
                 300)
-                const base64 = fs.readFileSync(path).toString('base64')
+                const base64 = fs.readFileSync(path ?? "").toString('base64')
                 await sender.reply([{ type: 'Voice', value: base64 }], true)
               }
             } catch(err) {
@@ -145,7 +144,7 @@ export const onMessage = async (data: ChatMessage, sender: Sender) => {
   }
 }
 
-export function checkActingBehavior(state: any, content: string): string {
+export function checkActingBehavior(state: any, content: string): string | undefined {
   if (!!state.preset?.key) {
     const ai = NowAI()
     const player = preset.player.filter(item => item.key === state.preset.key && item.type.includes(ai))[0]
@@ -153,7 +152,7 @@ export function checkActingBehavior(state: any, content: string): string {
       return (player.maintenance.condition??[])
         .find(item => content.toLocaleLowerCase().indexOf(item) >= 0)
     }
-    return null
+    return undefined
   }
 }
 

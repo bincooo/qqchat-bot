@@ -1,10 +1,9 @@
-import { Client, createClient, segment } from 'oicq'
+import { Client, createClient, segment } from 'icqq'
 import { config } from 'src/config'
 import { Sender } from 'src/model/sender'
 import * as types from 'src/types'
 import logger from 'src/util/log'
 import { randomBytes } from 'crypto'
-import { GuildApp } from 'oicq-guild'
 import inquirer from 'inquirer'
 import chalk from 'chalk'
 import fs from 'fs'
@@ -48,15 +47,13 @@ async function handleMessage (e) {
 async function initOicq (initMessageHandler?: Array<types.MessageHandler | types.BaseMessageHandler>): Promise<Client> {
   messageHandler = initMessageHandler ?? messageHandler ?? []
   await client?.logout()
-  client = createClient(config.botQQ, {
+  client = createClient({
     log_level: 'warn',
     data_dir: process.cwd() + '/data',
+    // 1:安卓手机(默认) 2:aPad 3:安卓手表 4:MacOS 5:iPad  6:Android_8.8.88
     platform: config.oicq?.platform ?? 1
   })
   client.on('message', async e => {
-    // if (e.group) {
-    //   config.groupList[e.group_id??e.group.group_id] = e
-    // }
     // 私信或at回复
     if (e.message_type === 'private' || e.atme) {
       if (e.nickname !== 'Q群管家') {
@@ -88,32 +85,32 @@ async function initOicq (initMessageHandler?: Array<types.MessageHandler | types
     }
   })
 
-  // qq频道
-  const app = GuildApp.bind(client)
-  app.on('message', e => {
-    const isAt = e.message.some(item => (item as any)?.id === app.tiny_id)
-    if (isAt) {
-      handleMessage(e)
-    }
-  })
-
   doLogin(client)
-
   return client
 }
 
 function doLogin (client: Client) {
-
   client.on('system.login.slider', function (e) {
     loginType = 0
+    console.log(" ===== 预备滑块登陆 ====")
     if (!config.docker) {
       inquirer.prompt({ type: 'input', message: '输入ticket：...\n', name: 'ticket' })
         .then(({ ticket }) => this.submitSlider(String(ticket).trim()))
     }
   })
 
+  client.on('system.login.qrcode', function (e) {
+    loginType = 2
+    console.log(" ===== 预备扫码登陆 ====")
+    if (!config.docker) {
+      inquirer.prompt({ type: 'input', message: '回车刷新二维码，等待扫码中...\n', name: 'enter' })
+        .then(() => { this.login() })
+    }
+  })
+
   client.on('system.login.device', function (e) {
     loginType = 1
+    console.log(" ===== 预备手机码登陆 ====")
     client.sendSmsCode()
     if (!config.docker) {
       inquirer.prompt({ type: 'input', message: '请输入手机验证码...\n', name: 'code' })
@@ -121,22 +118,15 @@ function doLogin (client: Client) {
     }
   })
 
-  client.on('system.login.qrcode', function (e) {
-    loginType = 2
-    if (!config.docker) {
-      inquirer.prompt({ type: 'input', message: '回车刷新二维码，等待扫码中...\n', name: 'enter' })
-        .then(() => { this.login() })
-    }
-  })
-
   if (!timer && config.docker) {
     console.log(chalk.green('请在15秒内完成登录 ...'))
     timer = setInterval(() => loginHelper(client), 15 * 1000)
   }
-  client.login(config.botPassword)
+  client.login(config.botQQ, config.botPassword)
 }
 
 function loginHelper(client) {
+  // 0 滑块，1 手机码， 2扫码
   switch(loginType) {
   case 0:
     fs.readFile('./ticket.txt', (err, data) => {
@@ -168,18 +158,18 @@ function loginHelper(client) {
   }
 }
 
-class OicqImpl extends types.TalkWrapper {
-  protected _oicq?: Client
+class IcqqImpl extends types.TalkWrapper {
+  protected _icqq?: Client
 
   get target(): any {
-    return this._oicq
+    return this._icqq
   }
 
   /**
    * 初始化处理器
    */
   async initHandlers(initMessageHandler?: (types.MessageHandler | types.BaseMessageHandler)[]) {
-    this._oicq = await initOicq(initMessageHandler)
+    this._icqq = await initOicq(initMessageHandler)
   }
 
   /**
@@ -252,12 +242,12 @@ class OicqImpl extends types.TalkWrapper {
   async recall(target: any): Promise<boolean> {
     if (config.debug)
       console.log('sender recall message: ', target)
-    if (this._oicq) {
-      this._oicq.deleteMsg(target)
+    if (this._icqq) {
+      this._icqq.deleteMsg(target)
     }
     return true
   }
 }
 
-export default new OicqImpl()
+export default new IcqqImpl()
 

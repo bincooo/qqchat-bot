@@ -34,7 +34,7 @@ export class Sender {
     this.isAdmin = info.isAdmin
     this.nickname = info.nickname
     this.textMessage = info.textMessage
-    this._userId = info.userId
+    this._userId = info.userId as number
   }
 
   getEvent(): any {
@@ -48,25 +48,25 @@ export class Sender {
   }
 
   get userId(): number {
-    return this._userId
+    return this._userId as number
   }
 
-  async reply(content: (types.TalkChain[] | string), quote?: boolean): [boolean, any] {
+  async reply(content: (types.TalkChain[] | string), quote?: boolean): Promise<[boolean, any]> {
     return getClient().reply(this._event, (typeof content == 'string') ? [{ type: 'Plain', value: content }] : content, quote)
   }
 
-  async recall(target: any): any {
+  async recall(target: any): Promise<any> {
     return await getClient().recall(target)
   }
 }
 
 
-export function buildTalkChain(sender: Sender, content: string): types.TalkChain {
+export function buildTalkChain(sender: Sender, content: string): types.TalkChain[] {
   const state: any = stateManager.getState(sender.id)
   const ai = NowAI()
   const player =  preset.player?.find(item => item.key === state?.preset?.key && item.type.includes(ai))
   let resultMessage = content.trim()
-  const chain: types.TalkChain = []
+  const chain: types.TalkChain[] = []
   if (resultMessage) {
     const regex = /\[@([0-9]{5,})\]/g
     const ats = resultMessage.match(regex) ?? []

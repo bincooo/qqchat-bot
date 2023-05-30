@@ -1,9 +1,6 @@
 import { config, lang } from 'src/config'
-import { initOicq } from 'src/core/oicq'
-import { BaseMessageHandler } from 'src/types'
 import { Sender } from '../../model/sender'
 import { BaseCommand } from '../command'
-import messageHandlers from './../../handler'
 import stateManager from 'src/util/state'
 
 class CgptCommand extends BaseCommand {

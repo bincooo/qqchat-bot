@@ -95,7 +95,7 @@ export function NowAI() {
  * @cb callback function
  * @def default object
  */
-async function NonErr(cb: () => any, def?: any): any {
+async function NonErr(cb: () => any, def?: any): Promise<any> {
   try {
     return await cb.call(undefined)
   } catch(err) {}

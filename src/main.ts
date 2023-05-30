@@ -1,10 +1,9 @@
 import { BaseMessageHandler } from 'src/types'
-import fetch from 'node-fetch'
 import logger from './util/log'
 import getClient from './core'
 import MessageHandlers from './handler'
 import { existsConfig, loadConfig, writeConfig, loadPresets } from './util/config'
-import { config, preset } from './config'
+import { config } from './config'
 import { run } from './auto'
 import chalk from 'chalk'
 

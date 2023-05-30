@@ -1,8 +1,6 @@
-import { segment } from 'oicq'
 import commands from '.'
 import { Sender } from 'src/model/sender'
 import { BaseCommand } from '../command'
-import { getClient } from 'src/core/oicq'
 import { config } from 'src/config'
 
 export function buildHelpMessage (isAdmin: boolean, title?: string) {

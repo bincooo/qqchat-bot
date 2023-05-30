@@ -2,7 +2,7 @@ import { type ChatMessage } from 'src/types'
 import { config } from 'src/config'
 
 
-export type Condition = (string | (tex: string, idx: number) => number)
+export type Condition = (string | ((tex: string, idx: number) => number))
 export type Cached = {
   old?: { index: number, fragment?: string }
   index: number
@@ -24,7 +24,7 @@ export class MessageParser {
     this._condition = condition
   }
 
-  pushCondition(item: (string | (tex: string, idx: number) => number)) {
+  pushCondition(item: (string | ((tex: string, idx: number) => number) )) {
     this._condition.push(item)
   }
 
@@ -35,8 +35,7 @@ export class MessageParser {
     }
 
     if (this._cacheMapper.has(conversationId)) {
-      const ca = this._cacheMapper.get(conversationId)
-      return ca
+      return this._cacheMapper.get(conversationId) as Cached
     }
 
     const _new: Cached = {
@@ -101,7 +100,7 @@ export class MessageParser {
   }
 }
 
-export function initHandler(): Array<parser.Condition> {
+export function initHandler(): Array<Condition> {
   // 代码解析处理
   const codeHdr = (text, index) => {
     const block = '```'
