@@ -34,7 +34,7 @@ async function unpatch () {
 async function fix() {
   const AppJS = (await readFile('build/app.js')).toString()
    await writeFile('build/app.js', AppJS
-    .replaceAll('return path3.resolve(__dirname, "silk", type2);', 'const silk = resolve(process.cwd(), "silk", type2); return fs6.existsSync(silk) ? silk : path3.resolve(__dirname, "silk", type2);')
+    .replaceAll('return path3.resolve(__dirname, "silk", type2);', 'const silk = path3.resolve(process.cwd(), "silk", type2); return fs6.existsSync(silk) ? silk : path3.resolve(__dirname, "silk", type2);')
     .replaceAll('require("path").join(__dirname, "tiktoken_bg.wasm")', 'require("path").join(process.cwd(), "tiktoken_bg.wasm")')
   )
 }

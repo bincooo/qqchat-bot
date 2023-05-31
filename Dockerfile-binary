@@ -1,5 +1,6 @@
 #FROM bincooo/chrome-vnc:latest
-FROM debian:bullseye-slim
+#FROM debian:bullseye-slim
+FROM node:18-slim
 
 ADD . /app
 ADD Enter /usr/local/bin
@@ -13,4 +14,6 @@ RUN apt-get update \
   && apt-get install -y make gcc g++ \
   && rm -rf /var/lib/apt/lists/*
 
+RUN npm i -g wx-voice
+RUN npm i -g ffmpeg-static@^4.4.1
 ENTRYPOINT ["/bin/bash", "/app/docker-entrypoint.sh"]

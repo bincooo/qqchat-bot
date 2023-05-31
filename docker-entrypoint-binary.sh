@@ -14,4 +14,5 @@ echo ' '
 cd /app
 wx-voice compile
 cp -rf /usr/local/lib/node_modules/wx-voice/silk /app
+cp -rf /usr/local/lib/node_modules/ffmpeg-static/ffmpeg /app
 ./qqchat-bot-linux
