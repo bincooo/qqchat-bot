@@ -116,7 +116,12 @@ class GlobalStateManager {
           return
         }
 
-        const [ok, result] = await sender.reply([{ type: 'Image', value: this._gifB64 }])
+        let value = this._gifB64
+        if (config.type == "oicq") {
+          value = "base64://" + value
+        }
+        
+        const [ok, result] = await sender.reply([{ type: 'Image', value: value }])
         await this.recallLoading(sender.id)
         if (!ok) return
         state.loading.push(result)

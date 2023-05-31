@@ -146,6 +146,7 @@ export function initHandler(): Array<Condition> {
     parseMinimum + ":。\n",
     parseMinimum + ":。",
     (parseMinimum + 50) + ":.\n",
-    (parseMinimum + 50) + ":\n\n"
+    (parseMinimum + 50) + ":!\n\n",
+    (parseMinimum + 50) + ":\n\n",
   ]
 }

@@ -44,7 +44,7 @@ async function handleMessage (e) {
   }
 }
 
-async function initOicq (initMessageHandler?: Array<types.MessageHandler | types.BaseMessageHandler>): Promise<Client> {
+async function initIcqq (initMessageHandler?: Array<types.MessageHandler | types.BaseMessageHandler>): Promise<Client> {
   messageHandler = initMessageHandler ?? messageHandler ?? []
   await client?.logout()
   client = createClient({
@@ -169,7 +169,7 @@ class IcqqImpl extends types.TalkWrapper {
    * 初始化处理器
    */
   async initHandlers(initMessageHandler?: (types.MessageHandler | types.BaseMessageHandler)[]) {
-    this._icqq = await initOicq(initMessageHandler)
+    this._icqq = await initIcqq(initMessageHandler)
   }
 
   /**
