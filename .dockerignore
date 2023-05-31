@@ -4,4 +4,6 @@ log
 package-look.json
 docker-compose.yaml
 Dockerfile
+qqchat-bot-macos
+qqchat-bot-win.exe
 mirai

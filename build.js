@@ -15,6 +15,9 @@ async function patch () {
   await copyFile('loading.gif', 'build/loading.gif')
   await copyFile('mirai-setting.yml', 'build/mirai-setting.yml')
   await copyFile('node_modules/@dqbd/tiktoken/tiktoken_bg.wasm', 'build/tiktoken_bg.wasm')
+
+  await copyFile('docker-entrypoint-binary.sh', 'build/docker-entrypoint.sh')
+  await copyFile('Dockerfile-binary', 'build/Dockerfile')
   console.log('patch...')
 }
 async function unpatch () {
