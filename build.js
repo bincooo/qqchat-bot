@@ -18,6 +18,7 @@ async function patch () {
   await copyFile('node_modules/@dqbd/tiktoken/tiktoken_bg.wasm', 'build/tiktoken_bg.wasm')
 
   await copyFile('Enter', 'build/Enter')
+  await copyFile('.dockerignore', 'build/.dockerignore')
   await copyFile('docker-compose.yaml', 'build/docker-compose.yaml')
   await copyFile('docker-entrypoint-binary.sh', 'build/docker-entrypoint.sh')
   await copyFile('Dockerfile-binary', 'build/Dockerfile')
@@ -33,7 +34,7 @@ async function unpatch () {
 async function fix() {
   const AppJS = (await readFile('build/app.js')).toString()
    await writeFile('build/app.js', AppJS
-    .replaceAll('resolve(__dirname, "silk", type2)', 'resolve(process.cwd(), "silk", type2)')
+    .replaceAll('return path3.resolve(__dirname, "silk", type2);', 'const silk = resolve(process.cwd(), "silk", type2); return fs6.existsSync(silk) ? silk : path3.resolve(__dirname, "silk", type2);')
     .replaceAll('require("path").join(__dirname, "tiktoken_bg.wasm")', 'require("path").join(process.cwd(), "tiktoken_bg.wasm")')
   )
 }

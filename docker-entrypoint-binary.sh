@@ -12,4 +12,6 @@ echo ' '
 
 
 cd /app
+wx-voice compile
+cp -rf /usr/local/lib/node_modules/wx-voice/silk /app
 ./qqchat-bot-linux
