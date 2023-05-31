@@ -18,7 +18,7 @@ const ffmpegPath = (() => {
   return ff_path
 })()
 
-let voice = null
+let voice:WxVoice
 function mp3ToAmr(filepath: string, outputDir = './tmp'): Promise<string> {
   return new Promise((resolve, reject) => {
     const basename = path.basename(filepath)
@@ -54,7 +54,7 @@ function mp3ToSilk(filepath, outputDir = './tmp'): Promise<string> {
     const filename = basename.replace('.' + etc , '')
     if(!voice) {
       voice = new WxVoice('./tmp', ffmpegPath)
-      (voice as any).on("error", (err) => console.log('WxVoice Error: ', err))
+      voice.on("error", (err) => console.log('WxVoice Error: ', err))
     }
     const enSilk = (retry: number = 5) => {
       (voice as any).encode(filepath, `${outputDir}/${filename}.silk`, {format: 'silk'}, (path) => {
