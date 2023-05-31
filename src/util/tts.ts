@@ -10,7 +10,10 @@ import { config } from 'src/config'
 import delay from 'delay'
 
 const ffmpegPath = (() => {
-  const ff_path = (typeof ffmpeg === 'string') ? ffmpeg : ffmpeg.path
+  let ff_path = (typeof ffmpeg === 'string') ? ffmpeg : ffmpeg.path
+  if (!fs.existsSync(ff_path)) {
+    ff_path = process.cwd() + "/ffmpeg"
+  }
   console.log(ff_path)
   return ff_path
 })()
