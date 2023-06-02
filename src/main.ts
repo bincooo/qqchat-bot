@@ -65,10 +65,10 @@ async function initChat() {
 }
 
 main().catch(logger.error)
-// process.on('unhandledRejection', async (reason, promise) => {
-//   await promise
-//   // logger.error('unhandledRejection <<<<', reason)
-//   // promise?.catch(err => {
-//   //   logger.error('unhandledRejection >>>>', err)
-//   // })
-// })
+process.on('unhandledRejection', (reason, promise) => {
+  // await promise
+  logger.error('unhandledRejection <<<<', reason)
+  promise?.catch(err => {
+    logger.error('unhandledRejection >>>>', err)
+  })
+})
